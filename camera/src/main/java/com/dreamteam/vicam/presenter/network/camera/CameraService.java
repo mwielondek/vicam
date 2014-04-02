@@ -1,6 +1,6 @@
 package com.dreamteam.vicam.presenter.network.camera;
 
-import android.database.Observable;
+import rx.Observable;
 
 import retrofit.http.Query;
 
