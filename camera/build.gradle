@@ -35,6 +35,8 @@ dependencies {
     compile 'com.netflix.rxjava:rxjava-android:0.17.1'
     compile 'com.github.frankiesardo:icepick:2.3.5'
     compile 'com.github.frankiesardo:icepick-processor:2.3.5'
+    compile 'com.j256.ormlite:ormlite-core:4.48'
+    compile 'com.j256.ormlite:ormlite-android:4.48'
     compile 'com.android.support:support-v4:+'
     compile fileTree(dir: 'libs', include: ['*.jar'])
 }
