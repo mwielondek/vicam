@@ -1,7 +1,5 @@
 package com.dreamteam.vicam.model.pojo;
 
-import CameraState;
-
 /**
  * Created by fsommar on 2014-04-01.
  */

@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.dreamteam.camera.R;
 import com.dreamteam.vicam.presenter.events.NavigationDrawerSelected;
 import com.dreamteam.vicam.presenter.utility.Dagger;
 
