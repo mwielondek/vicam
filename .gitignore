@@ -23,16 +23,16 @@ local.properties
 .project
 
 # Android Studio
-.idea
-#.idea/workspace.xml - uncomment this and comment/delete .idea if it better suit your needs
+!.idea/
+.idea/*
+!.idea/codeStyleSettings.xml
 .gradle
 /*/local.properties
 /*/out
-/*/*/build
-/*/*/production
+/*/build
+/*/production
 *.iml
 *.iws
 *.ipr
 *~
 *.swp
-!.idea/codeStyleSettings.xml # include code style

@@ -26,7 +26,7 @@ local.properties
 
 # IDEA/Android Studio project files, because
 # the project can be imported from settings.gradle
-.idea
+#.idea
 *.iml
 
 # Old-style IDEA project files
