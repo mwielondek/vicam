@@ -10,6 +10,7 @@ import dagger.ObjectGraph;
  * Created by fsommar on 2/5/14.
  */
 public class BaseApplication extends Application {
+
   private static BaseApplication instance;
   private ObjectGraph objectGraph;
 

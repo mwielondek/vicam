@@ -14,16 +14,17 @@ import dagger.Provides;
  * Created by fsommar on 2/5/14.
  */
 @Module(
-        injects = {
-            NavigationDrawerFragment.class,
-            ControlActivity.class
-        },
-        complete = false
+    injects = {
+        NavigationDrawerFragment.class,
+        ControlActivity.class
+    },
+    complete = false
 )
 public class EventBusModule {
-    @Provides
-    @Singleton
-    public EventBus provideEventBus() {
-        return new EventBus();
-    }
+
+  @Provides
+  @Singleton
+  public EventBus provideEventBus() {
+    return new EventBus();
+  }
 }

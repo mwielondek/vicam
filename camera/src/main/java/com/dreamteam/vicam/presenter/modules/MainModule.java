@@ -10,4 +10,6 @@ import dagger.Module;
         EventBusModule.class
     }
 )
-public class MainModule {}
+public class MainModule {
+
+}
