@@ -35,3 +35,4 @@ local.properties
 *.ipr
 *~
 *.swp
+!.idea/codeStyleSettings.xml # include code style
