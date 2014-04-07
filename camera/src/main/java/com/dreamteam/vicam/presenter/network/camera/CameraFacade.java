@@ -7,7 +7,7 @@ public class CameraFacade {
 
   private CameraCommands cameraCommands;
 
-  public CameraFacade(CameraCommands cameraCommands) {
-    this.cameraCommands = cameraCommands;
+  public CameraFacade(CameraService cameraService) {
+    this.cameraCommands = new CameraCommands(cameraService);
   }
 }
