@@ -11,6 +11,10 @@ public class CameraCommands {
 
   CameraService cameraService;
 
+  public CameraCommands(CameraService cameraService) {
+    this.cameraService = cameraService;
+  }
+
   private Observable<String> sendCommand(String command, int data) {
     return cameraService.sendCommand(COMMAND_PREFIX + command + Integer.toString(data));
   }

@@ -5,4 +5,9 @@ package com.dreamteam.vicam.presenter.network.camera;
  */
 public class CameraFacade {
 
+  private CameraCommands cameraCommands;
+
+  public CameraFacade(CameraCommands cameraCommands) {
+    this.cameraCommands = cameraCommands;
+  }
 }
