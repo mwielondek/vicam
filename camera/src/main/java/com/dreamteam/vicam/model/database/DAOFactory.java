@@ -8,6 +8,4 @@ public interface DAOFactory {
   public CameraDAO getCameraDAO();
 
   public PresetDAO getPresetDAO();
-
-  public CameraStateDAO getCameraStateDAO();
 }

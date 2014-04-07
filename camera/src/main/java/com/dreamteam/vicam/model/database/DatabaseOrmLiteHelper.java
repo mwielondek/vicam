@@ -26,7 +26,6 @@ public class DatabaseOrmLiteHelper extends OrmLiteSqliteOpenHelper implements DA
   // the DAO object we use to access the SimpleData table
   private CameraDAO cameraDao;
   private PresetDAO presetDao;
-  private CameraStateDAO cameraStateDao;
 
   public DatabaseOrmLiteHelper(Context context) {
     super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -59,7 +58,6 @@ public class DatabaseOrmLiteHelper extends OrmLiteSqliteOpenHelper implements DA
     super.close();
     cameraDao = null;
     presetDao = null;
-    cameraStateDao = null;
   }
 
   @Override
@@ -78,11 +76,4 @@ public class DatabaseOrmLiteHelper extends OrmLiteSqliteOpenHelper implements DA
     return presetDao;
   }
 
-  @Override
-  public CameraStateDAO getCameraStateDAO() {
-    if (cameraStateDao == null) {
-      // cameraStateDao = new CameraStateDAOImpl(getDao(CameraState.class));
-    }
-    return cameraStateDao;
-  }
 }
