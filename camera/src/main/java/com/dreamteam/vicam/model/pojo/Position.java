@@ -13,6 +13,11 @@ public class Position {
     this.id = id;
   }
 
+  public Position(int pan, int tilt) {
+    this.pan = pan;
+    this.tilt = tilt;
+  }
+
   public int getId() {
     return id;
   }

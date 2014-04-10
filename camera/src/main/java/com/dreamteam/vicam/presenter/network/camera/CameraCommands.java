@@ -1,6 +1,12 @@
 package com.dreamteam.vicam.presenter.network.camera;
 
+import com.dreamteam.vicam.model.pojo.Position;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import rx.Observable;
+import rx.functions.Func1;
 
 /**
  * Created by fsommar on 2014-04-01.
@@ -15,6 +21,10 @@ public class CameraCommands {
     this.cameraService = cameraService;
   }
 
+  private Observable<String> sendCommand(String command) {
+    return cameraService.sendCommand(COMMAND_PREFIX + command);
+  }
+
   private Observable<String> sendCommand(String command, int data) {
     return cameraService.sendCommand(COMMAND_PREFIX + command + Integer.toString(data));
   }
@@ -22,6 +32,10 @@ public class CameraCommands {
   private Observable<String> sendCommand(String command, int dataOne, int dataTwo) {
     return cameraService.sendCommand(
         COMMAND_PREFIX + command + Integer.toString(dataOne) + Integer.toString(dataTwo));
+  }
+
+  private Observable<String> sendControl(String control) {
+    return cameraService.sendControl(control);
   }
 
   private Observable<String> sendControl(String control, int data) {
@@ -72,5 +86,55 @@ public class CameraCommands {
 
   public Observable<String> oneTouchAutofocus() {
     return sendControl("OSE:69:", 1);
+  }
+
+  public Observable<Position> getPanTilt() {
+    return sendCommand("APC").map(new Func1<String, Position>() {
+      @Override
+      public Position call(String s) {
+        Pattern p = Pattern.compile("aPC(\\d{4})(\\d{4})");
+        Matcher m = p.matcher(s);
+        Position pos = new Position(
+           Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2))
+        );
+        return pos;
+      }
+    });
+  }
+
+  public Observable<Integer> getZoom() {
+    return sendCommand("GZ").map(new Func1<String, Integer>() {
+      @Override
+      public Integer call(String s) {
+        Pattern p = Pattern.compile("gz(\\d{3})");
+        Matcher m = p.matcher(s);
+        int level = Integer.parseInt(m.group(1));
+        return level;
+      }
+    });
+  }
+
+  public Observable<Integer> getFocus() {
+    return sendCommand("GF").map(new Func1<String, Integer>() {
+      @Override
+      public Integer call(String s) {
+        Pattern p = Pattern.compile("gf(\\d{3})");
+        Matcher m = p.matcher(s);
+        int level = Integer.parseInt(m.group(1));
+        return level;
+      }
+    });
+  }
+
+  public Observable<Boolean> getAF() {
+    return sendControl("QAF").map(new Func1<String, Boolean>() {
+      @Override
+      public Boolean call(String s) {
+        Pattern p = Pattern.compile("OAF:(\\d)");
+        Matcher m = p.matcher(s);
+        Boolean bool = m.group(1).equals("1");
+        return bool;
+      }
+    });
   }
 }
