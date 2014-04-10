@@ -5,17 +5,17 @@ package com.dreamteam.vicam.model.pojo;
  */
 public class Zoom {
 
-  private float level;
+  private int level;
 
-  public Zoom(float level) {
+  public Zoom(int level) {
     this.level = level;
   }
 
-  public float getLevel() {
+  public int getLevel() {
     return level;
   }
 
-  public void setLevel(float level) {
+  public void setLevel(int level) {
     this.level = level;
   }
 }

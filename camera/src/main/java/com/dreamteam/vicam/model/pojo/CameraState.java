@@ -8,13 +8,18 @@ public class CameraState {
   private int id;
   private Position position;
   private Zoom zoom;
-  private Brightness brightness;
   private Focus focus;
 
-  public CameraState(Position position, Zoom zoom, Brightness brightness, Focus focus) {
+  public CameraState(int id, Position position, Zoom zoom, Focus focus) {
+    this.id = id;
     this.position = position;
     this.zoom = zoom;
-    this.brightness = brightness;
+    this.focus = focus;
+  }
+
+  public CameraState(Position position, Zoom zoom, Focus focus) {
+    this.position = position;
+    this.zoom = zoom;
     this.focus = focus;
   }
 
@@ -30,11 +35,11 @@ public class CameraState {
     return zoom;
   }
 
-  public Brightness getBrightness() {
-    return brightness;
-  }
-
   public Focus getFocus() {
     return focus;
+  }
+
+  public boolean isAF() {
+    return focus.isAutoFocus();
   }
 }

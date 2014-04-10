@@ -1,10 +1,15 @@
 package com.dreamteam.vicam.presenter.network.camera;
 
 
+import com.dreamteam.vicam.model.pojo.CameraState;
+import com.dreamteam.vicam.model.pojo.Focus;
 import com.dreamteam.vicam.model.pojo.Position;
 import com.dreamteam.vicam.model.pojo.Speed;
+import com.dreamteam.vicam.model.pojo.Zoom;
 
 import rx.Observable;
+import rx.functions.Func2;
+import rx.functions.Func3;
 
 /**
  * Created by fsommar on 2014-04-01.
@@ -56,6 +61,26 @@ public class CameraFacade {
       throw new IllegalArgumentException();
     }
     return cameraCommands.focusAbsolute(level);
+  }
+
+  public Observable<CameraState> getCameraState() {
+    return Observable.zip(cameraCommands.getPanTilt(), cameraCommands.getZoomLevel(), getFocus(), new Func3<Position, Integer, Focus, CameraState>() {
+      @Override
+      public CameraState call(Position position, Integer zoomLevel, Focus focus) {
+        return new CameraState(
+            position, new Zoom(zoomLevel), focus
+        );
+      }
+    });
+  }
+
+  public Observable<Focus> getFocus() {
+    return Observable.zip(cameraCommands.getFocusLevel(), cameraCommands.getAF(), new Func2<Integer, Boolean, Focus>() {
+      @Override
+      public Focus call(Integer level, Boolean AF) {
+        return new Focus(level, AF);
+      }
+    });
   }
 
 }

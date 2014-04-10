@@ -5,14 +5,20 @@ package com.dreamteam.vicam.model.pojo;
  */
 public class Focus {
 
-  private boolean autoFocus;
-  private float level;
   private int id;
+  private int level;
+  private boolean autoFocus;
 
-  public Focus(boolean autoFocus, float level, int id) {
-    this.autoFocus = autoFocus;
+  public Focus(int level, boolean autoFocus) {
     this.level = level;
+    this.autoFocus = autoFocus;
+  }
+
+  public Focus(int id, int level, boolean autoFocus) {
+
     this.id = id;
+    this.level = level;
+    this.autoFocus = autoFocus;
   }
 
   public int getId() {
@@ -27,11 +33,11 @@ public class Focus {
     this.autoFocus = autoFocus;
   }
 
-  public float getLevel() {
+  public int getLevel() {
     return level;
   }
 
-  public void setLevel(float level) {
+  public void setLevel(int level) {
     this.level = level;
   }
 }

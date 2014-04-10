@@ -102,7 +102,7 @@ public class CameraCommands {
     });
   }
 
-  public Observable<Integer> getZoom() {
+  public Observable<Integer> getZoomLevel() {
     return sendCommand("GZ").map(new Func1<String, Integer>() {
       @Override
       public Integer call(String s) {
@@ -114,7 +114,7 @@ public class CameraCommands {
     });
   }
 
-  public Observable<Integer> getFocus() {
+  public Observable<Integer> getFocusLevel() {
     return sendCommand("GF").map(new Func1<String, Integer>() {
       @Override
       public Integer call(String s) {
