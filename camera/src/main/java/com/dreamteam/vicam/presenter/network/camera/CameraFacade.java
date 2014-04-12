@@ -9,6 +9,7 @@ import com.dreamteam.vicam.model.pojo.Zoom;
 import com.dreamteam.vicam.presenter.utility.Utils;
 
 import rx.Observable;
+import rx.functions.Func1;
 import rx.functions.Func2;
 import rx.functions.Func3;
 
@@ -60,11 +61,11 @@ public class CameraFacade {
 
   public Observable<CameraState> getCameraState() {
     return Observable.zip(
-        cameraCommands.getPanTilt(), cameraCommands.getZoomLevel(), getFocus(),
-        new Func3<Position, Integer, Focus, CameraState>() {
+        cameraCommands.getPanTilt(), getZoom(), getFocus(),
+        new Func3<Position, Zoom, Focus, CameraState>() {
           @Override
-          public CameraState call(Position position, Integer zoomLevel, Focus focus) {
-            return new CameraState(position, new Zoom(zoomLevel), focus);
+          public CameraState call(Position position, Zoom zoom, Focus focus) {
+            return new CameraState(position, zoom, focus);
           }
         }
     );
@@ -80,6 +81,18 @@ public class CameraFacade {
           }
         }
     );
+  }
+
+  public Observable<Zoom> getZoom() {
+    return cameraCommands.getZoomLevel().map(new Func1<Integer, Zoom>() {
+      @Override
+      public Zoom call(Integer level) {
+        if (level != null) {
+          return new Zoom(level);
+        }
+        return null;
+      }
+    });
   }
 
 }
