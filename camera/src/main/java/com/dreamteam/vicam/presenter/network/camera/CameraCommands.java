@@ -95,7 +95,7 @@ public class CameraCommands {
         Pattern p = Pattern.compile("aPC(\\d{4})(\\d{4})");
         Matcher m = p.matcher(s);
         Position pos = new Position(
-           Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2))
+            Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2))
         );
         return pos;
       }

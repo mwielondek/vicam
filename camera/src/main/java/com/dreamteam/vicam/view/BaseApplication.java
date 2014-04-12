@@ -14,6 +14,10 @@ public class BaseApplication extends Application {
   private static BaseApplication instance;
   private ObjectGraph objectGraph;
 
+  public static BaseApplication getInstance() {
+    return instance;
+  }
+
   @Override
   public void onCreate() {
     super.onCreate();
@@ -23,9 +27,5 @@ public class BaseApplication extends Application {
 
   public ObjectGraph getObjectGraph() {
     return objectGraph;
-  }
-
-  public static BaseApplication getInstance() {
-    return instance;
   }
 }

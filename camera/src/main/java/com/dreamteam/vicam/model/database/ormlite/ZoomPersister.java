@@ -14,7 +14,7 @@ import java.sql.SQLException;
 public class ZoomPersister extends IntegerObjectType {
 
   private ZoomPersister() {
-    super(SqlType.INTEGER, new Class<?>[] { Zoom.class });
+    super(SqlType.INTEGER, new Class<?>[]{Zoom.class});
   }
 
   @Override

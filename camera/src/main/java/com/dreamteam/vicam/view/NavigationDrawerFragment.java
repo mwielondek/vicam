@@ -52,22 +52,18 @@ public class NavigationDrawerFragment extends Fragment {
    * A pointer to the current callbacks instance (the Activity).
    */
 //    private NavigationDrawerCallbacks mCallbacks;
-
+  @Inject
+  public EventBus eventBus;
   /**
    * Helper component that ties the action bar to the navigation drawer.
    */
   private ActionBarDrawerToggle mDrawerToggle;
-
   private DrawerLayout mDrawerLayout;
   private ListView mDrawerListView;
   private View mFragmentContainerView;
-
   private int mCurrentSelectedPosition = 0;
   private boolean mFromSavedInstanceState;
   private boolean mUserLearnedDrawer;
-
-  @Inject
-  public EventBus eventBus;
 
   public NavigationDrawerFragment() {
   }

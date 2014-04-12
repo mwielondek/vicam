@@ -24,18 +24,16 @@ import javax.inject.Inject;
 
 public class ControlActivity extends Activity {
 
+  @Inject
+  public EventBus eventBus;
   /**
    * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
    */
   private NavigationDrawerFragment mNavigationDrawerFragment;
-
   /**
    * Used to store the last screen title. For use in {@link #restoreActionBar()}.
    */
   private CharSequence mTitle;
-
-  @Inject
-  public EventBus eventBus;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -134,6 +132,9 @@ public class ControlActivity extends Activity {
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
 
+    public PlaceholderFragment() {
+    }
+
     /**
      * Returns a new instance of this fragment for the given section number.
      */
@@ -143,9 +144,6 @@ public class ControlActivity extends Activity {
       args.putInt(ARG_SECTION_NUMBER, sectionNumber);
       fragment.setArguments(args);
       return fragment;
-    }
-
-    public PlaceholderFragment() {
     }
 
     @Override
