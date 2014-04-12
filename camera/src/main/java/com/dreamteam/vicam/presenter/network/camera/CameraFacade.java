@@ -31,9 +31,7 @@ public class CameraFacade {
   }
 
   public Observable<String> zoomStart(int speed) {
-    if (speed > 99 || speed < 0) {
-      throw new IllegalArgumentException();
-    }
+    rangeCheck(speed, 0, 99);
     return cameraCommands.zoom(speed);
   }
 
@@ -50,37 +48,44 @@ public class CameraFacade {
   }
 
   public Observable<String> zoomAbsolute(int level) {
-    if (level < 0x555 || level > 0xFFF) {
-      throw new IllegalArgumentException();
-    }
+    rangeCheck(level, 0x555, 0xFFF);
     return cameraCommands.zoomAbsolute(level);
   }
 
   public Observable<String> focusAbsolute(int level) {
-    if (level < 0x555 || level > 0xFFF) {
-      throw new IllegalArgumentException();
-    }
+    rangeCheck(level, 0x555, 0xFFF);
     return cameraCommands.focusAbsolute(level);
   }
 
   public Observable<CameraState> getCameraState() {
-    return Observable.zip(cameraCommands.getPanTilt(), cameraCommands.getZoomLevel(), getFocus(), new Func3<Position, Integer, Focus, CameraState>() {
-      @Override
-      public CameraState call(Position position, Integer zoomLevel, Focus focus) {
-        return new CameraState(
-            position, new Zoom(zoomLevel), focus
-        );
-      }
-    });
+    return Observable.zip(
+        cameraCommands.getPanTilt(), cameraCommands.getZoomLevel(), getFocus(),
+        new Func3<Position, Integer, Focus, CameraState>() {
+          @Override
+          public CameraState call(Position position, Integer zoomLevel, Focus focus) {
+            return new CameraState(position, new Zoom(zoomLevel), focus);
+          }
+        }
+    );
   }
 
   public Observable<Focus> getFocus() {
-    return Observable.zip(cameraCommands.getFocusLevel(), cameraCommands.getAF(), new Func2<Integer, Boolean, Focus>() {
-      @Override
-      public Focus call(Integer level, Boolean AF) {
-        return new Focus(level, AF);
-      }
-    });
+    return Observable.zip(
+        cameraCommands.getFocusLevel(), cameraCommands.getAF(),
+        new Func2<Integer, Boolean, Focus>() {
+          @Override
+          public Focus call(Integer level, Boolean AF) {
+            return new Focus(level, AF);
+          }
+        }
+    );
+  }
+
+  private void rangeCheck(int param, int lower, int upper) {
+    if (param < lower || param > upper) {
+      throw new IllegalArgumentException(
+          String.format("Parameter needs to be in range [%d, %d] - was %d.", lower, upper, param));
+    }
   }
 
 }
