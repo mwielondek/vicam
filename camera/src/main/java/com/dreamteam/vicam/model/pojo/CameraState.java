@@ -1,5 +1,6 @@
 package com.dreamteam.vicam.model.pojo;
 
+import com.dreamteam.vicam.model.database.ormlite.ZoomPersister;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 

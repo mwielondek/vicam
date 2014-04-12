@@ -1,5 +1,6 @@
-package com.dreamteam.vicam.model.pojo;
+package com.dreamteam.vicam.model.database.ormlite;
 
+import com.dreamteam.vicam.model.pojo.Zoom;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.field.types.IntegerObjectType;
