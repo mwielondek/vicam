@@ -17,7 +17,7 @@ public class CameraServiceManager {
   private static Map<String, CameraFacade> cameraFacades = new HashMap<>();
 
   public static CameraFacade geFacadeFor(Camera c) {
-    String key = c.getIp() + ":" + Short.toString(c.getPort());
+    String key = c.getAddress();
 
     if (cameraFacades.containsKey(key)) {
       return cameraFacades.get(key);
@@ -28,7 +28,7 @@ public class CameraServiceManager {
   public static CameraService createServiceFor(Camera c) {
     return new RestAdapter
         .Builder()
-        .setEndpoint(c.getIp() + ":" + Short.toString(c.getPort()))
+        .setEndpoint(c.getAddress())
         .build()
         .create(CameraService.class);
   }

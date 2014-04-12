@@ -14,7 +14,7 @@ public class Camera {
   @DatabaseField(unique = true, canBeNull = false)
   private String name;
   @DatabaseField
-  private short port;
+  private Short port;
   @DatabaseField(generatedId = true)
   private int id;
 
@@ -22,14 +22,12 @@ public class Camera {
     // ORMLite needs a no-arg constructor
   }
 
-  public Camera(String ip, String name, short port, int id) {
-    this.ip = ip;
-    this.name = name;
-    this.port = port;
+  public Camera(String ip, String name, Short port, int id) {
+    this(ip, name, port);
     this.id = id;
   }
 
-  public Camera(String ip, String name, short port) {
+  public Camera(String ip, String name, Short port) {
     this.ip = ip;
     this.name = name;
     this.port = port;
@@ -51,7 +49,7 @@ public class Camera {
     this.name = name;
   }
 
-  public short getPort() {
+  public Short getPort() {
     return port;
   }
 
@@ -61,5 +59,12 @@ public class Camera {
 
   public int getId() {
     return id;
+  }
+
+  public String getAddress() {
+    if (port == null) {
+      return ip;
+    }
+    return String.format("%s:%d", ip, port);
   }
 }
