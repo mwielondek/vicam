@@ -5,6 +5,8 @@ package com.dreamteam.vicam.model.pojo;
  */
 public class Speed {
 
+  public static final int LOWER_BOUND = 1, UPPER_BOUND = 99, STOP = 50;
+
   private int x, y;
 
   public Speed(int x, int y) {

@@ -5,6 +5,8 @@ package com.dreamteam.vicam.model.pojo;
  */
 public class Zoom {
 
+  public static final int LOWER_BOUND = 0x555, UPPER_BOUND = 0xFFF;
+
   private int level;
 
   public Zoom(int level) {

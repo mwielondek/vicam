@@ -28,16 +28,16 @@ public class CameraFacade {
   }
 
   public Observable<String> moveStop() {
-    return cameraCommands.panTilt(50, 50);
+    return cameraCommands.panTilt(Speed.STOP, Speed.STOP);
   }
 
   public Observable<String> zoomStart(int speed) {
-    Utils.rangeCheck(speed, 1, 99);
+    Utils.rangeCheck(speed, Speed.LOWER_BOUND, Speed.UPPER_BOUND);
     return cameraCommands.zoom(speed);
   }
 
   public Observable<String> zoomStop() {
-    return cameraCommands.zoom(50);
+    return cameraCommands.zoom(Speed.STOP);
   }
 
   public Observable<String> oneTouchFocus() {
@@ -49,12 +49,12 @@ public class CameraFacade {
   }
 
   public Observable<String> zoomAbsolute(int level) {
-    Utils.rangeCheck(level, 0x555, 0xFFF);
+    Utils.rangeCheck(level, Zoom.LOWER_BOUND, Zoom.UPPER_BOUND);
     return cameraCommands.zoomAbsolute(level);
   }
 
   public Observable<String> focusAbsolute(int level) {
-    Utils.rangeCheck(level, 0x555, 0xFFF);
+    Utils.rangeCheck(level, Focus.LOWER_BOUND, Focus.UPPER_BOUND);
     return cameraCommands.focusAbsolute(level);
   }
 

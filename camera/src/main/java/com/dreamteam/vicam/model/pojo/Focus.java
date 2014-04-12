@@ -9,6 +9,8 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable
 public class Focus {
 
+  public static final int LOWER_BOUND = 0x555, UPPER_BOUND = 0xFFF;
+
   @DatabaseField(generatedId = true)
   private int id;
   @DatabaseField
