@@ -1,5 +1,6 @@
 package com.dreamteam.vicam.model.pojo;
 
+import com.dreamteam.vicam.presenter.utility.Utils;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -8,6 +9,8 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 @DatabaseTable
 public class Position {
+
+  public static final int LOWER_BOUND = 0x0000, UPPER_BOUND = 0xFFFF, MID = 0x8000;
 
   @DatabaseField
   private int pan;
@@ -21,12 +24,13 @@ public class Position {
   }
 
   public Position(int pan, int tilt, int id) {
-    this.pan = pan;
-    this.tilt = tilt;
+    this(pan, tilt);
     this.id = id;
   }
 
   public Position(int pan, int tilt) {
+    Utils.rangeCheck(pan, LOWER_BOUND, UPPER_BOUND);
+    Utils.rangeCheck(tilt, LOWER_BOUND, UPPER_BOUND);
     this.pan = pan;
     this.tilt = tilt;
   }

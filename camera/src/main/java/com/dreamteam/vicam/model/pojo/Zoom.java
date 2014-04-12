@@ -1,5 +1,7 @@
 package com.dreamteam.vicam.model.pojo;
 
+import com.dreamteam.vicam.presenter.utility.Utils;
+
 /**
  * Created by fsommar on 2014-04-01.
  */
@@ -10,6 +12,7 @@ public class Zoom {
   private int level;
 
   public Zoom(int level) {
+    Utils.rangeCheck(level, LOWER_BOUND, UPPER_BOUND);
     this.level = level;
   }
 

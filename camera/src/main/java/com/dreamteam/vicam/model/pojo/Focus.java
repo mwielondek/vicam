@@ -1,5 +1,6 @@
 package com.dreamteam.vicam.model.pojo;
 
+import com.dreamteam.vicam.presenter.utility.Utils;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -23,14 +24,14 @@ public class Focus {
   }
 
   public Focus(int level, boolean autoFocus) {
+    Utils.rangeCheck(level, LOWER_BOUND, UPPER_BOUND);
     this.level = level;
     this.autoFocus = autoFocus;
   }
 
   public Focus(int id, int level, boolean autoFocus) {
+    this(level, autoFocus);
     this.id = id;
-    this.level = level;
-    this.autoFocus = autoFocus;
   }
 
   public int getId() {
