@@ -21,45 +21,24 @@ public class CameraCommands {
     this.cameraService = cameraService;
   }
 
-  private Observable<String> sendCommand(String command) {
-    return cameraService.sendCommand(COMMAND_PREFIX + command);
-  }
-
-  private Observable<String> sendCommand(String command, int data) {
-    return cameraService.sendCommand(COMMAND_PREFIX + command + Integer.toString(data));
-  }
-
-  private Observable<String> sendCommand(String command, int dataOne, int dataTwo) {
-    return cameraService.sendCommand(
-        COMMAND_PREFIX + command + Integer.toString(dataOne) + Integer.toString(dataTwo));
-  }
-
-  private Observable<String> sendControl(String control) {
-    return cameraService.sendControl(control);
-  }
-
-  private Observable<String> sendControl(String control, int data) {
-    return cameraService.sendControl(control + Integer.toString(data));
-  }
-
   public Observable<String> pan(int panSpeed) {
-    return sendCommand("PS", panSpeed);
+    return sendCommand("PS", padTwo(panSpeed));
   }
 
   public Observable<String> tilt(int tiltSpeed) {
-    return sendCommand("TS", tiltSpeed);
+    return sendCommand("TS", padTwo(tiltSpeed));
   }
 
   public Observable<String> panTilt(int panSpeed, int tiltSpeed) {
-    return sendCommand("PTS", panSpeed, tiltSpeed);
+    return sendCommand("PTS", padTwo(panSpeed), padTwo(tiltSpeed));
   }
 
   public Observable<String> zoom(int zoomSpeed) {
-    return sendCommand("Z", zoomSpeed);
+    return sendCommand("Z", padThree(zoomSpeed));
   }
 
   public Observable<String> focus(int focusSpeed) {
-    return sendCommand("F", focusSpeed);
+    return sendCommand("F", padThree(focusSpeed));
   }
 
   public Observable<String> focusManual() {
@@ -73,15 +52,15 @@ public class CameraCommands {
   }
 
   public Observable<String> panTiltAbsolute(int panPosition, int tiltPosition) {
-    return sendCommand("APC", panPosition, tiltPosition);
+    return sendCommand("APC", padTwo(panPosition), padTwo(tiltPosition));
   }
 
   public Observable<String> zoomAbsolute(int zoomLevel) {
-    return sendCommand("AXZ", zoomLevel);
+    return sendCommand("AXZ", padThree(zoomLevel));
   }
 
   public Observable<String> focusAbsolute(int focusLevel) {
-    return sendCommand("AXF", focusLevel);
+    return sendCommand("AXF", padThree(focusLevel));
   }
 
   public Observable<String> oneTouchAutofocus() {
@@ -94,10 +73,7 @@ public class CameraCommands {
       public Position call(String s) {
         Pattern p = Pattern.compile("aPC(\\d{4})(\\d{4})");
         Matcher m = p.matcher(s);
-        Position pos = new Position(
-            Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2))
-        );
-        return pos;
+        return new Position(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)));
       }
     });
   }
@@ -108,8 +84,7 @@ public class CameraCommands {
       public Integer call(String s) {
         Pattern p = Pattern.compile("gz(\\d{3})");
         Matcher m = p.matcher(s);
-        int level = Integer.parseInt(m.group(1));
-        return level;
+        return Integer.parseInt(m.group(1));
       }
     });
   }
@@ -120,8 +95,7 @@ public class CameraCommands {
       public Integer call(String s) {
         Pattern p = Pattern.compile("gf(\\d{3})");
         Matcher m = p.matcher(s);
-        int level = Integer.parseInt(m.group(1));
-        return level;
+        return Integer.parseInt(m.group(1));
       }
     });
   }
@@ -132,9 +106,41 @@ public class CameraCommands {
       public Boolean call(String s) {
         Pattern p = Pattern.compile("OAF:(\\d)");
         Matcher m = p.matcher(s);
-        Boolean bool = m.group(1).equals("1");
-        return bool;
+        return m.group(1).equals("1");
       }
     });
+  }
+
+  private Observable<String> sendCommand(String command) {
+    return cameraService.sendCommand(String.format("%s%s", COMMAND_PREFIX, command));
+  }
+
+  private Observable<String> sendCommand(String command, String data) {
+    return cameraService.sendCommand(String.format("%s%s%s", COMMAND_PREFIX, command, data));
+  }
+
+  private Observable<String> sendCommand(String command, String dataOne, String dataTwo) {
+    return cameraService.sendCommand(
+        String.format("%s%s%s%s", COMMAND_PREFIX, command, dataOne, dataTwo));
+  }
+
+  private Observable<String> sendControl(String control) {
+    return cameraService.sendControl(control);
+  }
+
+  private Observable<String> sendControl(String control, int data) {
+    return cameraService.sendControl(control + Integer.toString(data));
+  }
+
+  private String padZeroes(int value, int decimalPlaces) {
+    return String.format("%0" + decimalPlaces + "d", value);
+  }
+
+  private String padTwo(int value) {
+    return padZeroes(value, 2);
+  }
+
+  private String padThree(int value) {
+    return padZeroes(value, 3);
   }
 }
