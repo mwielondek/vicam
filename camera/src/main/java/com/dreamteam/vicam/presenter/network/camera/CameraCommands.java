@@ -63,13 +63,13 @@ public class CameraCommands {
   }
 
   public Observable<String> focusManual() {
-    return sendCommand("D", 10); // 1 is for autofocus and 0 for disable
-    // return sendControl("OAF:", 0);
+    // return sendCommand("D", 10); // 1 is for autofocus and 0 for disable
+    return sendControl("OAF:", 0);
   }
 
   public Observable<String> focusAuto() {
-    return sendCommand("D", 11); // 1 is for autofocus and 1 for enable
-    // return sendControl("OAF:", 1);
+    // return sendCommand("D", 11); // 1 is for autofocus and 1 for enable
+    return sendControl("OAF:", 1);
   }
 
   public Observable<String> panTiltAbsolute(int panPosition, int tiltPosition) {
