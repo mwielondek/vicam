@@ -6,6 +6,7 @@ import com.dreamteam.vicam.model.pojo.Focus;
 import com.dreamteam.vicam.model.pojo.Position;
 import com.dreamteam.vicam.model.pojo.Speed;
 import com.dreamteam.vicam.model.pojo.Zoom;
+import com.dreamteam.vicam.presenter.utility.Utils;
 
 import rx.Observable;
 import rx.functions.Func2;
@@ -31,7 +32,7 @@ public class CameraFacade {
   }
 
   public Observable<String> zoomStart(int speed) {
-    rangeCheck(speed, 1, 99);
+    Utils.rangeCheck(speed, 1, 99);
     return cameraCommands.zoom(speed);
   }
 
@@ -48,12 +49,12 @@ public class CameraFacade {
   }
 
   public Observable<String> zoomAbsolute(int level) {
-    rangeCheck(level, 0x555, 0xFFF);
+    Utils.rangeCheck(level, 0x555, 0xFFF);
     return cameraCommands.zoomAbsolute(level);
   }
 
   public Observable<String> focusAbsolute(int level) {
-    rangeCheck(level, 0x555, 0xFFF);
+    Utils.rangeCheck(level, 0x555, 0xFFF);
     return cameraCommands.focusAbsolute(level);
   }
 
@@ -79,13 +80,6 @@ public class CameraFacade {
           }
         }
     );
-  }
-
-  private void rangeCheck(int param, int lower, int upper) {
-    if (param < lower || param > upper) {
-      throw new IllegalArgumentException(
-          String.format("Parameter needs to be in range [%d, %d] - was %d.", lower, upper, param));
-    }
   }
 
 }
