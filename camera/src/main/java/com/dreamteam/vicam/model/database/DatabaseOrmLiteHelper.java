@@ -6,6 +6,8 @@ import android.util.Log;
 
 import com.dreamteam.vicam.model.pojo.Camera;
 import com.dreamteam.vicam.model.pojo.CameraState;
+import com.dreamteam.vicam.model.pojo.Focus;
+import com.dreamteam.vicam.model.pojo.Position;
 import com.dreamteam.vicam.model.pojo.Preset;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.support.ConnectionSource;
@@ -35,6 +37,8 @@ public class DatabaseOrmLiteHelper extends OrmLiteSqliteOpenHelper implements DA
   public void onCreate(SQLiteDatabase db, ConnectionSource connectionSource) {
     try {
       Log.i(this.getClass().getName(), "onCreate");
+      TableUtils.createTable(connectionSource, Focus.class);
+      TableUtils.createTable(connectionSource, Position.class);
       TableUtils.createTable(connectionSource, CameraState.class);
       TableUtils.createTable(connectionSource, Preset.class);
       TableUtils.createTable(connectionSource, Camera.class);
