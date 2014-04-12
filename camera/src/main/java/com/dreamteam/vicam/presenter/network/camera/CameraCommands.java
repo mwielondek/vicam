@@ -15,6 +15,11 @@ public class CameraCommands {
 
   private static final String COMMAND_PREFIX = "#";
 
+  private static final Pattern PAN_TILT_RESPONSE = Pattern.compile("aPC(\\d{4})(\\d{4})");
+  private static final Pattern ZOOM_LEVEL_RESPONSE = Pattern.compile("gz(\\d{3})");
+  private static final Pattern FOCUS_LEVEL_RESPONSE = Pattern.compile("gf(\\d{3})");
+  private static final Pattern AUTOFOCUS_RESPONSE = Pattern.compile("OAF:(\\d)");
+
   CameraService cameraService;
 
   public CameraCommands(CameraService cameraService) {
@@ -71,9 +76,11 @@ public class CameraCommands {
     return sendCommand("APC").map(new Func1<String, Position>() {
       @Override
       public Position call(String s) {
-        Pattern p = Pattern.compile("aPC(\\d{4})(\\d{4})");
-        Matcher m = p.matcher(s);
-        return new Position(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)));
+        Matcher m = PAN_TILT_RESPONSE.matcher(s);
+        if (m.matches()) {
+          return new Position(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)));
+        }
+        return null;
       }
     });
   }
@@ -82,9 +89,11 @@ public class CameraCommands {
     return sendCommand("GZ").map(new Func1<String, Integer>() {
       @Override
       public Integer call(String s) {
-        Pattern p = Pattern.compile("gz(\\d{3})");
-        Matcher m = p.matcher(s);
-        return Integer.parseInt(m.group(1));
+        Matcher m = ZOOM_LEVEL_RESPONSE.matcher(s);
+        if (m.matches()) {
+          return Integer.parseInt(m.group(1));
+        }
+        return null;
       }
     });
   }
@@ -93,9 +102,11 @@ public class CameraCommands {
     return sendCommand("GF").map(new Func1<String, Integer>() {
       @Override
       public Integer call(String s) {
-        Pattern p = Pattern.compile("gf(\\d{3})");
-        Matcher m = p.matcher(s);
-        return Integer.parseInt(m.group(1));
+        Matcher m = FOCUS_LEVEL_RESPONSE.matcher(s);
+        if (m.matches()) {
+          return Integer.parseInt(m.group(1));
+        }
+        return null;
       }
     });
   }
@@ -104,9 +115,11 @@ public class CameraCommands {
     return sendControl("QAF").map(new Func1<String, Boolean>() {
       @Override
       public Boolean call(String s) {
-        Pattern p = Pattern.compile("OAF:(\\d)");
-        Matcher m = p.matcher(s);
-        return m.group(1).equals("1");
+        Matcher m = AUTOFOCUS_RESPONSE.matcher(s);
+        if (m.matches()) {
+          return m.group(1).equals("1");
+        }
+        return null;
       }
     });
   }
