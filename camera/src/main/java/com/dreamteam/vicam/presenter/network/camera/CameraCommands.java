@@ -78,7 +78,10 @@ public class CameraCommands {
       public Position call(String s) {
         Matcher m = PAN_TILT_RESPONSE.matcher(s);
         if (m.matches()) {
-          return new Position(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)));
+          try {
+            return new Position(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)));
+          } catch (NumberFormatException ignored) {
+          }
         }
         return null;
       }
@@ -91,7 +94,10 @@ public class CameraCommands {
       public Integer call(String s) {
         Matcher m = ZOOM_LEVEL_RESPONSE.matcher(s);
         if (m.matches()) {
-          return Integer.parseInt(m.group(1));
+          try {
+            return Integer.parseInt(m.group(1));
+          } catch (NumberFormatException ignored) {
+          }
         }
         return null;
       }
@@ -104,7 +110,10 @@ public class CameraCommands {
       public Integer call(String s) {
         Matcher m = FOCUS_LEVEL_RESPONSE.matcher(s);
         if (m.matches()) {
-          return Integer.parseInt(m.group(1));
+          try {
+            return Integer.parseInt(m.group(1));
+          } catch (NumberFormatException ignored) {
+          }
         }
         return null;
       }
