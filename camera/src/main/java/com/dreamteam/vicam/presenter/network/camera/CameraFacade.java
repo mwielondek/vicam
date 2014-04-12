@@ -31,7 +31,7 @@ public class CameraFacade {
   }
 
   public Observable<String> zoomStart(int speed) {
-    rangeCheck(speed, 0, 99);
+    rangeCheck(speed, 1, 99);
     return cameraCommands.zoom(speed);
   }
 
