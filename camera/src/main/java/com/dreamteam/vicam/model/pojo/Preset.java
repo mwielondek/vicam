@@ -13,7 +13,7 @@ public class Preset {
   private String name;
   @DatabaseField(columnName = "id", generatedId = true)
   private int id;
-  @DatabaseField(columnName = "cameraState", foreign = true)
+  @DatabaseField(columnName = "cameraState", foreign = true, foreignAutoCreate = true, foreignAutoRefresh = true)
   private CameraState cameraState;
 
   public Preset() {
