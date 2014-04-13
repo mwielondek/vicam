@@ -7,16 +7,16 @@ import com.j256.ormlite.table.DatabaseTable;
 /**
  * Created by fsommar on 2014-04-01.
  */
-@DatabaseTable
+@DatabaseTable(tableName = "position")
 public class Position {
 
   public static final int LOWER_BOUND = 0x0000, UPPER_BOUND = 0xFFFF, MID = 0x8000;
 
-  @DatabaseField
+  @DatabaseField(columnName = "pan")
   private int pan;
-  @DatabaseField
+  @DatabaseField(columnName = "tilt")
   private int tilt;
-  @DatabaseField(generatedId = true)
+  @DatabaseField(columnName = "id", generatedId = true)
   private int id;
 
   public Position() {

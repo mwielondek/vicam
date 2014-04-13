@@ -6,16 +6,16 @@ import com.j256.ormlite.table.DatabaseTable;
 /**
  * Created by fsommar on 2014-04-01.
  */
-@DatabaseTable(tableName = "cameras")
+@DatabaseTable(tableName = "camera")
 public class Camera {
 
-  @DatabaseField(canBeNull = false)
+  @DatabaseField(columnName = "ip", canBeNull = false)
   private String ip;
-  @DatabaseField(unique = true, canBeNull = false)
+  @DatabaseField(columnName = "name", unique = true, canBeNull = false)
   private String name;
-  @DatabaseField
+  @DatabaseField(columnName = "port")
   private Short port;
-  @DatabaseField(generatedId = true)
+  @DatabaseField(columnName = "id", generatedId = true)
   private int id;
 
   public Camera() {

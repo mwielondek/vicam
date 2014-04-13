@@ -7,16 +7,16 @@ import com.j256.ormlite.table.DatabaseTable;
 /**
  * Created by fsommar on 2014-04-01.
  */
-@DatabaseTable(tableName = "cameraStates")
+@DatabaseTable(tableName = "cameraState")
 public class CameraState {
 
-  @DatabaseField(generatedId = true)
+  @DatabaseField(columnName = "id", generatedId = true)
   private int id;
-  @DatabaseField(foreign = true, foreignAutoCreate = true, foreignAutoRefresh = true)
+  @DatabaseField(columnName = "position", foreign = true, foreignAutoCreate = true, foreignAutoRefresh = true)
   private Position position;
-  @DatabaseField(persisterClass = ZoomPersister.class)
+  @DatabaseField(columnName = "zoom", persisterClass = ZoomPersister.class)
   private Zoom zoom;
-  @DatabaseField(foreign = true, foreignAutoCreate = true, foreignAutoRefresh = true)
+  @DatabaseField(columnName = "focus", foreign = true, foreignAutoCreate = true, foreignAutoRefresh = true)
   private Focus focus;
 
   public CameraState() {

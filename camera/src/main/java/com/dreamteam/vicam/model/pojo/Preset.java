@@ -6,14 +6,14 @@ import com.j256.ormlite.table.DatabaseTable;
 /**
  * Created by fsommar on 2014-04-01.
  */
-@DatabaseTable(tableName = "presets")
+@DatabaseTable(tableName = "preset")
 public class Preset {
 
-  @DatabaseField(unique = true, canBeNull = false)
+  @DatabaseField(columnName = "name", unique = true, canBeNull = false)
   private String name;
-  @DatabaseField(generatedId = true)
+  @DatabaseField(columnName = "id", generatedId = true)
   private int id;
-  @DatabaseField(foreign = true)
+  @DatabaseField(columnName = "cameraState", foreign = true)
   private CameraState cameraState;
 
   public Preset() {
