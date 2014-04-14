@@ -77,7 +77,10 @@ public class CameraFacade {
         new Func2<Integer, Boolean, Focus>() {
           @Override
           public Focus call(Integer level, Boolean AF) {
-            return new Focus(level, AF);
+            if (level != null && AF != null) {
+              return new Focus(level, AF);
+            }
+            return null;
           }
         }
     );
