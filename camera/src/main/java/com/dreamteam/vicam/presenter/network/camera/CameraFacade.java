@@ -77,10 +77,7 @@ public class CameraFacade {
         new Func2<Integer, Boolean, Focus>() {
           @Override
           public Focus call(Integer level, Boolean AF) {
-            if (level != null && AF != null) {
-              return new Focus(level, AF);
-            }
-            return null;
+            return new Focus(level, AF);
           }
         }
     );
@@ -90,10 +87,7 @@ public class CameraFacade {
     return cameraCommands.getZoomLevel().map(new Func1<Integer, Zoom>() {
       @Override
       public Zoom call(Integer level) {
-        if (level != null) {
-          return new Zoom(level);
-        }
-        return null;
+        return new Zoom(level);
       }
     });
   }

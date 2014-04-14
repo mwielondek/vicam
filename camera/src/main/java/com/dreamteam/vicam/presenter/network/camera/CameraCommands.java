@@ -1,5 +1,6 @@
 package com.dreamteam.vicam.presenter.network.camera;
 
+import com.dreamteam.vicam.model.errors.OnResponseError;
 import com.dreamteam.vicam.model.pojo.Position;
 
 import java.util.regex.Matcher;
@@ -47,12 +48,10 @@ public class CameraCommands {
   }
 
   public Observable<String> focusManual() {
-    // return sendCommand("D", 10); // 1 is for autofocus and 0 for disable
     return sendControl("OAF:", 0);
   }
 
   public Observable<String> focusAuto() {
-    // return sendCommand("D", 11); // 1 is for autofocus and 1 for enable
     return sendControl("OAF:", 1);
   }
 
@@ -81,9 +80,10 @@ public class CameraCommands {
           try {
             return new Position(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)));
           } catch (NumberFormatException ignored) {
+            // Shouldn't be reached since regex matches digits only
           }
         }
-        return null;
+        throw new OnResponseError(s);
       }
     });
   }
@@ -97,9 +97,10 @@ public class CameraCommands {
           try {
             return Integer.parseInt(m.group(1));
           } catch (NumberFormatException ignored) {
+            // Shouldn't be reached since regex matches digits only
           }
         }
-        return null;
+        throw new OnResponseError(s);
       }
     });
   }
@@ -113,9 +114,10 @@ public class CameraCommands {
           try {
             return Integer.parseInt(m.group(1));
           } catch (NumberFormatException ignored) {
+            // Shouldn't be reached since regex matches digits only
           }
         }
-        return null;
+        throw new OnResponseError(s);
       }
     });
   }
@@ -128,7 +130,7 @@ public class CameraCommands {
         if (m.matches()) {
           return m.group(1).equals("1");
         }
-        return null;
+        throw new OnResponseError(s);
       }
     });
   }
