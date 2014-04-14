@@ -10,6 +10,7 @@ import com.dreamteam.vicam.model.pojo.Focus;
 import com.dreamteam.vicam.model.pojo.Position;
 import com.dreamteam.vicam.model.pojo.Preset;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
@@ -36,14 +37,14 @@ public class DatabaseOrmLiteHelper extends OrmLiteSqliteOpenHelper implements DA
   @Override
   public void onCreate(SQLiteDatabase db, ConnectionSource connectionSource) {
     try {
-      Log.i(this.getClass().getName(), "onCreate");
+      Log.i(getClass().getName(), "onCreate");
       TableUtils.createTable(connectionSource, Focus.class);
       TableUtils.createTable(connectionSource, Position.class);
       TableUtils.createTable(connectionSource, CameraState.class);
       TableUtils.createTable(connectionSource, Preset.class);
       TableUtils.createTable(connectionSource, Camera.class);
     } catch (SQLException e) {
-      Log.e(this.getClass().getName(), "Can't create database", e);
+      Log.e(getClass().getName(), "Can't create database", e);
       throw new RuntimeException(e);
     }
   }
@@ -65,17 +66,27 @@ public class DatabaseOrmLiteHelper extends OrmLiteSqliteOpenHelper implements DA
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   public CameraDAO getCameraDAO() {
     if (cameraDao == null) {
-      // cameraDao = new CameraDAOImpl(getDao(Camera.class));
+      try {
+        cameraDao = new CameraDAOImpl(((Dao<Camera, Integer>) getDao(Camera.class)));
+      } catch (SQLException e) {
+        e.printStackTrace();
+      }
     }
     return cameraDao;
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   public PresetDAO getPresetDAO() {
     if (presetDao == null) {
-      // presetDao = new PresetDAOImpl(getDao(Preset.class));
+      try {
+        presetDao = new PresetDAOImpl(((Dao<Preset, Integer>) getDao(Preset.class)));
+      } catch (SQLException e) {
+        e.printStackTrace();
+      }
     }
     return presetDao;
   }
