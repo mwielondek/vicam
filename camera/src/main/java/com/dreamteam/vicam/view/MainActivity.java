@@ -28,9 +28,10 @@ public class MainActivity extends Activity {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_main);
 
-            mTitle = "Change presets";
+            mTitle = getString(R.string.text_preset);
 
             mPlanetTitles = new String[]{"Preset 1", "Preset 2", "Preset 3"};
+
             mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
             mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
@@ -82,6 +83,8 @@ public class MainActivity extends Activity {
 
            // getActionBar().setDisplayShowTitleEnabled(false);
             getMenuInflater().inflate(R.menu.main, menu);
+
+            getMenuInflater().inflate(R.menu.change_camera, menu);
             return true;
         }
 
@@ -114,7 +117,7 @@ public class MainActivity extends Activity {
          * Swaps fragments in the main ontent view
          */
         private void selectItem(int position) {
-           Toast.makeText(this, R.string.app_name, Toast.LENGTH_SHORT).show();
+           Toast.makeText(this, R.string.text_preset, Toast.LENGTH_SHORT).show();
 
 
 // Highlight the selected item, update the title, and close the drawer
