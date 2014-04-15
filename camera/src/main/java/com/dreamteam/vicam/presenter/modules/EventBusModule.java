@@ -1,8 +1,5 @@
 package com.dreamteam.vicam.presenter.modules;
 
-import com.dreamteam.vicam.view.ControlActivity;
-import com.dreamteam.vicam.view.NavigationDrawerFragment;
-
 import de.greenrobot.event.EventBus;
 
 import javax.inject.Singleton;
@@ -15,8 +12,6 @@ import dagger.Provides;
  */
 @Module(
     injects = {
-        NavigationDrawerFragment.class,
-        ControlActivity.class
     },
     complete = false
 )

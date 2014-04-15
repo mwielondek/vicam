@@ -1,0 +1,100 @@
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.dreamteam.camera.view.MainActivity">
+    <!-- The main content view -->
+    <FrameLayout
+        android:id="@+id/content_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#eee"
+        android:focusableInTouchMode="false">
+
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="280dp"
+            android:layout_height="fill_parent"
+            android:layout_gravity="left|center_vertical"
+            android:background="#FFF"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:layout_marginLeft="40dp">
+
+            <Switch
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/manual_focus"
+                android:layout_marginLeft="25dp"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="25dp"
+                android:id="@+id/switch2" />
+
+            <Button
+                android:textAlignment="center"
+                android:text="@string/auto_focus"
+                android:layout_width="fill_parent"
+                android:layout_height="50dp"
+                android:textSize="16dp"
+                android:padding="10dp"
+                android:id="@+id/AutoFocus"/>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:orientation="vertical"
+                android:layout_weight="1">
+
+                <SeekBar
+                android:id="@+id/seekBar1"
+                android:orientation="horizontal"
+                android:layout_weight="1"
+                android:layout_height="300dp"
+                android:minHeight="300dp"
+                android:maxHeight="300dp"
+                android:layout_width="fill_parent"
+                android:onClick="onToggleClicked"/>
+
+                <SeekBar
+                android:id="@+id/seekBar2"
+                android:orientation="horizontal"
+                android:layout_weight="1"
+                android:layout_height="300dp"
+                android:minHeight="300dp"
+                android:maxHeight="300dp"
+                android:layout_width="fill_parent"
+                android:onClick="onToggleClicked"/>
+
+
+            </LinearLayout>
+
+
+
+
+            </LinearLayout>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageView"
+            android:layout_gravity="right|bottom"
+            android:src="@drawable/controller"/>
+    </FrameLayout>
+    <!-- The navigation drawer -->
+    <ListView
+        android:id="@+id/left_drawer"
+        android:layout_width="240dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:choiceMode="singleChoice"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="0dp"
+        android:background="#FFF"
+        tools:listitem="@layout/drawer_list_item" />
+
+
+
+</android.support.v4.widget.DrawerLayout>
