@@ -10,73 +10,141 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#eee"
-            android:focusableInTouchMode="false" android:baselineAligned="false">
+            android:focusableInTouchMode="false" android:baselineAligned="false"
+            android:orientation="horizontal">
 
 
+        <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1.5">
+        </LinearLayout>
         <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="left|center_vertical"
                 android:background="#FFF"
-                android:paddingLeft="50dp"
-                android:paddingRight="50dp"
-                android:layout_marginLeft="50dp"
                 android:layout_weight="1">
 
-            <Switch
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/auto_focus"
-                    android:layout_marginBottom="20dp"
-                    android:layout_marginTop="25dp"
-                    android:paddingLeft="5dp"
-                    android:id="@+id/switch2"/>
-
-            <Button
-                    android:text="@string/force_auto_focus"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginBottom="100dp"
-                    android:padding="0dp"
-                    android:textSize="16dp"
-                    android:id="@+id/autoFocus"/>
-
-            <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/manual_focus"
-                    android:textSize="16dp"
-                    android:gravity="center"
-                    />
-            <SeekBar
-                    android:id="@+id/seekBar1"
+            <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
                     android:layout_weight="1"
-                    android:layout_height="50dp"
-                    android:minHeight="140dp"
-                    android:maxHeight="140dp"
+                    >
+                <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent">
+                    <LinearLayout
+                            android:orientation="vertical"
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent"
+                            android:layout_weight="12">
+                    </LinearLayout>
+                    <Switch
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:text="@string/auto_focus"
+                            android:layout_marginBottom="20dp"
+                            android:layout_marginTop="25dp"
+                            android:textSize="16dp"
+                            android:id="@+id/switch2"
+                            android:layout_weight="1"
+                            android:layout_marginRight="20dp"/>
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                    android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:max="10"
-                    android:progress="5"/>
-            <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/text_zoom"
-                    android:textSize="16dp"
-                    android:gravity="center"
-
-                    />
-            <SeekBar
-                    android:id="@+id/seekBar2"
-                    android:orientation="horizontal"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:layout_height="50dp"
-                    android:minHeight="140dp"
-                    android:maxHeight="140dp"
-                    android:layout_width="match_parent"
-                    android:max="10"
-                    android:progress="5"
-                    />
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    >
+
+                <!-- when clicked call the autoFocus function -->
+                    <LinearLayout
+                            android:orientation="vertical"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1.2">
+                    </LinearLayout>
+                    <Button
+                            android:text="@string/force_auto_focus"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:padding="0dp"
+                            android:textSize="16dp"
+                            android:id="@+id/autoFocus"
+                            android:layout_weight="1"/>
+                    <LinearLayout
+                            android:orientation="vertical"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1.2">
+                    </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1.2">
+            </LinearLayout>
+            <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1"
+                    >
+                <TextView
+                        android:id="@+id/textSeekBar1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/manual_focus"
+                        android:textSize="16dp"
+                        android:gravity="center"
+                        />
+                <SeekBar
+                        android:id="@+id/seekBar1"
+                        android:layout_weight="1"
+                        android:layout_height="match_parent"
+                        android:minHeight="140dp"
+                        android:maxHeight="140dp"
+                        android:layout_width="match_parent"
+                        android:max="10"
+                        android:progress="5"
+                        />
+            </LinearLayout>
+            <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1"
+                    >
+                <TextView
+                        android:id="@+id/textSeekBar2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/text_zoom"
+                        android:textSize="16dp"
+                        android:gravity="center"
+
+                        />
+                <SeekBar
+                        android:id="@+id/seekBar2"
+                        android:orientation="horizontal"
+                        android:layout_weight="1"
+                        android:layout_height="match_parent"
+                        android:minHeight="140dp"
+                        android:maxHeight="140dp"
+                        android:layout_width="match_parent"
+                        android:max="10"
+                        android:progress="5"
+                        />
+            </LinearLayout>
 
 
         </LinearLayout>

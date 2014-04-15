@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-
-
-
-
     <string name="app_name">VIC - Camera Steering</string>
     <string name="text_preset">Change Presets</string>
     <string name="auto_focus">Auto Focus</string>

@@ -1,27 +1,47 @@
 package com.dreamteam.vicam.view;
 
+
+
+import info.androidhive.actionbar.model.SpinnerNavItem;
+import info.androidhive.info.actionbar.adapter.TitleNavigationAdapter;
+
+import java.util.ArrayList;
+
 import android.app.Activity;
+import android.app.ActionBar;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.app.SearchManager;
+import android.content.Context;
+import android.widget.SearchView;
+import android.content.Intent;
 
 import com.dreamteam.camera.R;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements ActionBar.OnNavigationListener {
 
         private String[] mPlanetTitles;
         private DrawerLayout mDrawerLayout;
         private ListView mDrawerList;
         private CharSequence mTitle;
         private ActionBarDrawerToggle mDrawerToggle;
+        // Title navigation Spinner data
+        private ArrayList<SpinnerNavItem> navSpinner;
+
+        // Navigation adapter
+        private TitleNavigationAdapter adapter;
+
+
 
         @Override
         protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +80,11 @@ public class MainActivity extends Activity {
                 public void onDrawerOpened(View drawerView) {
                     getActionBar().setTitle(mTitle);
                 }
+
+
+
+
+
             };
 
 // Set the drawer toggle as the DrawerListener
@@ -69,6 +94,24 @@ public class MainActivity extends Activity {
             getActionBar().setHomeButtonEnabled(true);
 
 
+          // Hide the action bar title
+          getActionBar().setDisplayShowTitleEnabled(true);
+
+          // Enabling Spinner dropdown navigation
+          getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+
+          // Spinner title navigation data
+          navSpinner = new ArrayList<SpinnerNavItem>();
+          navSpinner.add(new SpinnerNavItem("Camera 1", R.drawable.ic_drawer));
+          navSpinner.add(new SpinnerNavItem("Camera 2", R.drawable.ic_drawer));
+          navSpinner.add(new SpinnerNavItem("Camera 3", R.drawable.ic_drawer));
+          navSpinner.add(new SpinnerNavItem("Camera 4", R.drawable.ic_drawer));
+
+          // title drop down adapter
+          adapter = new TitleNavigationAdapter(getApplicationContext(), navSpinner);
+
+          // assigning the spinner navigation
+          getActionBar().setListNavigationCallbacks(adapter, this);
 
         }
 
@@ -84,7 +127,8 @@ public class MainActivity extends Activity {
            // getActionBar().setDisplayShowTitleEnabled(false);
             getMenuInflater().inflate(R.menu.main, menu);
 
-            getMenuInflater().inflate(R.menu.change_camera, menu);
+
+
             return true;
         }
 
@@ -141,5 +185,16 @@ public class MainActivity extends Activity {
                 selectItem(position);
             }
         }
+
+      /**
+       * Actionbar navigation item select listener
+       * */
+      @Override
+      public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+        // Action to be taken after selecting a spinner item
+        return false;
+      }
+
+
 
     }
