@@ -1,5 +1,6 @@
 package com.dreamteam.vicam.view;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -15,22 +16,29 @@ import android.widget.Toast;
 
 import com.dreamteam.camera.R;
 
-public class MainActivity extends Activity {
+import java.util.ArrayList;
+
+public class MainActivity extends Activity implements ActionBar.OnNavigationListener {
 
   private String[] mPlanetTitles;
   private DrawerLayout mDrawerLayout;
   private ListView mDrawerList;
   private CharSequence mTitle;
   private ActionBarDrawerToggle mDrawerToggle;
+  // Title navigation Spinner data
+  private ArrayList<SpinnerNavItem> navSpinner;
+  // Navigation adapter
+  private TitleNavigationAdapter adapter;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
 
-    mTitle = "Change presets";
+    mTitle = getString(R.string.text_preset);
 
     mPlanetTitles = new String[]{"Preset 1", "Preset 2", "Preset 3"};
+
     mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
     mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
@@ -69,6 +77,26 @@ public class MainActivity extends Activity {
 
     getActionBar().setDisplayHomeAsUpEnabled(true);
     getActionBar().setHomeButtonEnabled(true);
+
+    // Hide the action bar title
+    getActionBar().setDisplayShowTitleEnabled(true);
+
+    // Enabling Spinner dropdown navigation
+    getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+
+    // Spinner title navigation data
+    navSpinner = new ArrayList<SpinnerNavItem>();
+    navSpinner.add(new SpinnerNavItem("Camera 1", R.drawable.ic_drawer));
+    navSpinner.add(new SpinnerNavItem("Camera 2", R.drawable.ic_drawer));
+    navSpinner.add(new SpinnerNavItem("Camera 3", R.drawable.ic_drawer));
+    navSpinner.add(new SpinnerNavItem("Camera 4", R.drawable.ic_drawer));
+
+    // title drop down adapter
+    adapter = new TitleNavigationAdapter(getApplicationContext(), navSpinner);
+
+    // assigning the spinner navigation
+    getActionBar().setListNavigationCallbacks(adapter, this);
+
   }
 
   @Override
@@ -81,6 +109,7 @@ public class MainActivity extends Activity {
 
     // getActionBar().setDisplayShowTitleEnabled(false);
     getMenuInflater().inflate(R.menu.main, menu);
+
     return true;
   }
 
@@ -110,12 +139,12 @@ public class MainActivity extends Activity {
   }
 
   /**
-   * Swaps fragments in the main content view
+   * Swaps fragments in the main ontent view
    */
   private void selectItem(int position) {
-    Toast.makeText(this, R.string.app_name, Toast.LENGTH_SHORT).show();
+    Toast.makeText(this, R.string.text_preset, Toast.LENGTH_SHORT).show();
 
-// Highlight the selected item, update the title, and close the drawer
+    // Highlight the selected item, update the title, and close the drawer
     mDrawerList.setItemChecked(position, true);
     setTitle(mPlanetTitles[position]);
     mDrawerLayout.closeDrawer(mDrawerList);
@@ -133,6 +162,15 @@ public class MainActivity extends Activity {
     public void onItemClick(AdapterView parent, View view, int position, long id) {
       selectItem(position);
     }
+  }
+
+  /**
+   * Actionbar navigation item select listener
+   */
+  @Override
+  public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+    // Action to be taken after selecting a spinner item
+    return false;
   }
 
 }

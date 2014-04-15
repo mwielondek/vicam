@@ -3,4 +3,7 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
-    </resources>
+
+    <dimen name="seek_bar_horizontal_len">140dp</dimen>
+
+</resources>
