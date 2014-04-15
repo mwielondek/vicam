@@ -1,8 +1,10 @@
 package com.dreamteam.vicam.view;
 
-import android.content.res.Configuration;
 import android.app.Activity;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -10,8 +12,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v4.app.ActionBarDrawerToggle;
 
 import com.dreamteam.camera.R;
 
@@ -111,7 +111,7 @@ public class MainActivity extends Activity {
         }
 
         /**
-         * Swaps fragments in the main content view
+         * Swaps fragments in the main ontent view
          */
         private void selectItem(int position) {
            Toast.makeText(this, R.string.app_name, Toast.LENGTH_SHORT).show();

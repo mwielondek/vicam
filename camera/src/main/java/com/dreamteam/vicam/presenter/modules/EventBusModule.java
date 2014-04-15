@@ -13,7 +13,8 @@ import dagger.Provides;
 @Module(
     injects = {
     },
-    complete = false
+    complete = false,
+    library = true
 )
 public class EventBusModule {
 
