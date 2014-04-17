@@ -2,8 +2,11 @@ package com.dreamteam.vicam.view;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
@@ -34,6 +37,10 @@ public class MainActivity extends Activity implements ActionBar.OnNavigationList
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
+    // Sets default values defined in preferences if empty
+    PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+    // Get set preferences
+    SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
     mTitle = getString(R.string.text_preset);
 
@@ -134,8 +141,13 @@ public class MainActivity extends Activity implements ActionBar.OnNavigationList
       return true;
     }
     // Handle your other action bar items...
-
-    return super.onOptionsItemSelected(item);
+    switch (item.getItemId()) {
+      case R.id.action_settings:
+        startActivity(new Intent(this, SettingsActivity.class));
+        return true;
+      default:
+        return super.onOptionsItemSelected(item);
+    }
   }
 
   /**
