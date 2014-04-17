@@ -1,6 +1,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
-            android:title="@string/hello_world"
-            android:key="pref_key_storage_settings">
+            android:title="@string/manage_camera"
+            android:key="pref_key_camera_settings">
     </PreferenceCategory>
 </PreferenceScreen>
