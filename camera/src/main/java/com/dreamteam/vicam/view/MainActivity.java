@@ -37,9 +37,9 @@ public class MainActivity extends Activity implements ActionBar.OnNavigationList
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-    // Sets default values defined in preferences if empty
-    PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
-    // Get set preferences
+    // Sets default values defined in camera_preferences if empty
+    PreferenceManager.setDefaultValues(this, R.xml.camera_preferences, false);
+    // Get set camera_preferences
     SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
     mTitle = getString(R.string.app_name);

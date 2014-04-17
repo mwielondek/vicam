@@ -1,0 +1,6 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+            android:title="@string/sync_server"
+            android:key="pref_key_sync_settings">
+    </PreferenceCategory>
+</PreferenceScreen>

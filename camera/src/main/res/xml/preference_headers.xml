@@ -2,7 +2,11 @@
 
 <preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
     <header
-            android:fragment="com.dreamteam.vicam.view.SettingsActivity$SettingsFragment"
-            android:title="@string/hello_world"
+            android:fragment="com.dreamteam.vicam.view.SettingsActivity$CameraFragment"
+            android:title="@string/manage_camera"
+            android:summary="@string/hello_world"/>
+    <header
+            android:fragment="com.dreamteam.vicam.view.SettingsActivity$SyncFragment"
+            android:title="@string/sync_server"
             android:summary="@string/hello_world"/>
 </preference-headers>
