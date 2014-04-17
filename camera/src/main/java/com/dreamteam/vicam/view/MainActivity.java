@@ -15,11 +15,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.dreamteam.camera.R;
-
-import java.util.ArrayList;
+import com.dreamteam.vicam.model.pojo.Camera;
 
 public class MainActivity extends Activity implements ActionBar.OnNavigationListener {
 
@@ -28,10 +28,8 @@ public class MainActivity extends Activity implements ActionBar.OnNavigationList
   private ListView mDrawerList;
   private CharSequence mTitle;
   private ActionBarDrawerToggle mDrawerToggle;
-  // Title navigation Spinner data
-  private ArrayList<SpinnerNavItem> navSpinner;
-  // Navigation adapter
-  private TitleNavigationAdapter adapter;
+  private MenuItem mSpinnerItem;
+  private ArrayAdapter changeCameraAdapter;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +47,7 @@ public class MainActivity extends Activity implements ActionBar.OnNavigationList
     mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
     mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
-    // Set the adapter for the list view
+    // Set the changeCameraAdapter for the list view
     mDrawerList.setAdapter(
         new ArrayAdapter<String>(this, R.layout.drawer_list_item, mPlanetTitles));
     // Set the list's click listener
@@ -67,7 +65,7 @@ public class MainActivity extends Activity implements ActionBar.OnNavigationList
        */
       @Override
       public void onDrawerClosed(View view) {
-       // Toast.makeText(this, R.string.auto_focus, Toast.LENGTH_SHORT).show();
+        // Toast.makeText(this, R.string.auto_focus, Toast.LENGTH_SHORT).show();
         getActionBar().setTitle(getString(R.string.change_preset));
       }
 
@@ -83,43 +81,47 @@ public class MainActivity extends Activity implements ActionBar.OnNavigationList
     // Set the drawer toggle as the DrawerListener
     mDrawerLayout.setDrawerListener(mDrawerToggle);
 
-
     getActionBar().setDisplayHomeAsUpEnabled(true);
     getActionBar().setHomeButtonEnabled(true);
 
     // Hide the action bar title
     getActionBar().setDisplayShowTitleEnabled(true);
 
-    // Enabling Spinner dropdown navigation
-    getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-
-    // Spinner title navigation data
-    navSpinner = new ArrayList<SpinnerNavItem>();
-    navSpinner.add(new SpinnerNavItem("Camera 1", R.drawable.ic_drawer));
-    navSpinner.add(new SpinnerNavItem("Camera 2", R.drawable.ic_drawer));
-    navSpinner.add(new SpinnerNavItem("Camera 3", R.drawable.ic_drawer));
-    navSpinner.add(new SpinnerNavItem("Camera 4", R.drawable.ic_drawer));
-
-
-    // title drop down adapter
-    adapter = new TitleNavigationAdapter(getApplicationContext(), navSpinner);
-
-
-    // assigning the spinner navigation
-    getActionBar().setListNavigationCallbacks(adapter, this);
-
+    changeCameraAdapter =
+        new ArrayAdapter<Camera>(this, android.R.layout.simple_expandable_list_item_1);
+    changeCameraAdapter.add(new Camera("127.0.0.1", "Test :3", null));
+    changeCameraAdapter.add(new Camera("localhost", "Test2 >:3", null));
   }
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
-    // Inflate the menu; this adds items to the action bar if it is present.
-    //getActionBar().setDisplayShowHomeEnabled(false);
+// Inflate the menu; this adds items to the action bar if it is present.
 
-    // Removes the icon
-   // getActionBar().setIcon(android.R.color.transparent);
-
-    // getActionBar().setDisplayShowTitleEnabled(false);
     getMenuInflater().inflate(R.menu.main, menu);
+
+    mSpinnerItem = menu.findItem(R.id.action_change_camera);
+    View spinnerView = mSpinnerItem.getActionView();
+    if (spinnerView instanceof Spinner) {
+      final Spinner spinner = (Spinner) spinnerView;
+      spinner.setAdapter(changeCameraAdapter);
+
+      spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+        @Override
+        public void onItemSelected(AdapterView<?> arg0, View arg1,
+                                   int arg2, long arg3) {
+
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> arg0) {
+
+
+        }
+      });
+
+    }
+    // getActionBar().setDisplayShowTitleEnabled(false);
 
     return true;
   }

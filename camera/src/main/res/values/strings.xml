@@ -22,5 +22,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="sync_server">Sync server</string>
     <string name="manage_camera">Manage camera</string>
+    <string name="change_camera">Change Camera</string>
 
 </resources>

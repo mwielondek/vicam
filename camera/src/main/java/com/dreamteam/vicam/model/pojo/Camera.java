@@ -62,9 +62,14 @@ public class Camera {
   }
 
   public String getAddress() {
-    if (port == null) {
+    if (ip == null) {
       return ip;
     }
     return String.format("%s:%d", ip, port);
+  }
+
+  @Override
+  public String toString() {
+    return getName();
   }
 }
