@@ -1,10 +1,4 @@
-package info.androidhive.info.actionbar.adapter;
-
-import com.dreamteam.camera.R;
-
-import info.androidhive.actionbar.model.SpinnerNavItem;
-
-import java.util.ArrayList;
+package com.dreamteam.vicam.view;
 
 import android.app.Activity;
 import android.content.Context;
@@ -14,6 +8,10 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.dreamteam.camera.R;
+
+import java.util.ArrayList;
 
 public class TitleNavigationAdapter extends BaseAdapter {
 

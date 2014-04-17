@@ -3,7 +3,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="fill_parent"
                 android:padding="5dp"
-               >
+        >
 
     <ImageView android:id="@+id/imgIcon"
                android:layout_width="25dp"

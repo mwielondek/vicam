@@ -66,26 +66,26 @@
                     >
 
                 <!-- when clicked call the autoFocus function -->
-                    <LinearLayout
-                            android:orientation="vertical"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1.2">
-                    </LinearLayout>
-                    <Button
-                            android:text="@string/force_auto_focus"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:padding="0dp"
-                            android:textSize="16dp"
-                            android:id="@+id/autoFocus"
-                            android:layout_weight="1"/>
-                    <LinearLayout
-                            android:orientation="vertical"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1.2">
-                    </LinearLayout>
+                <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1.2">
+                </LinearLayout>
+                <Button
+                        android:text="@string/force_auto_focus"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="0dp"
+                        android:textSize="16dp"
+                        android:id="@+id/autoFocus"
+                        android:layout_weight="1"/>
+                <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1.2">
+                </LinearLayout>
             </LinearLayout>
             <LinearLayout
                     android:orientation="vertical"
@@ -171,7 +171,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="0.3"
-                   >
+                    >
                 <ImageView
                         android:contentDescription="@string/image_description"
                         android:layout_width="match_parent"
