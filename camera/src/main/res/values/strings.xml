@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">VIC - Camera Steering</string>
-    <string name="text_preset">Change Presets</string>
+    <string name="app_name">VICAM</string>
     <string name="auto_focus">Auto Focus</string>
+    <string name="change_preset">Change Preset</string>
     <string name="manual_focus">Manual Focus</string>
     <string name="force_auto_focus">Force Auto Focus</string>
     <string name="title_section1">Section 1</string>

@@ -42,7 +42,7 @@ public class MainActivity extends Activity implements ActionBar.OnNavigationList
     // Get set preferences
     SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
-    mTitle = getString(R.string.text_preset);
+    mTitle = getString(R.string.app_name);
 
     mPlanetTitles = new String[]{"Preset 1", "Preset 2", "Preset 3"};
 
@@ -67,7 +67,8 @@ public class MainActivity extends Activity implements ActionBar.OnNavigationList
        */
       @Override
       public void onDrawerClosed(View view) {
-        getActionBar().setTitle(mTitle);
+       // Toast.makeText(this, R.string.auto_focus, Toast.LENGTH_SHORT).show();
+        getActionBar().setTitle(getString(R.string.change_preset));
       }
 
       /**
@@ -75,12 +76,13 @@ public class MainActivity extends Activity implements ActionBar.OnNavigationList
        */
       @Override
       public void onDrawerOpened(View drawerView) {
-        getActionBar().setTitle(mTitle);
+        getActionBar().setTitle(getString(R.string.auto_focus));
       }
     };
 
     // Set the drawer toggle as the DrawerListener
     mDrawerLayout.setDrawerListener(mDrawerToggle);
+
 
     getActionBar().setDisplayHomeAsUpEnabled(true);
     getActionBar().setHomeButtonEnabled(true);
@@ -98,8 +100,10 @@ public class MainActivity extends Activity implements ActionBar.OnNavigationList
     navSpinner.add(new SpinnerNavItem("Camera 3", R.drawable.ic_drawer));
     navSpinner.add(new SpinnerNavItem("Camera 4", R.drawable.ic_drawer));
 
+
     // title drop down adapter
     adapter = new TitleNavigationAdapter(getApplicationContext(), navSpinner);
+
 
     // assigning the spinner navigation
     getActionBar().setListNavigationCallbacks(adapter, this);
@@ -112,7 +116,7 @@ public class MainActivity extends Activity implements ActionBar.OnNavigationList
     //getActionBar().setDisplayShowHomeEnabled(false);
 
     // Removes the icon
-    getActionBar().setIcon(android.R.color.transparent);
+   // getActionBar().setIcon(android.R.color.transparent);
 
     // getActionBar().setDisplayShowTitleEnabled(false);
     getMenuInflater().inflate(R.menu.main, menu);
@@ -154,7 +158,7 @@ public class MainActivity extends Activity implements ActionBar.OnNavigationList
    * Swaps fragments in the main ontent view
    */
   private void selectItem(int position) {
-    Toast.makeText(this, R.string.text_preset, Toast.LENGTH_SHORT).show();
+    Toast.makeText(this, R.string.app_name, Toast.LENGTH_SHORT).show();
 
     // Highlight the selected item, update the title, and close the drawer
     mDrawerList.setItemChecked(position, true);

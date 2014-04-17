@@ -47,6 +47,7 @@ public class TitleNavigationAdapter extends BaseAdapter {
       LayoutInflater mInflater = (LayoutInflater)
           context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
       convertView = mInflater.inflate(R.layout.list_item_title_navigation, null);
+
     }
 
     imgIcon = (ImageView) convertView.findViewById(R.id.imgIcon);

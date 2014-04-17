@@ -18,7 +18,7 @@
                 android:orientation="vertical"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:layout_weight="1.5">
+                android:layout_weight="1.55">
         </LinearLayout>
         <LinearLayout
                 android:orientation="vertical"
@@ -26,7 +26,8 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="left|center_vertical"
                 android:background="#FFF"
-                android:layout_weight="1">
+                android:layout_weight="1.15"
+                 >
 
             <LinearLayout
                     android:orientation="vertical"
@@ -39,21 +40,45 @@
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent">
                     <LinearLayout
-                            android:orientation="vertical"
+                            android:orientation="horizontal"
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent">
+
+                        <LinearLayout
+                            android:orientation="horizontal"
                             android:layout_width="fill_parent"
                             android:layout_height="fill_parent"
-                            android:layout_weight="12">
-                    </LinearLayout>
-                    <Switch
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:text="@string/auto_focus"
-                            android:layout_marginBottom="20dp"
-                            android:layout_marginTop="25dp"
-                            android:textSize="16dp"
-                            android:id="@+id/switch2"
                             android:layout_weight="1"
-                            android:layout_marginRight="20dp"/>
+                            android:paddingLeft="20dp"
+                            >
+                        <Switch
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/switch2"
+
+                                android:layout_gravity="left|center"
+
+                              />
+                        </LinearLayout>
+
+                        <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                         >
+                        <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:text="@string/auto_focus"
+                                android:id="@+id/textView"
+                                android:gravity="left|center"
+                                />
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+
                 </LinearLayout>
             </LinearLayout>
             <LinearLayout
@@ -114,6 +139,7 @@
                         android:minHeight="140dp"
                         android:maxHeight="140dp"
                         android:layout_width="match_parent"
+
                         android:max="10"
                         android:progress="5"
                         />
@@ -141,6 +167,7 @@
                         android:minHeight="140dp"
                         android:maxHeight="140dp"
                         android:layout_width="match_parent"
+                        android:maxWidth="100dp"
                         android:max="10"
                         android:progress="5"
                         />
@@ -179,6 +206,9 @@
                         android:gravity="right|bottom"
                         android:id="@+id/imageView"
                         android:src="@drawable/controller"
+                        android:layout_marginBottom="25dp"
+                        android:layout_marginRight="25dp"
+
 
                         />
             </LinearLayout>
