@@ -17,11 +17,14 @@
     <string name="action_change_camera">Change Camera</string>
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
-    <string name="image_description">somethingsomething</string>
+    <string name="image_description">something something</string>
     <string name="title_activity_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="sync_server">Sync server</string>
     <string name="manage_camera">Manage camera</string>
     <string name="change_camera">Change Camera</string>
+
+    <string name="zoom_value">Zoom Value</string>
+    <string name="focus_value">Focus Value</string>
 
 </resources>

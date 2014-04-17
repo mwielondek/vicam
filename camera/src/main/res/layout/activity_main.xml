@@ -11,7 +11,8 @@
             android:layout_height="match_parent"
             android:background="#eee"
             android:focusableInTouchMode="false" android:baselineAligned="false"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            >
 
 
         <LinearLayout
@@ -180,6 +181,60 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:layout_weight="1.3">
+
+            <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1"></LinearLayout>
+            <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1.3">
+
+                <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:gravity="left|center"
+                        android:layout_weight="1">
+
+
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/focus_value"
+                            android:id="@+id/focus_value"
+                            android:paddingLeft="20dp"
+                            android:textSize="16dp"
+                            />
+                </LinearLayout>
+                <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:gravity="left|center"
+                        android:layout_weight="1">
+
+
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="20dp"
+                            android:textSize="16dp"
+                            android:text="@string/zoom_value"
+                            android:id="@+id/zoom_value"
+
+                            />
+                </LinearLayout>
+
+
+
+            </LinearLayout>
+
+
+
         </LinearLayout>
         <LinearLayout
                 android:orientation="vertical"

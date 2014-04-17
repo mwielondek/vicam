@@ -16,10 +16,15 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.SeekBar;
 
 import com.dreamteam.camera.R;
 import com.dreamteam.vicam.model.pojo.Camera;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 public class MainActivity extends Activity implements ActionBar.OnNavigationListener {
 
@@ -31,10 +36,12 @@ public class MainActivity extends Activity implements ActionBar.OnNavigationList
   private MenuItem mSpinnerItem;
   private ArrayAdapter changeCameraAdapter;
 
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
+    ButterKnife.inject(this);
     // Sets default values defined in camera_preferences if empty
     PreferenceManager.setDefaultValues(this, R.xml.camera_preferences, false);
     // Get set camera_preferences
@@ -46,6 +53,13 @@ public class MainActivity extends Activity implements ActionBar.OnNavigationList
 
     mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
     mDrawerList = (ListView) findViewById(R.id.left_drawer);
+
+    SeekBar mSeekBarFocus = (SeekBar)findViewById(R.id.seekBar1);
+    SeekBar mSeekBarZoom = (SeekBar)findViewById(R.id.seekBar2);
+    final TextView seekBarFocusValue = (TextView)findViewById(R.id.focus_value);
+    final TextView seekBarZoomValue = (TextView)findViewById(R.id.zoom_value);
+
+
 
     // Set the changeCameraAdapter for the list view
     mDrawerList.setAdapter(
@@ -65,8 +79,7 @@ public class MainActivity extends Activity implements ActionBar.OnNavigationList
        */
       @Override
       public void onDrawerClosed(View view) {
-        // Toast.makeText(this, R.string.auto_focus, Toast.LENGTH_SHORT).show();
-        getActionBar().setTitle(getString(R.string.change_preset));
+        getActionBar().setTitle(getString(R.string.app_name));
       }
 
       /**
@@ -74,7 +87,7 @@ public class MainActivity extends Activity implements ActionBar.OnNavigationList
        */
       @Override
       public void onDrawerOpened(View drawerView) {
-        getActionBar().setTitle(getString(R.string.auto_focus));
+        getActionBar().setTitle(getString(R.string.change_preset));
       }
     };
 
@@ -88,9 +101,47 @@ public class MainActivity extends Activity implements ActionBar.OnNavigationList
     getActionBar().setDisplayShowTitleEnabled(true);
 
     changeCameraAdapter =
-        new ArrayAdapter<Camera>(this, android.R.layout.simple_expandable_list_item_1);
+        new ArrayAdapter<Camera>(this, R.layout.change_camera_spinner);
     changeCameraAdapter.add(new Camera("127.0.0.1", "Test :3", null));
     changeCameraAdapter.add(new Camera("localhost", "Test2 >:3", null));
+
+    mSeekBarFocus.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+      @Override
+      public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+        seekBarFocusValue.setText(String.valueOf(progress));
+
+      }
+
+      @Override
+      public void onStartTrackingTouch(SeekBar seekBar) {
+
+      }
+
+      @Override
+      public void onStopTrackingTouch(SeekBar seekBar) {
+
+      }
+    });
+
+    mSeekBarZoom.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+      @Override
+      public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+        seekBarZoomValue.setText(String.valueOf(progress));
+
+      }
+
+      @Override
+      public void onStartTrackingTouch(SeekBar seekBar) {
+
+      }
+
+      @Override
+      public void onStopTrackingTouch(SeekBar seekBar) {
+
+      }
+    });
   }
 
   @Override
@@ -181,6 +232,10 @@ public class MainActivity extends Activity implements ActionBar.OnNavigationList
       selectItem(position);
     }
   }
+
+
+
+
 
   /**
    * Actionbar navigation item select listener
