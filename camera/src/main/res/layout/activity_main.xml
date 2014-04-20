@@ -21,24 +21,24 @@
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:background="#FFF"
                 android:minWidth="240dp"
+                android:gravity="center_vertical"
                 android:layout_alignParentLeft="true">
 
             <Switch
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/switch2"
+                    android:id="@+id/autofocus_switch"
                     android:text="@string/autofocus"
-                    android:layout_gravity="left|center"/>
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
 
             <Button
+                    android:id="@+id/one_touch_autofocus"
                     android:text="@string/force_autofocus"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="0dp"
-                    android:textSize="16sp"
-                    android:id="@+id/autoFocus"/>
+                    android:textSize="16sp"/>
+
             <TextView
-                    android:id="@+id/textSeekBar1"
+                    android:id="@+id/text_focus_seekbar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/manual_focus"
@@ -46,7 +46,7 @@
                     android:gravity="center"
                     />
             <SeekBar
-                    android:id="@+id/seekBar1"
+                    android:id="@+id/focus_seekbar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:max="10"
@@ -66,25 +66,24 @@
                     android:max="10"
                     android:progress="5"/>
 
-            <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/focus_value"
-                    android:id="@+id/focus_value"
-                    android:paddingLeft="20dp"
-                    android:textSize="16sp"/>
-
-            <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="20dp"
-                    android:textSize="16sp"
-                    android:text="@string/zoom_value"
-                    android:id="@+id/zoom_value"/>
         </LinearLayout>
 
+        <TextView
+                android:id="@+id/focus_value"
+                android:text="@string/focus_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"/>
+
+        <TextView
+                android:id="@+id/zoom_value"
+                android:text="@string/zoom_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"/>
+
         <ImageView
-                android:id="@+id/imageView"
+                android:id="@+id/camera_touchpad"
                 android:src="@drawable/controller"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -95,7 +94,7 @@
 
     <!-- Navigation drawer -->
     <ListView
-            android:id="@+id/left_drawer"
+            android:id="@+id/navigation_drawer"
             android:layout_width="240dp"
             android:layout_height="match_parent"
             android:layout_gravity="start"

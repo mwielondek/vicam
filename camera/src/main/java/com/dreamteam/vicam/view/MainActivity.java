@@ -51,9 +51,9 @@ public class MainActivity extends Activity implements ActionBar.OnNavigationList
     mPlanetTitles = new String[]{"Preset 1", "Preset 2", "Preset 3"};
 
     mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-    mDrawerList = (ListView) findViewById(R.id.left_drawer);
+    mDrawerList = (ListView) findViewById(R.id.navigation_drawer);
 
-    SeekBar mSeekBarFocus = (SeekBar)findViewById(R.id.seekBar1);
+    SeekBar mSeekBarFocus = (SeekBar)findViewById(R.id.focus_seekbar);
     SeekBar mSeekBarZoom = (SeekBar)findViewById(R.id.zoom_seekbar);
     final TextView seekBarFocusValue = (TextView)findViewById(R.id.focus_value);
     final TextView seekBarZoomValue = (TextView)findViewById(R.id.zoom_value);
