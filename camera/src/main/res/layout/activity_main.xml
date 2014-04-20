@@ -13,7 +13,14 @@
             android:layout_height="wrap_content"
             android:focusableInTouchMode="false">
 
-        <include layout="@layout/toolbox"/>
+        <include
+                android:id="@+id/toolbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_centerVertical="true"
+                layout="@layout/toolbox"/>
 
         <ImageView
                 android:id="@+id/camera_touchpad"
@@ -25,7 +32,7 @@
     <!-- Navigation drawer -->
     <ListView
             android:id="@+id/navigation_drawer"
-            android:layout_width="240dp"
+            android:layout_width="@dimen/toolbox_min_width"
             android:layout_height="match_parent"
             android:layout_gravity="start"
             android:choiceMode="singleChoice"
