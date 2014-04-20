@@ -1,28 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/toolbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:background="@drawable/bg_card"
         android:gravity="center_vertical"
         android:minWidth="@dimen/toolbox_min_width"
-        android:padding="@dimen/toolbox_margin">
+        android:padding="@dimen/toolbox_padding">
 
     <Switch
             android:id="@+id/autofocus_switch"
             android:text="@string/autofocus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/toolbox_margin"
+            android:layout_marginBottom="@dimen/toolbox_margin"
             android:textAppearance="?android:listSeparatorTextViewStyle"/>
 
     <Button
             android:id="@+id/one_touch_autofocus"
             android:text="@string/force_autofocus"
-            style="?android:segmentedButtonStyle"
             android:layout_width="match_parent"
-            android:layout_marginTop="@dimen/toolbox_margin"
             android:layout_height="wrap_content"
             android:layout_margin="0dp"
             android:textAppearance="?android:listSeparatorTextViewStyle"/>
@@ -68,6 +67,5 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="16sp"/>
-
 
 </LinearLayout>
