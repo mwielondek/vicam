@@ -71,7 +71,7 @@
                         <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:text="@string/auto_focus"
+                                android:text="@string/autofocus"
                                 android:id="@+id/textView"
                                 android:gravity="left|center"
                                 />
@@ -99,7 +99,7 @@
                         android:layout_weight="1.2">
                 </LinearLayout>
                 <Button
-                        android:text="@string/force_auto_focus"
+                        android:text="@string/force_autofocus"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:padding="0dp"
@@ -255,7 +255,7 @@
                     android:layout_weight="0.3"
                     >
                 <ImageView
-                        android:contentDescription="@string/image_description"
+                        android:contentDescription="@string/touchpad_description"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="right|bottom"

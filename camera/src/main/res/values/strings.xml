@@ -2,22 +2,21 @@
 <resources>
 
     <string name="app_name">VICAM</string>
-    <string name="auto_focus">Auto Focus</string>
+    <string name="autofocus">AF</string>
     <string name="change_preset">Change Preset</string>
-    <string name="manual_focus">Manual Focus</string>
-    <string name="force_auto_focus">Force Auto Focus</string>
-    <string name="title_section1">Section 1</string>
-    <string name="title_section2">Section 2</string>
-    <string name="title_section3">Section 3</string>
+    <string name="manual_focus">Focus</string>
+    <string name="force_autofocus">One touch AF</string>
+    <string name="title_section1">Preset 1</string>
+    <string name="title_section2">Preset 2</string>
+    <string name="title_section3">Preset 3</string>
     <string name="action_settings">Settings</string>
     <string name="action_about">About</string>
     <string name="text_zoom">Zoom</string>
     <string name="action_save_preset">Save Preset</string>
     <string name="action_sync_presets">Sync w/ Server</string>
-    <string name="action_change_camera">Change Camera</string>
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
-    <string name="image_description">something something</string>
+    <string name="touchpad_description">Camera touchpad</string>
     <string name="title_activity_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="sync_server">Sync server</string>
