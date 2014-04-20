@@ -19,7 +19,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:background="#FFF"
+                android:background="@drawable/bg_card"
                 android:minWidth="240dp"
                 android:padding="5dp"
                 android:gravity="center_vertical"
