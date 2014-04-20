@@ -24,7 +24,6 @@ import com.dreamteam.camera.R;
 import com.dreamteam.vicam.model.pojo.Camera;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 public class MainActivity extends Activity implements ActionBar.OnNavigationListener {
 
@@ -55,7 +54,7 @@ public class MainActivity extends Activity implements ActionBar.OnNavigationList
     mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
     SeekBar mSeekBarFocus = (SeekBar)findViewById(R.id.seekBar1);
-    SeekBar mSeekBarZoom = (SeekBar)findViewById(R.id.seekBar2);
+    SeekBar mSeekBarZoom = (SeekBar)findViewById(R.id.zoom_seekbar);
     final TextView seekBarFocusValue = (TextView)findViewById(R.id.focus_value);
     final TextView seekBarZoomValue = (TextView)findViewById(R.id.zoom_value);
 
