@@ -10,18 +10,20 @@
     <RelativeLayout
             android:id="@+id/content_frame"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:focusableInTouchMode="false">
 
         <LinearLayout
                 android:id="@+id/toolbox"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:background="#FFF"
                 android:minWidth="240dp"
+                android:padding="5dp"
                 android:gravity="center_vertical"
+                android:layout_centerVertical="true"
                 android:layout_alignParentLeft="true">
 
             <Switch
@@ -42,22 +44,27 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/manual_focus"
-                    android:textSize="16sp"
-                    android:gravity="center"
-                    />
+                    android:textAppearance="?android:listSeparatorTextViewStyle"
+                    android:gravity="center"/>
             <SeekBar
                     android:id="@+id/focus_seekbar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:max="10"
-                    android:progress="5"
-                    />
+                    android:progress="5"/>
+            <TextView
+                    android:id="@+id/focus_value"
+                    android:text="@string/focus_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"/>
+
             <TextView
                     android:id="@+id/text_zoom_seekbar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/text_zoom"
-                    android:textSize="16sp"
+                    android:textAppearance="?android:listSeparatorTextViewStyle"
                     android:gravity="center"/>
             <SeekBar
                     android:id="@+id/zoom_seekbar"
@@ -65,22 +72,15 @@
                     android:layout_height="wrap_content"
                     android:max="10"
                     android:progress="5"/>
+            <TextView
+                    android:id="@+id/zoom_value"
+                    android:text="@string/zoom_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"/>
+
 
         </LinearLayout>
-
-        <TextView
-                android:id="@+id/focus_value"
-                android:text="@string/focus_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"/>
-
-        <TextView
-                android:id="@+id/zoom_value"
-                android:text="@string/zoom_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"/>
 
         <ImageView
                 android:id="@+id/camera_touchpad"
