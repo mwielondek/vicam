@@ -3,6 +3,7 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
+    <dimen name="touchpad_max_size">320dp</dimen>
 
     <dimen name="seek_bar_horizontal_len">140dp</dimen>
     <dimen name="toolbox_margin_top">5dp</dimen>

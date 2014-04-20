@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/toolbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:background="@drawable/bg_card"
+        android:minWidth="240dp"
+        android:padding="5dp"
+        android:gravity="center_vertical"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true">
+
+    <Switch
+            android:id="@+id/autofocus_switch"
+            android:text="@string/autofocus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/toolbox_margin_top"
+            android:textAppearance="?android:listSeparatorTextViewStyle"/>
+
+    <Button
+            android:id="@+id/one_touch_autofocus"
+            android:text="@string/force_autofocus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/toolbox_margin_top"
+            android:textAppearance="?android:listSeparatorTextViewStyle"/>
+
+    <TextView
+            android:id="@+id/text_focus_seekbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/toolbox_margin_top"
+            android:text="@string/manual_focus"
+            android:textAppearance="?android:listSeparatorTextViewStyle"
+            android:gravity="center"/>
+    <SeekBar
+            android:id="@+id/focus_seekbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="10"
+            android:progress="5"/>
+    <TextView
+            android:id="@+id/focus_value"
+            android:text="@string/focus_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"/>
+
+    <TextView
+            android:id="@+id/text_zoom_seekbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/toolbox_margin_top"
+            android:text="@string/text_zoom"
+            android:textAppearance="?android:listSeparatorTextViewStyle"
+            android:gravity="center"/>
+    <SeekBar
+            android:id="@+id/zoom_seekbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="10"
+            android:progress="5"/>
+    <TextView
+            android:id="@+id/zoom_value"
+            android:text="@string/zoom_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"/>
+
+
+</LinearLayout>
