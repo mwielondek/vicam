@@ -3,6 +3,7 @@ package com.dreamteam.vicam.presenter;
 import com.dreamteam.vicam.model.pojo.Camera;
 import com.dreamteam.vicam.presenter.network.camera.CameraFacade;
 import com.dreamteam.vicam.presenter.network.camera.CameraService;
+import com.dreamteam.vicam.presenter.utility.RetrofitStringParser;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +32,7 @@ public class CameraServiceManager {
     return new RestAdapter
         .Builder()
         .setEndpoint(c.getAddress())
+        .setConverter(new RetrofitStringParser())
         .build()
         .create(CameraService.class);
   }
