@@ -171,7 +171,6 @@ public class MainActivity extends Activity implements ActionBar.OnNavigationList
       });
 
     }
-    // getActionBar().setDisplayShowTitleEnabled(false);
 
     return true;
   }
@@ -207,14 +206,14 @@ public class MainActivity extends Activity implements ActionBar.OnNavigationList
   }
 
   /**
-   * Swaps fragments in the main ontent view
+   * Swaps fragments in the main content view
    */
   private void selectItem(int position) {
-    Toast.makeText(this, R.string.app_name, Toast.LENGTH_SHORT).show();
 
-    // Highlight the selected item, update the title, and close the drawer
-    mDrawerList.setItemChecked(position, true);
-    setTitle(mPlanetTitles[position]);
+    // Shows a toast of the selected preset in main content view
+    Toast.makeText(this, mPlanetTitles[position], Toast.LENGTH_SHORT).show();
+
+    // Closes the drawer
     mDrawerLayout.closeDrawer(mDrawerList);
   }
 
