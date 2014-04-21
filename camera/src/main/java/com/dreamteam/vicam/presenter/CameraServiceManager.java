@@ -16,13 +16,15 @@ public class CameraServiceManager {
 
   private static Map<String, CameraFacade> cameraFacades = new HashMap<>();
 
-  public static CameraFacade geFacadeFor(Camera c) {
+  public static CameraFacade getFacadeFor(Camera c) {
     String key = c.getAddress();
 
     if (cameraFacades.containsKey(key)) {
       return cameraFacades.get(key);
     }
-    return cameraFacades.put(key, new CameraFacade(createServiceFor(c)));
+    CameraFacade cf = new CameraFacade(createServiceFor(c));
+    cameraFacades.put(key, cf);
+    return cf;
   }
 
   public static CameraService createServiceFor(Camera c) {
