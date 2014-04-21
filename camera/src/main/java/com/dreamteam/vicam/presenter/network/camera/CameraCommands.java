@@ -1,6 +1,6 @@
 package com.dreamteam.vicam.presenter.network.camera;
 
-import com.dreamteam.vicam.model.errors.OnResponseError;
+import com.dreamteam.vicam.model.errors.CameraResponseException;
 import com.dreamteam.vicam.model.pojo.Position;
 
 import java.util.regex.Matcher;
@@ -83,7 +83,7 @@ public class CameraCommands {
             // Shouldn't be reached since regex matches digits only
           }
         }
-        throw new OnResponseError(s);
+        throw new CameraResponseException(s);
       }
     });
   }
@@ -100,7 +100,7 @@ public class CameraCommands {
             // Shouldn't be reached since regex matches digits only
           }
         }
-        throw new OnResponseError(s);
+        throw new CameraResponseException(s);
       }
     });
   }
@@ -117,7 +117,7 @@ public class CameraCommands {
             // Shouldn't be reached since regex matches digits only
           }
         }
-        throw new OnResponseError(s);
+        throw new CameraResponseException(s);
       }
     });
   }
@@ -130,7 +130,7 @@ public class CameraCommands {
         if (m.matches()) {
           return m.group(1).equals("1");
         }
-        throw new OnResponseError(s);
+        throw new CameraResponseException(s);
       }
     });
   }
