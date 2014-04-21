@@ -78,7 +78,7 @@ public class CameraCommands {
         Matcher m = PAN_TILT_RESPONSE.matcher(s);
         if (m.matches()) {
           try {
-            return new Position(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)));
+            return new Position(parseHex(m.group(1)), parseHex(m.group(2)));
           } catch (NumberFormatException ignored) {
             // Shouldn't be reached since regex matches digits only
           }
@@ -95,7 +95,7 @@ public class CameraCommands {
         Matcher m = ZOOM_LEVEL_RESPONSE.matcher(s);
         if (m.matches()) {
           try {
-            return Integer.parseInt(m.group(1));
+            return parseHex(m.group(1));
           } catch (NumberFormatException ignored) {
             // Shouldn't be reached since regex matches digits only
           }
@@ -112,7 +112,7 @@ public class CameraCommands {
         Matcher m = FOCUS_LEVEL_RESPONSE.matcher(s);
         if (m.matches()) {
           try {
-            return Integer.parseInt(m.group(1));
+            return parseHex(m.group(1));
           } catch (NumberFormatException ignored) {
             // Shouldn't be reached since regex matches digits only
           }
@@ -167,4 +167,9 @@ public class CameraCommands {
   private String padThree(int value) {
     return padZeroes(value, 3);
   }
+
+  private Integer parseHex(String hex) {
+    return Integer.parseInt(hex, 16);
+  }
+
 }
