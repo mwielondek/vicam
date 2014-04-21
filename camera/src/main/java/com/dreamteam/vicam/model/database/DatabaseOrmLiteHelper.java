@@ -66,11 +66,12 @@ public class DatabaseOrmLiteHelper extends OrmLiteSqliteOpenHelper implements DA
   }
 
   @Override
-  @SuppressWarnings("unchecked")
   public CameraDAO getCameraDAO() {
     if (cameraDao == null) {
       try {
-        cameraDao = new CameraDAOImpl(((Dao<Camera, Integer>) getDao(Camera.class)));
+        @SuppressWarnings("unchecked")
+        CameraDAO temp = new CameraDAOImpl(((Dao<Camera, Integer>) getDao(Camera.class)));
+        cameraDao = temp;
       } catch (SQLException e) {
         e.printStackTrace();
       }
@@ -79,11 +80,12 @@ public class DatabaseOrmLiteHelper extends OrmLiteSqliteOpenHelper implements DA
   }
 
   @Override
-  @SuppressWarnings("unchecked")
   public PresetDAO getPresetDAO() {
     if (presetDao == null) {
       try {
-        presetDao = new PresetDAOImpl(((Dao<Preset, Integer>) getDao(Preset.class)));
+        @SuppressWarnings("unchecked")
+        PresetDAO temp = new PresetDAOImpl(((Dao<Preset, Integer>) getDao(Preset.class)));
+        presetDao = temp;
       } catch (SQLException e) {
         e.printStackTrace();
       }
