@@ -9,10 +9,10 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable(tableName = "preset")
 public class Preset {
 
-  @DatabaseField(columnName = "name", unique = true, canBeNull = false)
-  private String name;
   @DatabaseField(columnName = "id", generatedId = true)
   private int id;
+  @DatabaseField(columnName = "name", unique = true, canBeNull = false)
+  private String name;
   @DatabaseField(columnName = "cameraState", foreign = true, foreignAutoCreate = true, foreignAutoRefresh = true)
   private CameraState cameraState;
 
@@ -20,9 +20,9 @@ public class Preset {
     // ORMLite needs a no-arg constructor
   }
 
-  public Preset(String name, int id, CameraState cameraState) {
-    this.name = name;
+  public Preset(int id, String name, CameraState cameraState) {
     this.id = id;
+    this.name = name;
     this.cameraState = cameraState;
   }
 
@@ -45,5 +45,10 @@ public class Preset {
 
   public CameraState getCameraState() {
     return cameraState;
+  }
+
+  @Override
+  public String toString() {
+    return name;
   }
 }
