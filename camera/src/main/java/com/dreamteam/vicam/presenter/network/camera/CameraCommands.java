@@ -14,7 +14,7 @@ import rx.functions.Func1;
  */
 public class CameraCommands {
 
-  private static final String COMMAND_PREFIX = "#";
+  private static final String COMMAND_PREFIX = "%23"; // HTML-encoded '#'
 
   private static final Pattern PAN_TILT_RESPONSE = Pattern.compile("aPC(\\d{4})(\\d{4})");
   private static final Pattern ZOOM_LEVEL_RESPONSE = Pattern.compile("gz(\\d{3})");
