@@ -53,6 +53,6 @@ public class CameraState {
   }
 
   public boolean isAF() {
-    return focus.isAutoFocus();
+    return focus.isAutofocus();
   }
 }

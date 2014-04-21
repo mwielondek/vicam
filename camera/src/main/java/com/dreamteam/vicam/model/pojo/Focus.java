@@ -16,21 +16,21 @@ public class Focus {
   private int id;
   @DatabaseField(columnName = "level")
   private int level;
-  @DatabaseField(columnName = "autoFocus")
-  private boolean autoFocus;
+  @DatabaseField(columnName = "autofocus")
+  private boolean autofocus;
 
   public Focus() {
     // ORMLite needs a no-arg constructor
   }
 
-  public Focus(int level, boolean autoFocus) {
+  public Focus(int level, boolean autofocus) {
     Utils.rangeCheck(level, LOWER_BOUND, UPPER_BOUND);
     this.level = level;
-    this.autoFocus = autoFocus;
+    this.autofocus = autofocus;
   }
 
-  public Focus(int id, int level, boolean autoFocus) {
-    this(level, autoFocus);
+  public Focus(int id, int level, boolean autofocus) {
+    this(level, autofocus);
     this.id = id;
   }
 
@@ -38,12 +38,12 @@ public class Focus {
     return id;
   }
 
-  public boolean isAutoFocus() {
-    return autoFocus;
+  public boolean isAutofocus() {
+    return autofocus;
   }
 
-  public void setAutoFocus(boolean autoFocus) {
-    this.autoFocus = autoFocus;
+  public void setAutofocus(boolean autofocus) {
+    this.autofocus = autofocus;
   }
 
   public int getLevel() {
