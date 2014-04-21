@@ -152,11 +152,11 @@ public class MainActivity extends Activity {
    * Swaps fragments in the main content view
    */
   private void selectItem(int position) {
-    Toast.makeText(this, R.string.app_name, Toast.LENGTH_SHORT).show();
 
-    // Highlight the selected item, update the title, and close the drawer
-    mDrawerList.setItemChecked(position, true);
-    setTitle(mPresets[position].getName());
+    // Shows a toast of the selected preset in main content view
+    Toast.makeText(this, mPresets[position].toString(), Toast.LENGTH_SHORT).show();
+
+    // Closes the drawer
     mDrawerLayout.closeDrawer(mDrawerList);
   }
 
