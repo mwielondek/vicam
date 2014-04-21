@@ -28,23 +28,23 @@ public class CameraCommands {
   }
 
   public Observable<String> pan(int panSpeed) {
-    return sendCommand("PS", padTwo(panSpeed));
+    return sendCommand("PS", padTwoHex(panSpeed));
   }
 
   public Observable<String> tilt(int tiltSpeed) {
-    return sendCommand("TS", padTwo(tiltSpeed));
+    return sendCommand("TS", padTwoHex(tiltSpeed));
   }
 
   public Observable<String> panTilt(int panSpeed, int tiltSpeed) {
-    return sendCommand("PTS", padTwo(panSpeed), padTwo(tiltSpeed));
+    return sendCommand("PTS", padTwoHex(panSpeed), padTwoHex(tiltSpeed));
   }
 
   public Observable<String> zoom(int zoomSpeed) {
-    return sendCommand("Z", padThree(zoomSpeed));
+    return sendCommand("Z", padThreeHex(zoomSpeed));
   }
 
   public Observable<String> focus(int focusSpeed) {
-    return sendCommand("F", padThree(focusSpeed));
+    return sendCommand("F", padThreeHex(focusSpeed));
   }
 
   public Observable<String> focusManual() {
@@ -56,19 +56,19 @@ public class CameraCommands {
   }
 
   public Observable<String> panTiltAbsolute(int panPosition, int tiltPosition) {
-    return sendCommand("APC", padTwo(panPosition), padTwo(tiltPosition));
+    return sendCommand("APC", padTwoHex(panPosition), padTwoHex(tiltPosition));
   }
 
   public Observable<String> zoomAbsolute(int zoomLevel) {
-    return sendCommand("AXZ", padThree(zoomLevel));
+    return sendCommand("AXZ", padThreeHex(zoomLevel));
   }
 
   public Observable<String> focusAbsolute(int focusLevel) {
-    return sendCommand("AXF", padThree(focusLevel));
+    return sendCommand("AXF", padThreeHex(focusLevel));
   }
 
   public Observable<String> oneTouchAutofocus() {
-    return sendControl("OSE:69:", 1);
+    return sendControl("OSE:69:1");
   }
 
   public Observable<Position> getPanTilt() {
@@ -156,20 +156,20 @@ public class CameraCommands {
     return cameraService.sendControl(control + Integer.toString(data));
   }
 
-  private String padZeroes(int value, int decimalPlaces) {
-    return String.format("%0" + decimalPlaces + "d", value);
+  private String padZeroesHex(int hexValue, int decimalPlaces) {
+    return String.format("%0" + decimalPlaces + "X", hexValue);
   }
 
-  private String padTwo(int value) {
-    return padZeroes(value, 2);
+  private String padTwoHex(int hexValue) {
+    return padZeroesHex(hexValue, 2);
   }
 
-  private String padThree(int value) {
-    return padZeroes(value, 3);
+  private String padThreeHex(int hexValue) {
+    return padZeroesHex(hexValue, 3);
   }
 
-  private Integer parseHex(String hex) {
-    return Integer.parseInt(hex, 16);
+  private Integer parseHex(String hexString) {
+    return Integer.parseInt(hexString, 16);
   }
 
 }
