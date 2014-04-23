@@ -26,7 +26,11 @@ import com.dreamteam.camera.R;
 import com.dreamteam.vicam.model.events.CameraChangedEvent;
 import com.dreamteam.vicam.model.events.PresetChangedEvent;
 import com.dreamteam.vicam.model.pojo.Camera;
+import com.dreamteam.vicam.model.pojo.CameraState;
+import com.dreamteam.vicam.model.pojo.Focus;
+import com.dreamteam.vicam.model.pojo.Position;
 import com.dreamteam.vicam.model.pojo.Preset;
+import com.dreamteam.vicam.model.pojo.Zoom;
 import com.dreamteam.vicam.presenter.utility.Dagger;
 
 import de.greenrobot.event.EventBus;
@@ -81,10 +85,13 @@ public class MainActivity extends Activity {
 
     mTitle = getString(R.string.app_name);
 
+    CameraState dummy = new CameraState(
+        new Position(0x8000, 0x8000), new Zoom(0x555), new Focus(0x555, true));
+
     // Temporary dummy data
     mPresets = new Preset[]{
-        new Preset("Preset 1", null), new Preset("Preset 2", null),
-        new Preset("Preset 3", null)};
+        new Preset("Preset 1", dummy), new Preset("Preset 2", dummy),
+        new Preset("Preset 3", dummy)};
 
     mPresetAdapter = new ArrayAdapter<Preset>(this, R.layout.drawer_list_item, mPresets);
     mDrawerList.setAdapter(mPresetAdapter);
@@ -111,8 +118,6 @@ public class MainActivity extends Activity {
     mFocusSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(SeekBarType.FOCUS));
     mZoomSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(SeekBarType.ZOOM));
 
-
-
     // Init. alert dialog for Save Preset
     AlertDialog.Builder builderSavePreset = new AlertDialog.Builder(this);
     builderSavePreset.setTitle(R.string.dialog_save_preset_title);
@@ -122,26 +127,26 @@ public class MainActivity extends Activity {
         loaderSpinner.setVisibility(View.GONE);
       }
     });
-    builderSavePreset.setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
-      public void onClick(DialogInterface dialog, int id) {
-        // User cancelled the dialog
-      }
-    });
+    builderSavePreset.setNegativeButton(R.string.dialog_cancel,
+                                        new DialogInterface.OnClickListener() {
+                                          public void onClick(DialogInterface dialog, int id) {
+                                            // User cancelled the dialog
+                                          }
+                                        }
+    );
     dialogSavePreset = builderSavePreset.create();
 
-
     // Init loader loaderSpinner
-    loaderSpinner = (RelativeLayout)findViewById(R.id.sync_loader);
+    loaderSpinner = (RelativeLayout) findViewById(R.id.sync_loader);
 
     loaderSpinner.setVisibility(View.GONE);
-
 
     mFocusSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(SeekBarType.FOCUS));
     mZoomSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(SeekBarType.ZOOM));
   }
 
   // Load to loader spinner
-  public void load(View view){
+  public void load(View view) {
     loaderSpinner.setVisibility(View.VISIBLE);
 
     // Trying to disable all the background and put a grey transparent shadow over the whole view
@@ -215,9 +220,9 @@ public class MainActivity extends Activity {
       case R.id.action_settings:
         startActivity(new Intent(this, SettingsActivity.class));
         return true;
-    case R.id.action_save_preset:
-       dialogSavePreset.show();
-       return true;
+      case R.id.action_save_preset:
+        dialogSavePreset.show();
+        return true;
       case R.id.action_sync_presets:
         load(loaderSpinner);
 
