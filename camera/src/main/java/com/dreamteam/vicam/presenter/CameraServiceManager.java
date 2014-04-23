@@ -29,11 +29,10 @@ public class CameraServiceManager {
   }
 
   public static CameraService createServiceFor(Camera c) {
-    return new RestAdapter
-        .Builder()
+    RestAdapter restAdapter = new RestAdapter.Builder()
         .setEndpoint(c.getAddress())
         .setConverter(new RetrofitStringParser())
-        .build()
-        .create(CameraService.class);
+        .build();
+    return restAdapter.create(CameraService.class);
   }
 }

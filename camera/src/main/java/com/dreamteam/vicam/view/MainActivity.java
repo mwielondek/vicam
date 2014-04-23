@@ -28,11 +28,14 @@ import butterknife.InjectView;
 
 public class MainActivity extends Activity {
 
+  private Camera mCurrentCamera;
   private CharSequence mTitle;
   private Preset[] mPresets;
 
   private ActionBarDrawerToggle mDrawerToggle;
+  // TODO: Create CameraArrayAdapter class
   private ArrayAdapter<Camera> mCameraAdapter;
+  // TODO: Create PresetArrayAdapter class
   private ArrayAdapter<Preset> mPresetAdapter;
 
   @InjectView(R.id.drawer_layout)
@@ -82,8 +85,8 @@ public class MainActivity extends Activity {
     mCameraAdapter.add(new Camera("127.0.0.1", "Test :3", null));
     mCameraAdapter.add(new Camera("localhost", "Test2 >:3", null));
 
-    mFocusSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(mFocusValue));
-    mZoomSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(mZoomValue));
+    mFocusSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(SeekBarType.FOCUS));
+    mZoomSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(SeekBarType.ZOOM));
   }
 
   @Override
@@ -132,7 +135,7 @@ public class MainActivity extends Activity {
     if (mDrawerToggle.onOptionsItemSelected(item)) {
       return true;
     }
-    // Handle your other action bar items...
+    // Handle menu items
     switch (item.getItemId()) {
       case R.id.action_settings:
         startActivity(new Intent(this, SettingsActivity.class));
@@ -152,11 +155,8 @@ public class MainActivity extends Activity {
    * Swaps fragments in the main content view
    */
   private void selectItem(int position) {
-
     // Shows a toast of the selected preset in main content view
     Toast.makeText(this, mPresets[position].toString(), Toast.LENGTH_SHORT).show();
-
-    // Closes the drawer
     mDrawerLayout.closeDrawer(mDrawerList);
   }
 
@@ -194,15 +194,20 @@ public class MainActivity extends Activity {
 
   private class SeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
 
-    private final TextView mTextValue;
+    private TextView textValue;
 
-    private SeekBarChangeListener(TextView mTextValue) {
-      this.mTextValue = mTextValue;
+    private SeekBarChangeListener(SeekBarType type) {
+      if (SeekBarType.FOCUS == type) {
+        textValue = mFocusValue;
+      } else if (SeekBarType.ZOOM == type) {
+        textValue = mZoomValue;
+      }
     }
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-      mTextValue.setText(Integer.toString(progress));
+      textValue.setText(Integer.toString(progress));
+      // TODO: Network request updating focus/zoom
     }
 
     @Override
@@ -215,5 +220,7 @@ public class MainActivity extends Activity {
 
     }
   }
+
+  private enum SeekBarType {FOCUS, ZOOM}
 
 }
