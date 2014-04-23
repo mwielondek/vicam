@@ -61,8 +61,8 @@ public class Camera implements Identifiable {
     return String.format("http://%s:%d", ip, port);
   }
 
-  public Camera copyWithName(String name) {
-    return new Camera(id, ip, name, port);
+  public Camera copyWithName(String newName) {
+    return new Camera(id, ip, newName, port);
   }
 
   @Override
