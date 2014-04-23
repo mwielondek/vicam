@@ -1,5 +1,6 @@
 package com.dreamteam.vicam.model.pojo;
 
+import com.dreamteam.vicam.model.interfaces.Identifiable;
 import com.dreamteam.vicam.presenter.utility.Utils;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -8,7 +9,7 @@ import com.j256.ormlite.table.DatabaseTable;
  * Created by fsommar on 2014-04-01.
  */
 @DatabaseTable(tableName = "focus")
-public class Focus {
+public class Focus implements Identifiable {
 
   public static final int LOWER_BOUND = 0x555, UPPER_BOUND = 0xFFF;
 

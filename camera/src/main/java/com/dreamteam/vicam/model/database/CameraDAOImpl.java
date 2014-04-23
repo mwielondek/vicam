@@ -21,8 +21,7 @@ public class CameraDAOImpl implements CameraDAO {
 
   @Override
   public int insertCamera(Camera camera) {
-    boolean success = ORMLite.insert(cameraDaoOrmLite, camera);
-    return success ? camera.getId() : -1;
+    return ORMLite.insert(cameraDaoOrmLite, camera);
   }
 
   @Override

@@ -1,5 +1,6 @@
 package com.dreamteam.vicam.presenter.utility;
 
+import com.dreamteam.vicam.model.interfaces.Identifiable;
 import com.j256.ormlite.dao.Dao;
 
 import java.sql.SQLException;
@@ -25,13 +26,16 @@ public class Utils {
 
   public static class ORMLite {
 
-    public static <T> boolean insert(Dao<T, ?> dao, T obj) {
+    public static <T extends Identifiable> int insert(Dao<T, ?> dao, T obj) {
       int insertRows = 0;
       try {
         insertRows = dao.create(obj);
       } catch (SQLException ignored) {
       }
-      return insertRows != 0;
+      if (insertRows != 0) {
+        return obj.getId();
+      }
+      return -1;
     }
 
     public static <T, ID> T find(Dao<T, ID> dao, ID id) {
@@ -42,7 +46,10 @@ public class Utils {
       }
     }
 
-    public static <T> boolean update(Dao<T, ?> dao, T obj) {
+    public static <T extends Identifiable> boolean update(Dao<T, ?> dao, T obj) {
+      if (obj.getId() < 0) {
+        return false;
+      }
       int updatedRows = 0;
       try {
         updatedRows = dao.update(obj);

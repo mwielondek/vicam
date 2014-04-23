@@ -21,8 +21,7 @@ public class PresetDAOImpl implements PresetDAO {
 
   @Override
   public int insertPreset(Preset preset) {
-    boolean success = ORMLite.insert(presetDaoOrmLite, preset);
-    return success ? preset.getId() : -1;
+    return ORMLite.insert(presetDaoOrmLite, preset);
   }
 
   @Override
