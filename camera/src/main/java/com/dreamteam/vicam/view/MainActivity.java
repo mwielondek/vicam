@@ -10,11 +10,13 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -23,6 +25,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dreamteam.camera.R;
+import com.dreamteam.vicam.model.database.CameraDAO;
+import com.dreamteam.vicam.model.database.DatabaseOrmLiteHelper;
+import com.dreamteam.vicam.model.database.PresetDAO;
 import com.dreamteam.vicam.model.events.CameraChangedEvent;
 import com.dreamteam.vicam.model.events.PresetChangedEvent;
 import com.dreamteam.vicam.model.pojo.Camera;
@@ -32,13 +37,18 @@ import com.dreamteam.vicam.model.pojo.Position;
 import com.dreamteam.vicam.model.pojo.Preset;
 import com.dreamteam.vicam.model.pojo.Zoom;
 import com.dreamteam.vicam.presenter.utility.Dagger;
+import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import de.greenrobot.event.EventBus;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 
 public class MainActivity extends Activity {
 
@@ -47,17 +57,18 @@ public class MainActivity extends Activity {
 
   private Camera mCurrentCamera;
   private CharSequence mTitle;
-  private Preset[] mPresets;
+  private List<Preset> mPresets;
 
   private ActionBarDrawerToggle mDrawerToggle;
   // TODO: Create CameraArrayAdapter class
   private ArrayAdapter<Camera> mCameraAdapter;
   // TODO: Create PresetArrayAdapter class
   private ArrayAdapter<Preset> mPresetAdapter;
-  private AlertDialog dialogSavePreset;
-  private RelativeLayout loaderSpinner;
+  private AlertDialog mDialogSavePreset;
+  private DatabaseOrmLiteHelper mDatabaseHelper;
 
-
+  @InjectView(R.id.sync_loader)
+  RelativeLayout mLoaderSpinner;
   @InjectView(R.id.drawer_layout)
   DrawerLayout mDrawerLayout;
   @InjectView(R.id.navigation_drawer)
@@ -77,7 +88,6 @@ public class MainActivity extends Activity {
     setContentView(R.layout.activity_main);
     Dagger.inject(this);
     ButterKnife.inject(this);
-    eventBus.register(this);
     // Sets default values defined in camera_preferences if empty
     PreferenceManager.setDefaultValues(this, R.xml.camera_preferences, false);
     // Get set camera_preferences
@@ -88,10 +98,13 @@ public class MainActivity extends Activity {
     CameraState dummy = new CameraState(
         new Position(0x8000, 0x8000), new Zoom(0x555), new Focus(0x555, true));
 
-    // Temporary dummy data
-    mPresets = new Preset[]{
-        new Preset("Preset 1", dummy), new Preset("Preset 2", dummy),
-        new Preset("Preset 3", dummy)};
+    PresetDAO presetDao = getHelper().getPresetDAO();
+    List<Preset> presets = presetDao.getPresets();
+    if (presets != null) {
+      mPresets = presets;
+    } else {
+      mPresets = new ArrayList<>();
+    }
 
     mPresetAdapter = new ArrayAdapter<Preset>(this, R.layout.drawer_list_item, mPresets);
     mDrawerList.setAdapter(mPresetAdapter);
@@ -102,52 +115,94 @@ public class MainActivity extends Activity {
 
     getActionBar().setDisplayHomeAsUpEnabled(true);
     getActionBar().setHomeButtonEnabled(true);
-
-    // Hide the action bar title
     getActionBar().setDisplayShowTitleEnabled(true);
 
-    mCameraAdapter = new ArrayAdapter<Camera>(this, R.layout.change_camera_spinner);
-    mCameraAdapter.add(new Camera("127.0.0.1", "Camera 1", null));
-    mCameraAdapter.add(new Camera("localhost", "Camera 2", null));
-    mCameraAdapter.add(new Camera("localhost", "Camera 3", null));
-    mCameraAdapter.add(new Camera("localhost", "Camera 4", null));
-    mCameraAdapter.add(new Camera("localhost", "Camera 5", null));
-    mCameraAdapter.add(new Camera("localhost", "Camera 6", null));
-    mCameraAdapter.add(new Camera("localhost", "Camera 7", null));
+    CameraDAO cameraDao = getHelper().getCameraDAO();
+    List<Camera> cameras = cameraDao.getCameras();
+    if (cameras == null) {
+      cameras = new ArrayList<>();
+    }
+    if (cameras.isEmpty()) {
+      cameraDao.insertCamera(new Camera("127.0.0.1", "Camera 1", null));
+      cameraDao.insertCamera(new Camera("localhost", "Camera 2", null));
+      cameraDao.insertCamera(new Camera("localhost", "Camera 3", null));
+      cameraDao.insertCamera(new Camera("localhost", "Camera 4", null));
+      cameraDao.insertCamera(new Camera("localhost", "Camera 5", null));
+      cameras = cameraDao.getCameras();
+    }
+    mCameraAdapter = new ArrayAdapter<Camera>(this, R.layout.change_camera_spinner, cameras);
 
     mFocusSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(SeekBarType.FOCUS));
     mZoomSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(SeekBarType.ZOOM));
 
-    // Init. alert dialog for Save Preset
     AlertDialog.Builder builderSavePreset = new AlertDialog.Builder(this);
     builderSavePreset.setTitle(R.string.dialog_save_preset_title);
 
-    builderSavePreset.setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
-      public void onClick(DialogInterface dialog, int id) {
-        loaderSpinner.setVisibility(View.GONE);
-      }
-    });
-    builderSavePreset.setNegativeButton(R.string.dialog_cancel,
-                                        new DialogInterface.OnClickListener() {
-                                          public void onClick(DialogInterface dialog, int id) {
-                                            // User cancelled the dialog
-                                          }
-                                        }
+    builderSavePreset.setPositiveButton(
+        R.string.dialog_ok,
+        new DialogInterface.OnClickListener() {
+          public void onClick(DialogInterface dialog, int id) {
+            mLoaderSpinner.setVisibility(View.GONE);
+          }
+        }
     );
-    dialogSavePreset = builderSavePreset.create();
-
-    // Init loader loaderSpinner
-    loaderSpinner = (RelativeLayout) findViewById(R.id.sync_loader);
-
-    loaderSpinner.setVisibility(View.GONE);
+    builderSavePreset.setNegativeButton(
+        R.string.dialog_cancel,
+        new DialogInterface.OnClickListener() {
+          public void onClick(DialogInterface dialog, int id) {
+            // User cancelled the dialog
+          }
+        }
+    );
+    mDialogSavePreset = builderSavePreset.create();
+    mLoaderSpinner.setVisibility(View.GONE);
 
     mFocusSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(SeekBarType.FOCUS));
     mZoomSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(SeekBarType.ZOOM));
   }
 
+  @OnClick(R.id.one_touch_autofocus)
+  public void OneTouchAutofocusClick(Button button) {
+    // Temporary for testing only!
+    Preset preset = new Preset("Preset " + (int) (1 + Math.random() * 100),
+                               mCurrentCamera,
+                               new CameraState(new Position(0x8500, 0x9500),
+                                               new Zoom(0xFFF),
+                                               new Focus(0xFFF, false))
+    );
+    int id = getHelper().getPresetDAO().insertPreset(preset);
+    if (id > 0) {
+      mPresets.add(preset);
+      mPresetAdapter.notifyDataSetChanged();
+    }
+  }
+
+  @OnClick(R.id.camera_touchpad)
+  public void testclick(View v) {
+    // Temporary for testing only!
+    PresetDAO presetDao = getHelper().getPresetDAO();
+    Preset prevPreset = presetDao.findPreset(1); // will cause NPE if Preset with ID 1 doesn't exist
+    Log.i("CUSTOM", String.format("getCamera(%s)", prevPreset.getCamera()));
+    Preset newPreset = prevPreset.copy()
+        .name(prevPreset.getName() + "3")
+        .cameraState(prevPreset.getCameraState().copy()
+                         .zoom(new Zoom(0x666))
+                         .commit())
+        .commit();
+    presetDao.updatePreset(newPreset);
+    for (int i = 0; i < mPresets.size(); i++) {
+      if (mPresets.get(i).getId() == newPreset.getId()) {
+        mPresets.set(i, newPreset);
+        break;
+      }
+    }
+    mPresetAdapter.notifyDataSetChanged();
+    showToast("Updated preset!", Toast.LENGTH_SHORT);
+  }
+
   // Load to loader spinner
   public void load(View view) {
-    loaderSpinner.setVisibility(View.VISIBLE);
+    mLoaderSpinner.setVisibility(View.VISIBLE);
 
     // Trying to disable all the background and put a grey transparent shadow over the whole view
     /*
@@ -161,12 +216,6 @@ public class MainActivity extends Activity {
     */
   }
 
-
-  @Override
-  protected void onDestroy() {
-    eventBus.unregister(this);
-    super.onDestroy();
-  }
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
@@ -221,10 +270,10 @@ public class MainActivity extends Activity {
         startActivity(new Intent(this, SettingsActivity.class));
         return true;
       case R.id.action_save_preset:
-        dialogSavePreset.show();
+        mDialogSavePreset.show();
         return true;
       case R.id.action_sync_presets:
-        load(loaderSpinner);
+        load(mLoaderSpinner);
 
         return true;
 
@@ -237,6 +286,34 @@ public class MainActivity extends Activity {
   public void setTitle(CharSequence title) {
     mTitle = title;
     getActionBar().setTitle(mTitle);
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    eventBus.register(this);
+  }
+
+  @Override
+  protected void onPause() {
+    super.onPause();
+    eventBus.unregister(this);
+  }
+
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+    if (mDatabaseHelper != null) {
+      OpenHelperManager.releaseHelper();
+      mDatabaseHelper = null;
+    }
+  }
+
+  private DatabaseOrmLiteHelper getHelper() {
+    if (mDatabaseHelper == null) {
+      mDatabaseHelper = OpenHelperManager.getHelper(this, DatabaseOrmLiteHelper.class);
+    }
+    return mDatabaseHelper;
   }
 
   private void showToast(String msg, int length) {
