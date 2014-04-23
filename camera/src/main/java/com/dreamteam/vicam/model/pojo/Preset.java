@@ -55,8 +55,8 @@ public class Preset implements Identifiable {
     return cameraState;
   }
 
-  public Preset copyWithName(String newName) {
-    return new Preset(id, newName, camera, cameraState);
+  public Copy copy() {
+    return new Copy();
   }
 
   @Override
@@ -68,4 +68,38 @@ public class Preset implements Identifiable {
            ", cameraState=" + cameraState +
            '}';
   }
+
+  public class Copy {
+
+    private String cName;
+    private Camera cCamera;
+    private CameraState cCameraState;
+
+
+    private Copy() {
+      this.cName = name;
+      this.cCamera = camera;
+      this.cCameraState = cameraState;
+    }
+
+    public Copy name(String name) {
+      this.cName = name;
+      return this;
+    }
+
+    public Copy camera(Camera camera) {
+      this.cCamera = camera;
+      return this;
+    }
+
+    public Copy cameraState(CameraState cameraState) {
+      this.cCameraState = cameraState;
+      return this;
+    }
+
+    public Preset commit() {
+      return new Preset(id, cName, cCamera, cCameraState);
+    }
+  }
+
 }

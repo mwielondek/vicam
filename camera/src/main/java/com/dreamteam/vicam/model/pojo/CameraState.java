@@ -62,6 +62,10 @@ public class CameraState implements Identifiable {
     return focus.isAutofocus();
   }
 
+  public Copy copy() {
+    return new Copy();
+  }
+
   @Override
   public String toString() {
     return "CameraState{" +
@@ -71,4 +75,38 @@ public class CameraState implements Identifiable {
            ", focus=" + focus +
            '}';
   }
+
+  public class Copy {
+
+    private Position cPosition;
+    private Zoom cZoom;
+    private Focus cFocus;
+
+
+    private Copy() {
+      this.cPosition = position;
+      this.cZoom = zoom;
+      this.cFocus = focus;
+    }
+
+    public Copy position(Position position) {
+      this.cPosition = position;
+      return this;
+    }
+
+    public Copy zoom(Zoom zoom) {
+      this.cZoom = zoom;
+      return this;
+    }
+
+    public Copy focus(Focus focus) {
+      this.cFocus = focus;
+      return this;
+    }
+
+    public CameraState commit() {
+      return new CameraState(id, cPosition, cZoom, cFocus);
+    }
+  }
+
 }
