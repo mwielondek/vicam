@@ -1,6 +1,8 @@
 package com.dreamteam.vicam.view;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -14,30 +16,39 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-
 
 import com.dreamteam.camera.R;
+import com.dreamteam.vicam.model.events.CameraChangedEvent;
+import com.dreamteam.vicam.model.events.PresetChangedEvent;
 import com.dreamteam.vicam.model.pojo.Camera;
 import com.dreamteam.vicam.model.pojo.Preset;
+import com.dreamteam.vicam.presenter.utility.Dagger;
+
+import de.greenrobot.event.EventBus;
+
+import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-public class MainActivity extends Activity  {
+public class MainActivity extends Activity {
 
+  @Inject
+  EventBus eventBus;
+
+  private Camera mCurrentCamera;
   private CharSequence mTitle;
   private Preset[] mPresets;
 
   private ActionBarDrawerToggle mDrawerToggle;
+  // TODO: Create CameraArrayAdapter class
   private ArrayAdapter<Camera> mCameraAdapter;
+  // TODO: Create PresetArrayAdapter class
   private ArrayAdapter<Preset> mPresetAdapter;
   private AlertDialog dialogSavePreset;
   private RelativeLayout loaderSpinner;
@@ -56,12 +67,13 @@ public class MainActivity extends Activity  {
   @InjectView(R.id.zoom_value)
   TextView mZoomValue;
 
-
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
+    Dagger.inject(this);
     ButterKnife.inject(this);
+    eventBus.register(this);
     // Sets default values defined in camera_preferences if empty
     PreferenceManager.setDefaultValues(this, R.xml.camera_preferences, false);
     // Get set camera_preferences
@@ -96,8 +108,8 @@ public class MainActivity extends Activity  {
     mCameraAdapter.add(new Camera("localhost", "Camera 6", null));
     mCameraAdapter.add(new Camera("localhost", "Camera 7", null));
 
-    mFocusSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(mFocusValue));
-    mZoomSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(mZoomValue));
+    mFocusSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(SeekBarType.FOCUS));
+    mZoomSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(SeekBarType.ZOOM));
 
 
 
@@ -124,6 +136,8 @@ public class MainActivity extends Activity  {
     loaderSpinner.setVisibility(View.GONE);
 
 
+    mFocusSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(SeekBarType.FOCUS));
+    mZoomSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(SeekBarType.ZOOM));
   }
 
   // Load to loader spinner
@@ -131,6 +145,12 @@ public class MainActivity extends Activity  {
     loaderSpinner.setVisibility(View.VISIBLE);
   }
 
+
+  @Override
+  protected void onDestroy() {
+    eventBus.unregister(this);
+    super.onDestroy();
+  }
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
@@ -145,17 +165,17 @@ public class MainActivity extends Activity  {
 
       spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
         @Override
-        public void onItemSelected(AdapterView<?> arg0, View arg1,
-                                   int arg2, long arg3) {
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+          Camera camera = (Camera) parent.getItemAtPosition(position);
+          updateCamera(camera);
         }
 
         @Override
-        public void onNothingSelected(AdapterView<?> arg0) {
+        public void onNothingSelected(AdapterView<?> parent) {
         }
       });
 
     }
-
     return true;
   }
 
@@ -179,7 +199,7 @@ public class MainActivity extends Activity  {
     if (mDrawerToggle.onOptionsItemSelected(item)) {
       return true;
     }
-    // Handle your other action bar items...
+    // Handle menu items
     switch (item.getItemId()) {
       case R.id.action_settings:
         startActivity(new Intent(this, SettingsActivity.class));
@@ -204,23 +224,37 @@ public class MainActivity extends Activity  {
     getActionBar().setTitle(mTitle);
   }
 
-  /**
-   * Swaps fragments in the main content view
-   */
-  private void selectItem(int position) {
+  private void showToast(String msg, int length) {
+    Toast.makeText(this, msg, length).show();
+  }
 
-    // Shows a toast of the selected preset in main content view
-    Toast.makeText(this, mPresets[position].toString(), Toast.LENGTH_SHORT).show();
-
-    // Closes the drawer
+  private void updatePreset(Preset preset) {
     mDrawerLayout.closeDrawer(mDrawerList);
+    eventBus.post(new PresetChangedEvent(preset));
+  }
+
+  private void updateCamera(Camera camera) {
+    if (camera == null) {
+      throw new IllegalArgumentException("Camera cannot be null!");
+    }
+    mCurrentCamera = camera;
+    eventBus.post(new CameraChangedEvent(camera));
+  }
+
+  public void onEventMainThread(CameraChangedEvent e) {
+    showToast("Current Camera: " + e.camera, Toast.LENGTH_SHORT);
+  }
+
+  public void onEventMainThread(PresetChangedEvent e) {
+    showToast("Selected Preset: " + e.preset, Toast.LENGTH_SHORT);
   }
 
   private class DrawerItemClickListener implements ListView.OnItemClickListener {
 
     @Override
     public void onItemClick(AdapterView parent, View view, int position, long id) {
-      selectItem(position);
+      Preset preset = (Preset) parent.getItemAtPosition(position);
+      updatePreset(preset);
     }
   }
 
@@ -250,15 +284,20 @@ public class MainActivity extends Activity  {
 
   private class SeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
 
-    private final TextView mTextValue;
+    private TextView textValue;
 
-    private SeekBarChangeListener(TextView mTextValue) {
-      this.mTextValue = mTextValue;
+    private SeekBarChangeListener(SeekBarType type) {
+      if (SeekBarType.FOCUS == type) {
+        textValue = mFocusValue;
+      } else if (SeekBarType.ZOOM == type) {
+        textValue = mZoomValue;
+      }
     }
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-      mTextValue.setText(Integer.toString(progress));
+      textValue.setText(Integer.toString(progress));
+      // TODO: Network request updating focus/zoom
     }
 
     @Override
@@ -271,5 +310,7 @@ public class MainActivity extends Activity  {
 
     }
   }
+
+  private enum SeekBarType {FOCUS, ZOOM}
 
 }

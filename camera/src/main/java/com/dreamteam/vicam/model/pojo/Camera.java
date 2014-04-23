@@ -62,10 +62,10 @@ public class Camera {
   }
 
   public String getAddress() {
-    if (ip == null) {
-      return ip;
+    if (port == null) {
+      return String.format("http://%s" , ip);
     }
-    return String.format("%s:%d", ip, port);
+    return String.format("http://%s:%d", ip, port);
   }
 
   @Override
