@@ -143,6 +143,17 @@ public class MainActivity extends Activity {
   // Load to loader spinner
   public void load(View view){
     loaderSpinner.setVisibility(View.VISIBLE);
+
+    // Trying to disable all the background and put a grey transparent shadow over the whole view
+    /*
+    ListView layout = (ListView)findViewById(R.id.navigation_drawer);
+    layout.setEnabled(false);
+
+    for (int i = 0; i < layout.getChildCount(); i++) {
+      View child = layout.getChildAt(i);
+      child.setEnabled(false);
+    }
+    */
   }
 
 
@@ -209,7 +220,6 @@ public class MainActivity extends Activity {
        return true;
       case R.id.action_sync_presets:
         load(loaderSpinner);
-
 
         return true;
 

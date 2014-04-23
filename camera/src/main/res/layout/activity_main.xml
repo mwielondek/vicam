@@ -6,12 +6,15 @@
         android:layout_height="match_parent"
         android:background="#eee">
 
+
+
     <!-- Main content view -->
     <RelativeLayout
             android:id="@+id/content_frame"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:focusableInTouchMode="false">
+            android:focusableInTouchMode="false"
+            >
 
         <include
                 android:layout_width="wrap_content"
@@ -19,6 +22,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:layout_centerVertical="true"
+
                 layout="@layout/toolbox"/>
 
         <ImageView
@@ -47,6 +51,7 @@
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:layout_centerVertical="true"
+            android:layout_alignParentTop="@+id/content_frame"
             layout="@layout/loader_spinner"/>
 
 
