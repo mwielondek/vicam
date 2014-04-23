@@ -4,7 +4,6 @@ import com.dreamteam.vicam.model.pojo.Zoom;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.field.types.IntegerObjectType;
-import com.j256.ormlite.support.DatabaseResults;
 
 import java.sql.SQLException;
 
@@ -13,14 +12,22 @@ import java.sql.SQLException;
  */
 public class ZoomPersister extends IntegerObjectType {
 
+  private static ZoomPersister singleton;
+
   private ZoomPersister() {
     super(SqlType.INTEGER, new Class<?>[]{Zoom.class});
   }
 
+  public static ZoomPersister getSingleton() {
+    if (singleton == null) {
+      singleton = new ZoomPersister();
+    }
+    return singleton;
+  }
+
   @Override
-  public Object resultToSqlArg(FieldType fieldType, DatabaseResults results, int columnPos)
-      throws SQLException {
-    return results.getInt(columnPos);
+  public Object javaToSqlArg(FieldType fieldType, Object javaObject) throws SQLException {
+    return ((Zoom) javaObject).getLevel();
   }
 
   @Override
