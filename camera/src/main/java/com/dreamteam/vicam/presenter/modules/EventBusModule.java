@@ -1,5 +1,7 @@
 package com.dreamteam.vicam.presenter.modules;
 
+import com.dreamteam.vicam.view.MainActivity;
+
 import de.greenrobot.event.EventBus;
 
 import javax.inject.Singleton;
@@ -12,6 +14,7 @@ import dagger.Provides;
  */
 @Module(
     injects = {
+        MainActivity.class
     },
     complete = false,
     library = true
