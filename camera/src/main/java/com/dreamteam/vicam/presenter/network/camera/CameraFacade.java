@@ -1,6 +1,7 @@
 package com.dreamteam.vicam.presenter.network.camera;
 
 
+import com.dreamteam.vicam.model.errors.NotImplementedException;
 import com.dreamteam.vicam.model.pojo.CameraState;
 import com.dreamteam.vicam.model.pojo.Focus;
 import com.dreamteam.vicam.model.pojo.Position;
@@ -18,6 +19,7 @@ import rx.functions.Func3;
  */
 public class CameraFacade {
 
+  // TODO: Methods returning Observable<String> should return Observable<Boolean> to show whether the action carried out or not.
   private CameraCommands cameraCommands;
 
   public CameraFacade(CameraService cameraService) {
@@ -57,6 +59,11 @@ public class CameraFacade {
   public Observable<String> focusAbsolute(int level) {
     Utils.rangeCheck(level, Focus.LOWER_BOUND, Focus.UPPER_BOUND);
     return cameraCommands.focusAbsolute(level);
+  }
+
+  public Observable<Boolean> setCameraState(CameraState cameraState) {
+    // TODO
+    throw new NotImplementedException();
   }
 
   public Observable<CameraState> getCameraState() {
