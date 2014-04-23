@@ -67,6 +67,11 @@ public class Camera implements Identifiable {
 
   @Override
   public String toString() {
-    return getName();
+    return "Camera{" +
+           "id=" + id +
+           ", ip='" + ip + '\'' +
+           ", name='" + name + '\'' +
+           ", port=" + port +
+           '}';
   }
 }
