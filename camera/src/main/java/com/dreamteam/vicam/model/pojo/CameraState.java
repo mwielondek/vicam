@@ -11,26 +11,31 @@ import com.j256.ormlite.table.DatabaseTable;
 public class CameraState {
 
   @DatabaseField(columnName = "id", generatedId = true)
-  private int id;
-  @DatabaseField(columnName = "position", foreign = true, foreignAutoCreate = true, foreignAutoRefresh = true)
+  private int id = -1;
+  @DatabaseField(columnName = "position", foreign = true, foreignAutoCreate = true,
+                 foreignAutoRefresh = true)
   private Position position;
   @DatabaseField(columnName = "zoom", persisterClass = ZoomPersister.class)
   private Zoom zoom;
-  @DatabaseField(columnName = "focus", foreign = true, foreignAutoCreate = true, foreignAutoRefresh = true)
+  @DatabaseField(columnName = "focus", foreign = true, foreignAutoCreate = true,
+                 foreignAutoRefresh = true)
   private Focus focus;
 
-  public CameraState() {
+  CameraState() {
     // ORMLite needs a no-arg constructor
   }
 
   public CameraState(int id, Position position, Zoom zoom, Focus focus) {
+    this(position, zoom, focus);
     this.id = id;
-    this.position = position;
-    this.zoom = zoom;
-    this.focus = focus;
   }
 
   public CameraState(Position position, Zoom zoom, Focus focus) {
+    if (position == null || zoom == null || focus == null) {
+      throw new IllegalArgumentException(String.format(
+          "No parameters are allowed to be null! (Position(%s), Zoom(%s), Focus(%s))",
+          position, zoom, focus));
+    }
     this.position = position;
     this.zoom = zoom;
     this.focus = focus;

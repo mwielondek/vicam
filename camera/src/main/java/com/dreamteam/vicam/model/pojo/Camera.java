@@ -9,25 +9,29 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable(tableName = "camera")
 public class Camera {
 
+  @DatabaseField(columnName = "id", generatedId = true)
+  private int id = -1;
   @DatabaseField(columnName = "ip", canBeNull = false)
   private String ip;
   @DatabaseField(columnName = "name", unique = true, canBeNull = false)
   private String name;
   @DatabaseField(columnName = "port")
   private Short port;
-  @DatabaseField(columnName = "id", generatedId = true)
-  private int id;
 
-  public Camera() {
+  Camera() {
     // ORMLite needs a no-arg constructor
   }
 
-  public Camera(String ip, String name, Short port, int id) {
+  public Camera(int id, String ip, String name, Short port) {
     this(ip, name, port);
     this.id = id;
   }
 
   public Camera(String ip, String name, Short port) {
+    if (ip == null || name == null) {
+      throw new IllegalArgumentException(String.format(
+          "Name(%s) or IP address(%s) can't be null.", name, ip));
+    }
     this.ip = ip;
     this.name = name;
     this.port = port;
@@ -37,24 +41,12 @@ public class Camera {
     return ip;
   }
 
-  public void setIp(String ip) {
-    this.ip = ip;
-  }
-
   public String getName() {
     return name;
   }
 
-  public void setName(String name) {
-    this.name = name;
-  }
-
   public Short getPort() {
     return port;
-  }
-
-  public void setPort(short port) {
-    this.port = port;
   }
 
   public int getId() {
@@ -63,9 +55,13 @@ public class Camera {
 
   public String getAddress() {
     if (port == null) {
-      return String.format("http://%s" , ip);
+      return String.format("http://%s", ip);
     }
     return String.format("http://%s:%d", ip, port);
+  }
+
+  public Camera copyWithName(String name) {
+    return new Camera(id, ip, name, port);
   }
 
   @Override

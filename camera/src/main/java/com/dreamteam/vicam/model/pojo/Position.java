@@ -13,13 +13,13 @@ public class Position {
   public static final int LOWER_BOUND = 0x0000, UPPER_BOUND = 0xFFFF, MID = 0x8000;
 
   @DatabaseField(columnName = "id", generatedId = true)
-  private int id;
+  private int id = -1;
   @DatabaseField(columnName = "pan")
   private int pan;
   @DatabaseField(columnName = "tilt")
   private int tilt;
 
-  public Position() {
+  Position() {
     // ORMLite needs a no-arg constructor
   }
 
@@ -43,15 +43,7 @@ public class Position {
     return pan;
   }
 
-  public void setPan(int pan) {
-    this.pan = pan;
-  }
-
   public int getTilt() {
     return tilt;
-  }
-
-  public void setTilt(int tilt) {
-    this.tilt = tilt;
   }
 }
