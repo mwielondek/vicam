@@ -18,6 +18,9 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+
 
 import com.dreamteam.camera.R;
 import com.dreamteam.vicam.model.pojo.Camera;
@@ -34,6 +37,7 @@ public class MainActivity extends Activity {
   private ActionBarDrawerToggle mDrawerToggle;
   private ArrayAdapter<Camera> mCameraAdapter;
   private ArrayAdapter<Preset> mPresetAdapter;
+  private AlertDialog dialogSavePreset;
 
   @InjectView(R.id.drawer_layout)
   DrawerLayout mDrawerLayout;
@@ -47,6 +51,7 @@ public class MainActivity extends Activity {
   TextView mFocusValue;
   @InjectView(R.id.zoom_value)
   TextView mZoomValue;
+
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -79,11 +84,39 @@ public class MainActivity extends Activity {
     getActionBar().setDisplayShowTitleEnabled(true);
 
     mCameraAdapter = new ArrayAdapter<Camera>(this, R.layout.change_camera_spinner);
-    mCameraAdapter.add(new Camera("127.0.0.1", "Test :3", null));
-    mCameraAdapter.add(new Camera("localhost", "Test2 >:3", null));
+    mCameraAdapter.add(new Camera("127.0.0.1", "Camera 1", null));
+    mCameraAdapter.add(new Camera("localhost", "Camera 2", null));
+    mCameraAdapter.add(new Camera("localhost", "Camera 3", null));
+    mCameraAdapter.add(new Camera("localhost", "Camera 4", null));
+    mCameraAdapter.add(new Camera("localhost", "Camera 5", null));
+    mCameraAdapter.add(new Camera("localhost", "Camera 6", null));
+    mCameraAdapter.add(new Camera("localhost", "Camera 7", null));
 
     mFocusSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(mFocusValue));
     mZoomSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(mZoomValue));
+
+
+
+    // Init. alert dialog for Save Preset
+    AlertDialog.Builder builderSavePreset = new AlertDialog.Builder(this);
+    builderSavePreset.setMessage(R.string.app_name).setTitle(R.string.app_name);
+
+
+    builderSavePreset.setPositiveButton(R.string.app_name, new DialogInterface.OnClickListener() {
+      public void onClick(DialogInterface dialog, int id) {
+        // User clicked OK button
+      }
+    });
+    builderSavePreset.setNegativeButton(R.string.app_name, new DialogInterface.OnClickListener() {
+      public void onClick(DialogInterface dialog, int id) {
+        // User cancelled the dialog
+      }
+    });
+
+
+
+    dialogSavePreset = builderSavePreset.create();
+
   }
 
   @Override
@@ -109,6 +142,10 @@ public class MainActivity extends Activity {
       });
 
     }
+
+
+
+
     return true;
   }
 
@@ -137,6 +174,9 @@ public class MainActivity extends Activity {
       case R.id.action_settings:
         startActivity(new Intent(this, SettingsActivity.class));
         return true;
+    case R.id.action_save_preset:
+       dialogSavePreset.show();
+       return true;
       default:
         return super.onOptionsItemSelected(item);
     }
