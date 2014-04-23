@@ -40,6 +40,15 @@ public class Position implements Identifiable {
     return id;
   }
 
+  @Override
+  public String toString() {
+    return "Position{" +
+           "id=" + id +
+           ", pan=" + pan +
+           ", tilt=" + tilt +
+           '}';
+  }
+
   public int getPan() {
     return pan;
   }

@@ -61,4 +61,14 @@ public class CameraState implements Identifiable {
   public boolean isAF() {
     return focus.isAutofocus();
   }
+
+  @Override
+  public String toString() {
+    return "CameraState{" +
+           "id=" + id +
+           ", position=" + position +
+           ", zoom=" + zoom +
+           ", focus=" + focus +
+           '}';
+  }
 }

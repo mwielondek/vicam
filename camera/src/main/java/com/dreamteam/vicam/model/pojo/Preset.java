@@ -54,6 +54,10 @@ public class Preset implements Identifiable {
 
   @Override
   public String toString() {
-    return name;
+    return "Preset{" +
+           "id=" + id +
+           ", name='" + name + '\'' +
+           ", state=" + cameraState +
+           '}';
   }
 }

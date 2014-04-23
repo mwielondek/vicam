@@ -46,4 +46,13 @@ public class Focus implements Identifiable {
   public int getLevel() {
     return level;
   }
+
+  @Override
+  public String toString() {
+    return "Focus{" +
+           "id=" + id +
+           ", level=" + level +
+           ", autofocus=" + autofocus +
+           '}';
+  }
 }

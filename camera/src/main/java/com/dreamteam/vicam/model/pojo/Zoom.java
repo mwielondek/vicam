@@ -23,4 +23,11 @@ public class Zoom {
   public void setLevel(int level) {
     this.level = level;
   }
+
+  @Override
+  public String toString() {
+    return "Zoom{" +
+           "level=" + level +
+           '}';
+  }
 }
