@@ -10,7 +10,6 @@ import com.dreamteam.vicam.model.pojo.Focus;
 import com.dreamteam.vicam.model.pojo.Position;
 import com.dreamteam.vicam.model.pojo.Preset;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
-import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
@@ -70,7 +69,7 @@ public class DatabaseOrmLiteHelper extends OrmLiteSqliteOpenHelper implements DA
     if (cameraDao == null) {
       try {
         @SuppressWarnings("unchecked")
-        CameraDAO temp = new CameraDAOImpl(((Dao<Camera, Integer>) getDao(Camera.class)));
+        CameraDAO temp = new CameraDAOImpl(this);
         cameraDao = temp;
       } catch (SQLException e) {
         e.printStackTrace();
@@ -84,7 +83,7 @@ public class DatabaseOrmLiteHelper extends OrmLiteSqliteOpenHelper implements DA
     if (presetDao == null) {
       try {
         @SuppressWarnings("unchecked")
-        PresetDAO temp = new PresetDAOImpl(((Dao<Preset, Integer>) getDao(Preset.class)));
+        PresetDAO temp = new PresetDAOImpl(this);
         presetDao = temp;
       } catch (SQLException e) {
         e.printStackTrace();
