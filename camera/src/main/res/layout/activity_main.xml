@@ -40,4 +40,17 @@
             android:background="#FFF"
             tools:listitem="@layout/drawer_list_item"/>
 
+
+    <include
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_centerVertical="true"
+            layout="@layout/loader_spinner"/>
+
+
+
+
+
 </android.support.v4.widget.DrawerLayout>

@@ -14,6 +14,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -29,7 +31,7 @@ import com.dreamteam.vicam.model.pojo.Preset;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity  {
 
   private CharSequence mTitle;
   private Preset[] mPresets;
@@ -38,6 +40,8 @@ public class MainActivity extends Activity {
   private ArrayAdapter<Camera> mCameraAdapter;
   private ArrayAdapter<Preset> mPresetAdapter;
   private AlertDialog dialogSavePreset;
+  private RelativeLayout loaderSpinner;
+
 
   @InjectView(R.id.drawer_layout)
   DrawerLayout mDrawerLayout;
@@ -99,25 +103,34 @@ public class MainActivity extends Activity {
 
     // Init. alert dialog for Save Preset
     AlertDialog.Builder builderSavePreset = new AlertDialog.Builder(this);
-    builderSavePreset.setMessage(R.string.app_name).setTitle(R.string.app_name);
+    builderSavePreset.setTitle(R.string.dialog_save_preset_title);
 
-
-    builderSavePreset.setPositiveButton(R.string.app_name, new DialogInterface.OnClickListener() {
+    builderSavePreset.setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int id) {
-        // User clicked OK button
+        loaderSpinner.setVisibility(View.GONE);
       }
     });
-    builderSavePreset.setNegativeButton(R.string.app_name, new DialogInterface.OnClickListener() {
+    builderSavePreset.setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int id) {
         // User cancelled the dialog
       }
     });
-
-
-
     dialogSavePreset = builderSavePreset.create();
 
+
+    // Init loader loaderSpinner
+    loaderSpinner = (RelativeLayout)findViewById(R.id.sync_loader);
+
+    loaderSpinner.setVisibility(View.GONE);
+
+
   }
+
+  // Load to loader spinner
+  public void load(View view){
+    loaderSpinner.setVisibility(View.VISIBLE);
+  }
+
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
@@ -142,9 +155,6 @@ public class MainActivity extends Activity {
       });
 
     }
-
-
-
 
     return true;
   }
@@ -177,6 +187,12 @@ public class MainActivity extends Activity {
     case R.id.action_save_preset:
        dialogSavePreset.show();
        return true;
+      case R.id.action_sync_presets:
+        load(loaderSpinner);
+
+
+        return true;
+
       default:
         return super.onOptionsItemSelected(item);
     }
