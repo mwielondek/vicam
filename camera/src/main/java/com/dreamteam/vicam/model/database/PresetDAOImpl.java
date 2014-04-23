@@ -4,6 +4,7 @@ import com.dreamteam.vicam.model.pojo.CameraState;
 import com.dreamteam.vicam.model.pojo.Focus;
 import com.dreamteam.vicam.model.pojo.Position;
 import com.dreamteam.vicam.model.pojo.Preset;
+import com.dreamteam.vicam.presenter.utility.Utils;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.misc.TransactionManager;
@@ -50,6 +51,7 @@ public class PresetDAOImpl implements PresetDAO {
           }
       );
     } catch (SQLException e) {
+      Utils.databaseLog(String.format("Error while inserting preset (%s)", preset), e);
       return -1;
     }
   }
@@ -77,6 +79,7 @@ public class PresetDAOImpl implements PresetDAO {
       );
       return true;
     } catch (SQLException e) {
+      Utils.databaseLog(String.format("Error while updating preset (%s)", preset), e);
       return false;
     }
   }

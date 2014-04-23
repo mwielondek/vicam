@@ -9,6 +9,7 @@ import com.dreamteam.vicam.model.pojo.CameraState;
 import com.dreamteam.vicam.model.pojo.Focus;
 import com.dreamteam.vicam.model.pojo.Position;
 import com.dreamteam.vicam.model.pojo.Preset;
+import com.dreamteam.vicam.presenter.utility.Utils;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
@@ -20,12 +21,9 @@ import java.sql.SQLException;
  */
 public class DatabaseOrmLiteHelper extends OrmLiteSqliteOpenHelper implements DAOFactory {
 
-  // name of the database file for your application -- change to something appropriate for your app
   private static final String DATABASE_NAME = "vicamera.db";
-  // any time you make changes to your database objects, you may have to increase the database version
   private static final int DATABASE_VERSION = 1;
 
-  // the DAO object we use to access the SimpleData table
   private CameraDAO cameraDao;
   private PresetDAO presetDao;
 
@@ -43,7 +41,7 @@ public class DatabaseOrmLiteHelper extends OrmLiteSqliteOpenHelper implements DA
       TableUtils.createTable(connectionSource, Preset.class);
       TableUtils.createTable(connectionSource, Camera.class);
     } catch (SQLException e) {
-      Log.e(getClass().getName(), "Can't create database", e);
+      Utils.databaseLog("Can't create database", e);
       throw new RuntimeException(e);
     }
   }
@@ -72,7 +70,7 @@ public class DatabaseOrmLiteHelper extends OrmLiteSqliteOpenHelper implements DA
         CameraDAO temp = new CameraDAOImpl(this);
         cameraDao = temp;
       } catch (SQLException e) {
-        e.printStackTrace();
+        Utils.databaseLog("Error while getting Camera DAO", e);
       }
     }
     return cameraDao;
@@ -86,7 +84,7 @@ public class DatabaseOrmLiteHelper extends OrmLiteSqliteOpenHelper implements DA
         PresetDAO temp = new PresetDAOImpl(this);
         presetDao = temp;
       } catch (SQLException e) {
-        e.printStackTrace();
+        Utils.databaseLog("Error while getting Preset DAO", e);
       }
     }
     return presetDao;
