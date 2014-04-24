@@ -27,7 +27,11 @@ public class CameraArrayAdapter extends ArrayAdapter<Camera> {
   }
 
   @Override
-  public View getView(int position, View convertView, ViewGroup parent) {
+  public View getDropDownView(int position, View convertView, ViewGroup parent) {
+    return getCustomView(position, convertView, parent);
+  }
+
+  private View getCustomView(int position, View convertView, ViewGroup parent){
     LayoutInflater inflater = (LayoutInflater) context
         .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     View rowView = inflater.inflate(R.layout.change_camera_spinner, parent, false);
@@ -35,5 +39,10 @@ public class CameraArrayAdapter extends ArrayAdapter<Camera> {
     textView.setText(cameras.get(position).getName());
 
     return rowView;
+  }
+
+  @Override
+  public View getView(int position, View convertView, ViewGroup parent) {
+    return getCustomView(position, convertView, parent);
   }
 }
