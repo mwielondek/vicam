@@ -38,6 +38,7 @@ import com.dreamteam.vicam.model.pojo.Preset;
 import com.dreamteam.vicam.model.pojo.Zoom;
 import com.dreamteam.vicam.presenter.utility.Dagger;
 import com.dreamteam.vicam.view.custom.CameraArrayAdapter;
+import com.dreamteam.vicam.view.custom.PresetArrayAdapter;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import de.greenrobot.event.EventBus;
@@ -61,10 +62,8 @@ public class MainActivity extends Activity {
   private List<Preset> mPresets;
 
   private ActionBarDrawerToggle mDrawerToggle;
-  // TODO: Create CameraArrayAdapter class
   private CameraArrayAdapter mCameraAdapter;
-  // TODO: Create PresetArrayAdapter class
-  private ArrayAdapter<Preset> mPresetAdapter;
+  private PresetArrayAdapter mPresetAdapter;
   private AlertDialog mDialogSavePreset;
   private DatabaseOrmLiteHelper mDatabaseHelper;
 
@@ -107,7 +106,7 @@ public class MainActivity extends Activity {
       mPresets = new ArrayList<Preset>();
     }
 
-    mPresetAdapter = new ArrayAdapter<Preset>(this, R.layout.drawer_list_item, mPresets);
+    mPresetAdapter = new PresetArrayAdapter(this, mPresets);
     mDrawerList.setAdapter(mPresetAdapter);
     mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 

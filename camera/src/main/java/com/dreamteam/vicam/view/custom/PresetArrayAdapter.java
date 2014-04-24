@@ -8,21 +8,21 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.dreamteam.camera.R;
-import com.dreamteam.vicam.model.pojo.Camera;
+import com.dreamteam.vicam.model.pojo.Preset;
 
 import java.util.List;
 
 /**
  * Created by Donia on 2014-04-24.
  */
-public class CameraArrayAdapter extends ArrayAdapter<Camera> {
+public class PresetArrayAdapter extends ArrayAdapter<Preset> {
   private final Context context;
-  private final List<Camera> cameras;
+  private final List<Preset> presets;
 
-  public CameraArrayAdapter(Context context, List<Camera> cameras) {
-    super(context, R.layout.drawer_list_item, cameras);
+  public PresetArrayAdapter(Context context, List<Preset> presets) {
+    super(context, R.layout.drawer_list_item, presets);
     this.context = context;
-    this.cameras = cameras;
+    this.presets = presets;
   }
 
   @Override
@@ -35,7 +35,7 @@ public class CameraArrayAdapter extends ArrayAdapter<Camera> {
         .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     View rowView = inflater.inflate(R.layout.drawer_list_item, parent, false);
     TextView textView = (TextView) rowView.findViewById(android.R.id.text1);
-    textView.setText(cameras.get(position).getName());
+    textView.setText(presets.get(position).getName());
 
     return rowView;
   }
