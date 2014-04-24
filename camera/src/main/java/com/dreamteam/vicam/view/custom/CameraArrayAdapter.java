@@ -20,7 +20,7 @@ public class CameraArrayAdapter extends ArrayAdapter<Camera> {
   private final List<Camera> cameras;
 
   public CameraArrayAdapter(Context context, List<Camera> cameras) {
-    super(context, R.layout.drawer_list_item, cameras);
+    super(context, R.layout.change_camera_spinner, cameras);
     this.context = context;
     this.cameras = cameras;
   }
@@ -33,7 +33,7 @@ public class CameraArrayAdapter extends ArrayAdapter<Camera> {
   private View getCustomView(int position, View convertView, ViewGroup parent){
     LayoutInflater inflater = (LayoutInflater) context
         .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-    View rowView = inflater.inflate(R.layout.drawer_list_item, parent, false);
+    View rowView = inflater.inflate(R.layout.change_camera_spinner, parent, false);
     TextView textView = (TextView) rowView.findViewById(android.R.id.text1);
     textView.setText(cameras.get(position).getName());
 

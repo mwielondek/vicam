@@ -34,7 +34,7 @@ public class PresetArrayAdapter extends ArrayAdapter<Preset> {
     LayoutInflater inflater = (LayoutInflater) context
         .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     View rowView = inflater.inflate(R.layout.drawer_list_item, parent, false);
-    TextView textView = (TextView) rowView.findViewById(android.R.id.text1);
+    TextView textView = (TextView) rowView.findViewById(R.id.textView);
     textView.setText(presets.get(position).getName());
 
     return rowView;
