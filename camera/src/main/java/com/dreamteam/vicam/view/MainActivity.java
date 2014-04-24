@@ -37,6 +37,7 @@ import com.dreamteam.vicam.model.pojo.Position;
 import com.dreamteam.vicam.model.pojo.Preset;
 import com.dreamteam.vicam.model.pojo.Zoom;
 import com.dreamteam.vicam.presenter.utility.Dagger;
+import com.dreamteam.vicam.view.custom.CameraArrayAdapter;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import de.greenrobot.event.EventBus;
@@ -61,7 +62,7 @@ public class MainActivity extends Activity {
 
   private ActionBarDrawerToggle mDrawerToggle;
   // TODO: Create CameraArrayAdapter class
-  private ArrayAdapter<Camera> mCameraAdapter;
+  private CameraArrayAdapter mCameraAdapter;
   // TODO: Create PresetArrayAdapter class
   private ArrayAdapter<Preset> mPresetAdapter;
   private AlertDialog mDialogSavePreset;
@@ -103,7 +104,7 @@ public class MainActivity extends Activity {
     if (presets != null) {
       mPresets = presets;
     } else {
-      mPresets = new ArrayList<>();
+      mPresets = new ArrayList<Preset>();
     }
 
     mPresetAdapter = new ArrayAdapter<Preset>(this, R.layout.drawer_list_item, mPresets);
@@ -120,7 +121,7 @@ public class MainActivity extends Activity {
     CameraDAO cameraDao = getHelper().getCameraDAO();
     List<Camera> cameras = cameraDao.getCameras();
     if (cameras == null) {
-      cameras = new ArrayList<>();
+      cameras = new ArrayList<Camera>();
     }
     if (cameras.isEmpty()) {
       cameraDao.insertCamera(new Camera("127.0.0.1", "Camera 1", null));
@@ -130,7 +131,7 @@ public class MainActivity extends Activity {
       cameraDao.insertCamera(new Camera("localhost", "Camera 5", null));
       cameras = cameraDao.getCameras();
     }
-    mCameraAdapter = new ArrayAdapter<Camera>(this, R.layout.change_camera_spinner, cameras);
+    mCameraAdapter = new CameraArrayAdapter(this, cameras);
 
     mFocusSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(SeekBarType.FOCUS));
     mZoomSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(SeekBarType.ZOOM));
