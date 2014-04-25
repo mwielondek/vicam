@@ -2,6 +2,8 @@ package com.dreamteam.vicam.view;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,12 +13,14 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -135,8 +139,13 @@ public class MainActivity extends Activity {
     mFocusSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(SeekBarType.FOCUS));
     mZoomSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(SeekBarType.ZOOM));
 
+
     AlertDialog.Builder builderSavePreset = new AlertDialog.Builder(this);
     builderSavePreset.setTitle(R.string.dialog_save_preset_title);
+
+    // Set an EditText view to get user input
+    final EditText input = new EditText(this);
+    builderSavePreset.setView(input);
 
     builderSavePreset.setPositiveButton(
         R.string.dialog_ok,
@@ -176,6 +185,10 @@ public class MainActivity extends Activity {
       mPresetAdapter.notifyDataSetChanged();
     }
   }
+
+
+
+
 
   @OnClick(R.id.camera_touchpad)
   public void testclick(View v) {
