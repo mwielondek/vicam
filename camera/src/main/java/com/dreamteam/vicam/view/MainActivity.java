@@ -37,7 +37,9 @@ import com.dreamteam.vicam.model.pojo.CameraState;
 import com.dreamteam.vicam.model.pojo.Focus;
 import com.dreamteam.vicam.model.pojo.Position;
 import com.dreamteam.vicam.model.pojo.Preset;
+import com.dreamteam.vicam.model.pojo.Speed;
 import com.dreamteam.vicam.model.pojo.Zoom;
+import com.dreamteam.vicam.presenter.CameraServiceManager;
 import com.dreamteam.vicam.presenter.utility.Dagger;
 import com.dreamteam.vicam.view.custom.CameraArrayAdapter;
 import com.dreamteam.vicam.view.custom.PresetArrayAdapter;
@@ -53,6 +55,9 @@ import javax.inject.Inject;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 public class MainActivity extends Activity {
 
@@ -124,13 +129,58 @@ public class MainActivity extends Activity {
         float eventX = motionEvent.getX();
         float eventY = motionEvent.getY();
 
-        int normX = (int) (eventX/mTouchpad.getWidth()*99 + 1);
-        int normY = (int) (eventY/mTouchpad.getHeight()*99 + 1);
+        int normX = (int) (eventX / mTouchpad.getWidth() * 99 + 1);
+        int normY = (int) (eventY / mTouchpad.getHeight() * 99 + 1);
 
-        showToast("Coordinatez: " + normX + "," + normY, Toast.LENGTH_SHORT);
+        if(normX < 1 || normX > 99 || normY < 1 || normY > 99){
+          return false;
+        }
 
+        switch (motionEvent.getAction()) {
+          case MotionEvent.ACTION_DOWN:
+          case MotionEvent.ACTION_MOVE:
+            CameraServiceManager.getFacadeFor(mCurrentCamera)
+                .moveStart(new Speed(normX, normY))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.newThread())
+                .subscribe(
+                    new Action1<String>() {
+                      @Override
+                      public void call(String s) {
+                        showToast("debug", Toast.LENGTH_SHORT);
+                      }
+                    }
+                    , new Action1<Throwable>() {
+                      @Override
+                      public void call(Throwable throwable) {
+                        showToast("ERRRR", Toast.LENGTH_SHORT);
+                      }
+                    }
+                );
+            return true;
+          case MotionEvent.ACTION_UP:
+            CameraServiceManager.getFacadeFor(mCurrentCamera)
+                .moveStop()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.newThread()).subscribe(
+                new Action1<String>() {
+                  @Override
+                  public void call(String s) {
+                    showToast("debugstop", Toast.LENGTH_SHORT);
+                  }
+                }
+                , new Action1<Throwable>() {
+                  @Override
+                  public void call(Throwable throwable) {
+                    showToast("ERRRRsnopp", Toast.LENGTH_SHORT);
+                  }
+                }
+            );
+            return true;
+          default:
+            return false;
+        }
 
-        return false;
       }
     });
 
@@ -155,7 +205,6 @@ public class MainActivity extends Activity {
 
     mFocusSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(SeekBarType.FOCUS));
     mZoomSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(SeekBarType.ZOOM));
-
 
     AlertDialog.Builder builderSavePreset = new AlertDialog.Builder(this);
     builderSavePreset.setTitle(R.string.dialog_save_preset_title);
