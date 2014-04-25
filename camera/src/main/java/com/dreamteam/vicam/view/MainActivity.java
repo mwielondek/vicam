@@ -17,6 +17,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -146,8 +147,13 @@ public class MainActivity extends Activity {
     mFocusSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(SeekBarType.FOCUS));
     mZoomSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(SeekBarType.ZOOM));
 
+
     AlertDialog.Builder builderSavePreset = new AlertDialog.Builder(this);
     builderSavePreset.setTitle(R.string.dialog_save_preset_title);
+
+    // Set an EditText view to get user input
+    final EditText input = new EditText(this);
+    builderSavePreset.setView(input);
 
     builderSavePreset.setPositiveButton(
         R.string.dialog_ok,
@@ -226,7 +232,6 @@ public class MainActivity extends Activity {
     }
     */
   }
-
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
