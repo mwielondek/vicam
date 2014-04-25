@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -40,6 +39,7 @@ import com.dreamteam.vicam.model.pojo.Preset;
 import com.dreamteam.vicam.model.pojo.Speed;
 import com.dreamteam.vicam.model.pojo.Zoom;
 import com.dreamteam.vicam.presenter.CameraServiceManager;
+import com.dreamteam.vicam.presenter.network.camera.CameraFacade;
 import com.dreamteam.vicam.presenter.utility.Dagger;
 import com.dreamteam.vicam.view.custom.CameraArrayAdapter;
 import com.dreamteam.vicam.view.custom.PresetArrayAdapter;
@@ -104,8 +104,9 @@ public class MainActivity extends Activity {
 
     mTitle = getString(R.string.app_name);
 
-    CameraState dummy = new CameraState(
-        new Position(0x8000, 0x8000), new Zoom(0x555), new Focus(0x555, true));
+    getActionBar().setDisplayHomeAsUpEnabled(true);
+    getActionBar().setHomeButtonEnabled(true);
+    getActionBar().setDisplayShowTitleEnabled(true);
 
     PresetDAO presetDao = getHelper().getPresetDAO();
     List<Preset> presets = presetDao.getPresets();
@@ -131,14 +132,14 @@ public class MainActivity extends Activity {
         int normX = (int) (eventX / mTouchpad.getWidth() * 99 + 1);
         int normY = (int) (eventY / mTouchpad.getHeight() * 99 + 1);
 
-        if(normX < 1 || normX > 99 || normY < 1 || normY > 99){
+        if (normX < 1 || normX > 99 || normY < 1 || normY > 99) {
           return false;
         }
 
         switch (motionEvent.getAction()) {
           case MotionEvent.ACTION_DOWN:
           case MotionEvent.ACTION_MOVE:
-            CameraServiceManager.getFacadeFor(mCurrentCamera)
+            getFacade()
                 .moveStart(new Speed(normX, normY))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.newThread())
@@ -158,7 +159,7 @@ public class MainActivity extends Activity {
                 );
             return true;
           case MotionEvent.ACTION_UP:
-            CameraServiceManager.getFacadeFor(mCurrentCamera)
+            getFacade()
                 .moveStop()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.newThread()).subscribe(
@@ -171,7 +172,7 @@ public class MainActivity extends Activity {
                 , new Action1<Throwable>() {
                   @Override
                   public void call(Throwable throwable) {
-                    showToast("ERRRRsnopp", Toast.LENGTH_SHORT);
+                    showToast("ERRRRopp", Toast.LENGTH_SHORT);
                   }
                 }
             );
@@ -179,13 +180,8 @@ public class MainActivity extends Activity {
           default:
             return false;
         }
-
       }
     });
-
-    getActionBar().setDisplayHomeAsUpEnabled(true);
-    getActionBar().setHomeButtonEnabled(true);
-    getActionBar().setDisplayShowTitleEnabled(true);
 
     CameraDAO cameraDao = getHelper().getCameraDAO();
     List<Camera> cameras = cameraDao.getCameras();
@@ -196,8 +192,6 @@ public class MainActivity extends Activity {
       cameraDao.insertCamera(new Camera("127.0.0.1", "Camera 1", null));
       cameraDao.insertCamera(new Camera("localhost", "Camera 2", null));
       cameraDao.insertCamera(new Camera("localhost", "Camera 3", null));
-      cameraDao.insertCamera(new Camera("localhost", "Camera 4", null));
-      cameraDao.insertCamera(new Camera("localhost", "Camera 5", null));
       cameras = cameraDao.getCameras();
     }
     mCameraAdapter = new CameraArrayAdapter(this, cameras);
@@ -251,43 +245,21 @@ public class MainActivity extends Activity {
     }
   }
 
-  //@OnClick(R.id.camera_touchpad)
-  public void testclick(View v) {
-    // Temporary for testing only!
+  public void updatePreset(Preset preset) {
     PresetDAO presetDao = getHelper().getPresetDAO();
-    Preset prevPreset = presetDao.findPreset(1); // will cause NPE if Preset with ID 1 doesn't exist
-    Log.i("CUSTOM", String.format("getCamera(%s)", prevPreset.getCamera()));
-    Preset newPreset = prevPreset.copy()
-        .name(prevPreset.getName() + "3")
-        .cameraState(prevPreset.getCameraState().copy()
-                         .zoom(new Zoom(0x666))
-                         .commit())
-        .commit();
-    presetDao.updatePreset(newPreset);
+    presetDao.updatePreset(preset);
     for (int i = 0; i < mPresets.size(); i++) {
-      if (mPresets.get(i).getId() == newPreset.getId()) {
-        mPresets.set(i, newPreset);
+      if (mPresets.get(i).getId() == preset.getId()) {
+        mPresets.set(i, preset);
         break;
       }
     }
     mPresetAdapter.notifyDataSetChanged();
-    showToast("Updated preset!", Toast.LENGTH_SHORT);
   }
 
   // Load to loader spinner
   public void load(View view) {
     mLoaderSpinner.setVisibility(View.VISIBLE);
-
-    // Trying to disable all the background and put a grey transparent shadow over the whole view
-    /*
-    ListView layout = (ListView)findViewById(R.id.navigation_drawer);
-    layout.setEnabled(false);
-
-    for (int i = 0; i < layout.getChildCount(); i++) {
-      View child = layout.getChildAt(i);
-      child.setEnabled(false);
-    }
-    */
   }
 
   @Override
@@ -296,23 +268,22 @@ public class MainActivity extends Activity {
     getMenuInflater().inflate(R.menu.main, menu);
 
     MenuItem cameraSpinner = menu.findItem(R.id.action_change_camera);
-    View spinnerView = cameraSpinner.getActionView();
-    if (spinnerView instanceof Spinner) {
-      final Spinner spinner = (Spinner) spinnerView;
+    View view = cameraSpinner.getActionView();
+    if (view instanceof Spinner) {
+      Spinner spinner = (Spinner) view;
       spinner.setAdapter(mCameraAdapter);
 
       spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
           Camera camera = (Camera) parent.getItemAtPosition(position);
-          updateCamera(camera);
+          changeCamera(camera);
         }
 
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
         }
       });
-
     }
     return true;
   }
@@ -347,9 +318,7 @@ public class MainActivity extends Activity {
         return true;
       case R.id.action_sync_presets:
         load(mLoaderSpinner);
-
         return true;
-
       default:
         return super.onOptionsItemSelected(item);
     }
@@ -389,16 +358,15 @@ public class MainActivity extends Activity {
     return mDatabaseHelper;
   }
 
+  private CameraFacade getFacade() {
+    return CameraServiceManager.getFacadeFor(mCurrentCamera);
+  }
+
   private void showToast(String msg, int length) {
     Toast.makeText(this, msg, length).show();
   }
 
-  private void updatePreset(Preset preset) {
-    mDrawerLayout.closeDrawer(mDrawerList);
-    eventBus.post(new PresetChangedEvent(preset));
-  }
-
-  private void updateCamera(Camera camera) {
+  private void changeCamera(Camera camera) {
     if (camera == null) {
       throw new IllegalArgumentException("Camera cannot be null!");
     }
@@ -419,7 +387,8 @@ public class MainActivity extends Activity {
     @Override
     public void onItemClick(AdapterView parent, View view, int position, long id) {
       Preset preset = (Preset) parent.getItemAtPosition(position);
-      updatePreset(preset);
+      mDrawerLayout.closeDrawer(mDrawerList);
+      eventBus.post(new PresetChangedEvent(preset));
     }
   }
 
@@ -450,10 +419,7 @@ public class MainActivity extends Activity {
   private class SeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
 
     private TextView textValue;
-
     private SeekBarType seekBarType;
-
-
 
     private SeekBarChangeListener(SeekBarType type) {
       seekBarType = type;
@@ -467,14 +433,13 @@ public class MainActivity extends Activity {
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
       textValue.setText(Integer.toString(progress));
-      // TODO: Network request updating focus/zoom
-      int normProgress = progress*10+0x555;
-      if(normProgress < 0x555 || normProgress > 0xfff){
+      int normProgress = progress * 10 + 0x555;
+      if (normProgress < 0x555 || normProgress > 0xfff) {
         return;
       }
 
-      if(seekBarType == SeekBarType.ZOOM){
-        CameraServiceManager.getFacadeFor(mCurrentCamera)
+      if (seekBarType == SeekBarType.ZOOM) {
+        getFacade()
             .zoomAbsolute(normProgress)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.newThread())
@@ -492,8 +457,8 @@ public class MainActivity extends Activity {
                   }
                 }
             );
-      }else if (seekBarType == SeekBarType.FOCUS){
-        CameraServiceManager.getFacadeFor(mCurrentCamera)
+      } else if (seekBarType == SeekBarType.FOCUS) {
+        getFacade()
             .focusAbsolute(normProgress)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.newThread())
