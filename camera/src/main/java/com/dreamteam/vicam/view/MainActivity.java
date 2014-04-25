@@ -13,10 +13,11 @@ import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -81,6 +82,8 @@ public class MainActivity extends Activity {
   TextView mFocusValue;
   @InjectView(R.id.zoom_value)
   TextView mZoomValue;
+  @InjectView(R.id.camera_touchpad)
+  ImageView mTouchpad;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +115,14 @@ public class MainActivity extends Activity {
 
     mDrawerToggle = new DrawerToggle(this, mDrawerLayout);
     mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+    mTouchpad.setOnTouchListener(new View.OnTouchListener() {
+      @Override
+      public boolean onTouch(View view, MotionEvent motionEvent) {
+        // TODO
+        return false;
+      }
+    });
 
     getActionBar().setDisplayHomeAsUpEnabled(true);
     getActionBar().setHomeButtonEnabled(true);
