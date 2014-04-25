@@ -106,7 +106,7 @@ public class MainActivity extends Activity {
     getActionBar().setHomeButtonEnabled(true);
     getActionBar().setDisplayShowTitleEnabled(true);
 
-    PresetDAO presetDao = getHelper().getPresetDAO();
+    PresetDAO presetDao = getDatabase().getPresetDAO();
     List<Preset> presets = presetDao.getPresets();
     if (presets != null) {
       mPresets = presets;
@@ -180,7 +180,7 @@ public class MainActivity extends Activity {
       }
     });
 
-    CameraDAO cameraDao = getHelper().getCameraDAO();
+    CameraDAO cameraDao = getDatabase().getCameraDAO();
     List<Camera> cameras = cameraDao.getCameras();
     if (cameras == null) {
       cameras = new ArrayList<Camera>();
@@ -232,14 +232,14 @@ public class MainActivity extends Activity {
   }
 
   public void insertPreset(Preset preset) {
-    PresetDAO presetDao = getHelper().getPresetDAO();
+    PresetDAO presetDao = getDatabase().getPresetDAO();
     presetDao.insertPreset(preset);
     mPresets.add(preset);
     mPresetAdapter.notifyDataSetChanged();
   }
 
   public void updatePreset(Preset preset) {
-    PresetDAO presetDao = getHelper().getPresetDAO();
+    PresetDAO presetDao = getDatabase().getPresetDAO();
     presetDao.updatePreset(preset);
     for (int i = 0; i < mPresets.size(); i++) {
       if (mPresets.get(i).getId() == preset.getId()) {
@@ -251,7 +251,7 @@ public class MainActivity extends Activity {
   }
 
   public void deletePreset(Preset preset) {
-    PresetDAO presetDao = getHelper().getPresetDAO();
+    PresetDAO presetDao = getDatabase().getPresetDAO();
     presetDao.deletePreset(preset.getId());
     for (int i = 0; i < mPresets.size(); i++) {
       if (mPresets.get(i).getId() == preset.getId()) {
@@ -356,7 +356,7 @@ public class MainActivity extends Activity {
     }
   }
 
-  private DatabaseOrmLiteHelper getHelper() {
+  private DatabaseOrmLiteHelper getDatabase() {
     if (mDatabaseHelper == null) {
       mDatabaseHelper = OpenHelperManager.getHelper(this, DatabaseOrmLiteHelper.class);
     }
