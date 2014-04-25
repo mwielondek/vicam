@@ -121,6 +121,12 @@ public class MainActivity extends Activity {
       @Override
       public boolean onTouch(View view, MotionEvent motionEvent) {
         // TODO
+
+        float eventX = motionEvent.getX();
+        float eventY = motionEvent.getY();
+
+        showToast("Coordinatez: " + eventX + "," + eventY, Toast.LENGTH_SHORT);
+
         return false;
       }
     });
@@ -194,7 +200,7 @@ public class MainActivity extends Activity {
     }
   }
 
-  @OnClick(R.id.camera_touchpad)
+  //@OnClick(R.id.camera_touchpad)
   public void testclick(View v) {
     // Temporary for testing only!
     PresetDAO presetDao = getHelper().getPresetDAO();
