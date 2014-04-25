@@ -121,11 +121,14 @@ public class MainActivity extends Activity {
       @Override
       public boolean onTouch(View view, MotionEvent motionEvent) {
         // TODO
-
         float eventX = motionEvent.getX();
         float eventY = motionEvent.getY();
 
-        showToast("Coordinatez: " + eventX + "," + eventY, Toast.LENGTH_SHORT);
+        int normX = (int) (eventX/mTouchpad.getWidth()*99 + 1);
+        int normY = (int) (eventY/mTouchpad.getHeight()*99 + 1);
+
+        showToast("Coordinatez: " + normX + "," + normY, Toast.LENGTH_SHORT);
+
 
         return false;
       }
