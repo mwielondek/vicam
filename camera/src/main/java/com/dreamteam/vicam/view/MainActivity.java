@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -34,6 +35,7 @@ import com.dreamteam.vicam.model.events.PresetChangedEvent;
 import com.dreamteam.vicam.model.pojo.Camera;
 import com.dreamteam.vicam.model.pojo.Preset;
 import com.dreamteam.vicam.model.pojo.Speed;
+import com.dreamteam.vicam.model.pojo.Zoom;
 import com.dreamteam.vicam.presenter.CameraServiceManager;
 import com.dreamteam.vicam.presenter.network.camera.CameraFacade;
 import com.dreamteam.vicam.presenter.utility.Dagger;
@@ -125,10 +127,11 @@ public class MainActivity extends Activity {
         float eventX = motionEvent.getX();
         float eventY = motionEvent.getY();
 
-        int normX = (int) (eventX / mTouchpad.getWidth() * 99 + 1);
-        int normY = (int) (eventY / mTouchpad.getHeight() * 99 + 1);
+        int normX = (int) (eventX / mTouchpad.getWidth() * Speed.UPPER_BOUND + Speed.LOWER_BOUND);
+        int normY = (int) (eventY / mTouchpad.getHeight() * Speed.UPPER_BOUND + Speed.LOWER_BOUND);
 
-        if (normX < 1 || normX > 99 || normY < 1 || normY > 99) {
+        if (normX < Speed.LOWER_BOUND || normX > Speed.UPPER_BOUND
+            || normY < Speed.LOWER_BOUND || normY > Speed.UPPER_BOUND) {
           return false;
         }
 
@@ -145,8 +148,7 @@ public class MainActivity extends Activity {
                       public void call(String s) {
                         showToast("debug", Toast.LENGTH_SHORT);
                       }
-                    }
-                    , new Action1<Throwable>() {
+                    }, new Action1<Throwable>() {
                       @Override
                       public void call(Throwable throwable) {
                         showToast("ERRRR", Toast.LENGTH_SHORT);
@@ -164,8 +166,7 @@ public class MainActivity extends Activity {
                   public void call(String s) {
                     showToast("debugstop", Toast.LENGTH_SHORT);
                   }
-                }
-                , new Action1<Throwable>() {
+                }, new Action1<Throwable>() {
                   @Override
                   public void call(Throwable throwable) {
                     showToast("ERRRRopp", Toast.LENGTH_SHORT);
@@ -437,10 +438,10 @@ public class MainActivity extends Activity {
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
       textValue.setText(Integer.toString(progress));
-      int normProgress = progress * 10 + 0x555;
-      if (normProgress < 0x555 || normProgress > 0xfff) {
-        return;
-      }
+      int normProgress = progress
+                         * (Zoom.UPPER_BOUND - Zoom.LOWER_BOUND) / seekBar.getMax()
+                         + Zoom.LOWER_BOUND;
+      Log.i("CUSTOM", "Normalized progress: " + normProgress);
 
       if (seekBarType == SeekBarType.ZOOM) {
         getFacade()
@@ -453,8 +454,7 @@ public class MainActivity extends Activity {
                   public void call(String s) {
                     showToast("debugZ", Toast.LENGTH_SHORT);
                   }
-                }
-                , new Action1<Throwable>() {
+                }, new Action1<Throwable>() {
                   @Override
                   public void call(Throwable throwable) {
                     showToast("ZOOM", Toast.LENGTH_SHORT);
@@ -472,8 +472,7 @@ public class MainActivity extends Activity {
                   public void call(String s) {
                     showToast("debugF", Toast.LENGTH_SHORT);
                   }
-                }
-                , new Action1<Throwable>() {
+                }, new Action1<Throwable>() {
                   @Override
                   public void call(Throwable throwable) {
                     showToast("FOCUS", Toast.LENGTH_SHORT);
