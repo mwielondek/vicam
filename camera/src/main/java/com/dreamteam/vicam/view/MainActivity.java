@@ -32,12 +32,8 @@ import com.dreamteam.vicam.model.database.PresetDAO;
 import com.dreamteam.vicam.model.events.CameraChangedEvent;
 import com.dreamteam.vicam.model.events.PresetChangedEvent;
 import com.dreamteam.vicam.model.pojo.Camera;
-import com.dreamteam.vicam.model.pojo.CameraState;
-import com.dreamteam.vicam.model.pojo.Focus;
-import com.dreamteam.vicam.model.pojo.Position;
 import com.dreamteam.vicam.model.pojo.Preset;
 import com.dreamteam.vicam.model.pojo.Speed;
-import com.dreamteam.vicam.model.pojo.Zoom;
 import com.dreamteam.vicam.presenter.CameraServiceManager;
 import com.dreamteam.vicam.presenter.network.camera.CameraFacade;
 import com.dreamteam.vicam.presenter.utility.Dagger;
@@ -231,18 +227,14 @@ public class MainActivity extends Activity {
 
   @OnClick(R.id.one_touch_autofocus)
   public void OneTouchAutofocusClick(Button button) {
-    // Temporary for testing only!
-    Preset preset = new Preset("Preset " + (int) (1 + Math.random() * 100),
-                               mCurrentCamera,
-                               new CameraState(new Position(0x8500, 0x9500),
-                                               new Zoom(0xFFF),
-                                               new Focus(0xFFF, false))
-    );
-    int id = getHelper().getPresetDAO().insertPreset(preset);
-    if (id > 0) {
-      mPresets.add(preset);
-      mPresetAdapter.notifyDataSetChanged();
-    }
+
+  }
+
+  public void insertPreset(Preset preset) {
+    PresetDAO presetDao = getHelper().getPresetDAO();
+    presetDao.insertPreset(preset);
+    mPresets.add(preset);
+    mPresetAdapter.notifyDataSetChanged();
   }
 
   public void updatePreset(Preset preset) {
@@ -251,6 +243,18 @@ public class MainActivity extends Activity {
     for (int i = 0; i < mPresets.size(); i++) {
       if (mPresets.get(i).getId() == preset.getId()) {
         mPresets.set(i, preset);
+        break;
+      }
+    }
+    mPresetAdapter.notifyDataSetChanged();
+  }
+
+  public void deletePreset(Preset preset) {
+    PresetDAO presetDao = getHelper().getPresetDAO();
+    presetDao.deletePreset(preset.getId());
+    for (int i = 0; i < mPresets.size(); i++) {
+      if (mPresets.get(i).getId() == preset.getId()) {
+        mPresets.remove(i);
         break;
       }
     }
