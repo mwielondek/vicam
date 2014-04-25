@@ -125,7 +125,6 @@ public class MainActivity extends Activity {
     mTouchpad.setOnTouchListener(new View.OnTouchListener() {
       @Override
       public boolean onTouch(View view, MotionEvent motionEvent) {
-        // TODO
         float eventX = motionEvent.getX();
         float eventY = motionEvent.getY();
 
@@ -452,7 +451,12 @@ public class MainActivity extends Activity {
 
     private TextView textValue;
 
+    private SeekBarType seekBarType;
+
+
+
     private SeekBarChangeListener(SeekBarType type) {
+      seekBarType = type;
       if (SeekBarType.FOCUS == type) {
         textValue = mFocusValue;
       } else if (SeekBarType.ZOOM == type) {
@@ -464,6 +468,50 @@ public class MainActivity extends Activity {
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
       textValue.setText(Integer.toString(progress));
       // TODO: Network request updating focus/zoom
+      int normProgress = progress*10+0x555;
+      if(normProgress < 0x555 || normProgress > 0xfff){
+        return;
+      }
+
+      if(seekBarType == SeekBarType.ZOOM){
+        CameraServiceManager.getFacadeFor(mCurrentCamera)
+            .zoomAbsolute(normProgress)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.newThread())
+            .subscribe(
+                new Action1<String>() {
+                  @Override
+                  public void call(String s) {
+                    showToast("debugZ", Toast.LENGTH_SHORT);
+                  }
+                }
+                , new Action1<Throwable>() {
+                  @Override
+                  public void call(Throwable throwable) {
+                    showToast("ZOOM", Toast.LENGTH_SHORT);
+                  }
+                }
+            );
+      }else if (seekBarType == SeekBarType.FOCUS){
+        CameraServiceManager.getFacadeFor(mCurrentCamera)
+            .focusAbsolute(normProgress)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.newThread())
+            .subscribe(
+                new Action1<String>() {
+                  @Override
+                  public void call(String s) {
+                    showToast("debugF", Toast.LENGTH_SHORT);
+                  }
+                }
+                , new Action1<Throwable>() {
+                  @Override
+                  public void call(Throwable throwable) {
+                    showToast("FOCUS", Toast.LENGTH_SHORT);
+                  }
+                }
+            );
+      }
     }
 
     @Override
