@@ -22,7 +22,6 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dreamteam.camera.R;
@@ -81,10 +80,6 @@ public class MainActivity extends Activity {
   SeekBar mFocusSeekBar;
   @InjectView(R.id.zoom_seekbar)
   SeekBar mZoomSeekBar;
-  @InjectView(R.id.focus_value)
-  TextView mFocusValue;
-  @InjectView(R.id.zoom_value)
-  TextView mZoomValue;
   @InjectView(R.id.camera_touchpad)
   ImageView mTouchpad;
 
@@ -422,26 +417,18 @@ public class MainActivity extends Activity {
 
   private class SeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
 
-    private TextView textValue;
     private SeekBarType seekBarType;
 
-    private SeekBarChangeListener(SeekBarType type) {
-      seekBarType = type;
-      if (SeekBarType.FOCUS == type) {
-        textValue = mFocusValue;
-      } else if (SeekBarType.ZOOM == type) {
-        textValue = mZoomValue;
-      }
+    private SeekBarChangeListener(SeekBarType seekBarType) {
+      this.seekBarType = seekBarType;
     }
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-      textValue.setText(Integer.toString(progress));
     }
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-
     }
 
     @Override
