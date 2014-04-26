@@ -38,7 +38,7 @@
             android:id="@+id/focus_seekbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:max="273"/>
+            android:max="@integer/seek_bar_max"/>
     <TextView
             android:id="@+id/focus_value"
             android:text="@string/focus_value"
@@ -58,7 +58,7 @@
             android:id="@+id/zoom_seekbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:max="273"/>
+            android:max="@integer/seek_bar_max"/>
     <TextView
             android:id="@+id/zoom_value"
             android:text="@string/zoom_value"
