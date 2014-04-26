@@ -35,6 +35,7 @@ import com.dreamteam.vicam.presenter.CameraServiceManager;
 import com.dreamteam.vicam.presenter.network.camera.CameraFacade;
 import com.dreamteam.vicam.presenter.utility.Dagger;
 import com.dreamteam.vicam.view.custom.CameraArrayAdapter;
+import com.dreamteam.vicam.view.custom.CameraSpinnerItemListener;
 import com.dreamteam.vicam.view.custom.DrawerToggle;
 import com.dreamteam.vicam.view.custom.PresetArrayAdapter;
 import com.dreamteam.vicam.view.custom.SeekBarChangeListener;
@@ -211,18 +212,7 @@ public class MainActivity extends Activity {
     if (view instanceof Spinner) {
       Spinner spinner = (Spinner) view;
       spinner.setAdapter(mCameraAdapter);
-
-      spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-        @Override
-        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-          Camera camera = (Camera) parent.getItemAtPosition(position);
-          changeCamera(camera);
-        }
-
-        @Override
-        public void onNothingSelected(AdapterView<?> parent) {
-        }
-      });
+      spinner.setOnItemSelectedListener(new CameraSpinnerItemListener());
     }
     return true;
   }
@@ -305,15 +295,8 @@ public class MainActivity extends Activity {
     Toast.makeText(this, msg, length).show();
   }
 
-  private void changeCamera(Camera camera) {
-    if (camera == null) {
-      throw new IllegalArgumentException("Camera cannot be null!");
-    }
-    mCurrentCamera = camera;
-    eventBus.post(new CameraChangedEvent(camera));
-  }
-
   public void onEventMainThread(CameraChangedEvent e) {
+    mCurrentCamera = e.camera;
     showToast("Current Camera: " + e.camera, Toast.LENGTH_SHORT);
   }
 

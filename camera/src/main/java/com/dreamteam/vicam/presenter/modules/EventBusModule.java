@@ -1,6 +1,7 @@
 package com.dreamteam.vicam.presenter.modules;
 
 import com.dreamteam.vicam.view.MainActivity;
+import com.dreamteam.vicam.view.custom.CameraSpinnerItemListener;
 
 import de.greenrobot.event.EventBus;
 
@@ -14,7 +15,8 @@ import dagger.Provides;
  */
 @Module(
     injects = {
-        MainActivity.class
+        MainActivity.class,
+        CameraSpinnerItemListener.class
     },
     complete = false,
     library = true
