@@ -24,7 +24,7 @@ import android.widget.Toast;
 
 import com.dreamteam.camera.R;
 import com.dreamteam.vicam.model.database.CameraDAO;
-import com.dreamteam.vicam.model.database.ormlite.DatabaseOrmLiteHelper;
+import com.dreamteam.vicam.model.database.DAOFactory;
 import com.dreamteam.vicam.model.database.PresetDAO;
 import com.dreamteam.vicam.model.events.CameraChangedEvent;
 import com.dreamteam.vicam.model.events.DrawerCloseEvent;
@@ -41,7 +41,6 @@ import com.dreamteam.vicam.view.custom.DrawerToggle;
 import com.dreamteam.vicam.view.custom.PresetArrayAdapter;
 import com.dreamteam.vicam.view.custom.SeekBarChangeListener;
 import com.dreamteam.vicam.view.custom.TouchpadTouchListener;
-import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import de.greenrobot.event.EventBus;
 
@@ -58,6 +57,8 @@ public class MainActivity extends Activity {
 
   @Inject
   EventBus mEventBus;
+  @Inject
+  DAOFactory mDAOFactory;
 
   private Camera mCurrentCamera;
   private CharSequence mTitle;
@@ -67,7 +68,6 @@ public class MainActivity extends Activity {
   private CameraArrayAdapter mCameraAdapter;
   private PresetArrayAdapter mPresetAdapter;
   private AlertDialog mDialogSavePreset;
-  private DatabaseOrmLiteHelper mDatabaseHelper;
 
   @InjectView(R.id.sync_loader)
   RelativeLayout mLoaderSpinner;
@@ -99,16 +99,15 @@ public class MainActivity extends Activity {
     getActionBar().setHomeButtonEnabled(true);
     getActionBar().setDisplayShowTitleEnabled(true);
 
-    PresetDAO presetDao = getDatabase().getPresetDAO();
+    PresetDAO presetDao = getPresetDAO();
     mPresets = presetDao.getPresets();
     if (mPresets == null) {
       mPresets = new ArrayList<>();
     }
-
     mPresetAdapter = new PresetArrayAdapter(this, mPresets);
+
     mDrawerList.setAdapter(mPresetAdapter);
     mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
-
     mDrawerToggle = new DrawerToggle(this, mDrawerLayout);
     mDrawerLayout.setDrawerListener(mDrawerToggle);
 
@@ -119,7 +118,7 @@ public class MainActivity extends Activity {
 
     mTouchpad.setOnTouchListener(new TouchpadTouchListener(this));
 
-    CameraDAO cameraDao = getDatabase().getCameraDAO();
+    CameraDAO cameraDao = getCameraDAO();
     List<Camera> cameras = cameraDao.getCameras();
     if (cameras == null) {
       cameras = new ArrayList<>();
@@ -134,7 +133,6 @@ public class MainActivity extends Activity {
 
     mDialogSavePreset = createSavePresetDialog();
     mLoaderSpinner.setVisibility(View.GONE);
-
   }
 
   @Override
@@ -209,17 +207,7 @@ public class MainActivity extends Activity {
   @Override
   protected void onDestroy() {
     super.onDestroy();
-    if (mDatabaseHelper != null) {
-      OpenHelperManager.releaseHelper();
-      mDatabaseHelper = null;
-    }
-  }
-
-  private DatabaseOrmLiteHelper getDatabase() {
-    if (mDatabaseHelper == null) {
-      mDatabaseHelper = OpenHelperManager.getHelper(this, DatabaseOrmLiteHelper.class);
-    }
-    return mDatabaseHelper;
+    mDAOFactory.close();
   }
 
   public CameraFacade getFacade() {
@@ -228,6 +216,42 @@ public class MainActivity extends Activity {
 
   public void showToast(String msg, int length) {
     Toast.makeText(this, msg, length).show();
+  }
+
+  @OnClick(R.id.one_touch_autofocus)
+  public void OneTouchAutofocusClick(Button button) {
+
+  }
+
+  public void insertPreset(Preset preset) {
+    PresetDAO presetDao = getPresetDAO();
+    presetDao.insertPreset(preset);
+    mPresets.add(preset);
+    mPresetAdapter.notifyDataSetChanged();
+  }
+
+  public void updatePreset(Preset preset) {
+    PresetDAO presetDao = getPresetDAO();
+    presetDao.updatePreset(preset);
+    for (int i = 0; i < mPresets.size(); i++) {
+      if (mPresets.get(i).getId() == preset.getId()) {
+        mPresets.set(i, preset);
+        break;
+      }
+    }
+    mPresetAdapter.notifyDataSetChanged();
+  }
+
+  public void deletePreset(Preset preset) {
+    PresetDAO presetDao = getPresetDAO();
+    presetDao.deletePreset(preset.getId());
+    for (int i = 0; i < mPresets.size(); i++) {
+      if (mPresets.get(i).getId() == preset.getId()) {
+        mPresets.remove(i);
+        break;
+      }
+    }
+    mPresetAdapter.notifyDataSetChanged();
   }
 
   private AlertDialog createSavePresetDialog() {
@@ -257,42 +281,6 @@ public class MainActivity extends Activity {
     return builderSavePreset.create();
   }
 
-  @OnClick(R.id.one_touch_autofocus)
-  public void OneTouchAutofocusClick(Button button) {
-
-  }
-
-  public void insertPreset(Preset preset) {
-    PresetDAO presetDao = getDatabase().getPresetDAO();
-    presetDao.insertPreset(preset);
-    mPresets.add(preset);
-    mPresetAdapter.notifyDataSetChanged();
-  }
-
-  public void updatePreset(Preset preset) {
-    PresetDAO presetDao = getDatabase().getPresetDAO();
-    presetDao.updatePreset(preset);
-    for (int i = 0; i < mPresets.size(); i++) {
-      if (mPresets.get(i).getId() == preset.getId()) {
-        mPresets.set(i, preset);
-        break;
-      }
-    }
-    mPresetAdapter.notifyDataSetChanged();
-  }
-
-  public void deletePreset(Preset preset) {
-    PresetDAO presetDao = getDatabase().getPresetDAO();
-    presetDao.deletePreset(preset.getId());
-    for (int i = 0; i < mPresets.size(); i++) {
-      if (mPresets.get(i).getId() == preset.getId()) {
-        mPresets.remove(i);
-        break;
-      }
-    }
-    mPresetAdapter.notifyDataSetChanged();
-  }
-
   @SuppressWarnings("unused")
   public void onEventMainThread(CameraChangedEvent e) {
     mCurrentCamera = e.camera;
@@ -307,6 +295,14 @@ public class MainActivity extends Activity {
   @SuppressWarnings("unused")
   public void onEventMainThread(DrawerCloseEvent e) {
     mDrawerLayout.closeDrawer(mDrawerList);
+  }
+
+  private CameraDAO getCameraDAO() {
+    return mDAOFactory.getCameraDAO();
+  }
+
+  private PresetDAO getPresetDAO() {
+    return mDAOFactory.getPresetDAO();
   }
 
 }

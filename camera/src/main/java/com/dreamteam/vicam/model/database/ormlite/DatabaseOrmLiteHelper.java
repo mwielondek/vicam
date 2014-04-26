@@ -5,7 +5,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.dreamteam.vicam.model.database.CameraDAO;
-import com.dreamteam.vicam.model.database.DAOFactory;
 import com.dreamteam.vicam.model.database.PresetDAO;
 import com.dreamteam.vicam.model.pojo.Camera;
 import com.dreamteam.vicam.model.pojo.CameraState;
@@ -22,7 +21,7 @@ import java.sql.SQLException;
 /**
  * Created by fsommar on 2014-04-03.
  */
-public class DatabaseOrmLiteHelper extends OrmLiteSqliteOpenHelper implements DAOFactory {
+public class DatabaseOrmLiteHelper extends OrmLiteSqliteOpenHelper {
 
   private static final String DATABASE_NAME = "vicamera.db";
   private static final int DATABASE_VERSION = 1;
@@ -65,7 +64,6 @@ public class DatabaseOrmLiteHelper extends OrmLiteSqliteOpenHelper implements DA
     presetDao = null;
   }
 
-  @Override
   public CameraDAO getCameraDAO() {
     if (cameraDao == null) {
       try {
@@ -79,7 +77,6 @@ public class DatabaseOrmLiteHelper extends OrmLiteSqliteOpenHelper implements DA
     return cameraDao;
   }
 
-  @Override
   public PresetDAO getPresetDAO() {
     if (presetDao == null) {
       try {

@@ -7,7 +7,8 @@ import dagger.Module;
  */
 @Module(
     includes = {
-        EventBusModule.class
+        EventBusModule.class,
+        DAOFactoryModule.class
     }
 )
 public class MainModule {
