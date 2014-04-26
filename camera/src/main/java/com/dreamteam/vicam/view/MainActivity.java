@@ -35,6 +35,7 @@ import com.dreamteam.vicam.presenter.CameraServiceManager;
 import com.dreamteam.vicam.presenter.network.camera.CameraFacade;
 import com.dreamteam.vicam.presenter.utility.Dagger;
 import com.dreamteam.vicam.view.custom.CameraArrayAdapter;
+import com.dreamteam.vicam.view.custom.DrawerToggle;
 import com.dreamteam.vicam.view.custom.PresetArrayAdapter;
 import com.dreamteam.vicam.view.custom.SeekBarChangeListener;
 import com.dreamteam.vicam.view.custom.TouchpadTouchListener;
@@ -327,30 +328,6 @@ public class MainActivity extends Activity {
       Preset preset = (Preset) parent.getItemAtPosition(position);
       mDrawerLayout.closeDrawer(mDrawerList);
       eventBus.post(new PresetChangedEvent(preset));
-    }
-  }
-
-  private class DrawerToggle extends ActionBarDrawerToggle {
-
-    private DrawerToggle(Activity activity, DrawerLayout drawerLayout) {
-      super(activity, drawerLayout, R.drawable.ic_drawer, R.string.drawer_open,
-            R.string.drawer_close);
-    }
-
-    /**
-     * Called when a drawer has settled in a completely closed state.
-     */
-    @Override
-    public void onDrawerClosed(View view) {
-      getActionBar().setTitle(getString(R.string.app_name));
-    }
-
-    /**
-     * Called when a drawer has settled in a completely open state.
-     */
-    @Override
-    public void onDrawerOpened(View view) {
-      getActionBar().setTitle(getString(R.string.change_preset));
     }
   }
 }
