@@ -2,7 +2,8 @@ package com.dreamteam.vicam.view;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
+import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -14,7 +15,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -39,6 +39,7 @@ import com.dreamteam.vicam.view.custom.CameraSpinnerItemListener;
 import com.dreamteam.vicam.view.custom.DrawerItemClickListener;
 import com.dreamteam.vicam.view.custom.DrawerToggle;
 import com.dreamteam.vicam.view.custom.PresetArrayAdapter;
+import com.dreamteam.vicam.view.custom.SavePresetDialogFragment;
 import com.dreamteam.vicam.view.custom.SeekBarChangeListener;
 import com.dreamteam.vicam.view.custom.TouchpadTouchListener;
 
@@ -67,6 +68,8 @@ public class MainActivity extends Activity {
   private ActionBarDrawerToggle mDrawerToggle;
   private CameraArrayAdapter mCameraAdapter;
   private PresetArrayAdapter mPresetAdapter;
+  private SavePresetDialogFragment mSavePresetDialogFragment;
+
   private AlertDialog mDialogSavePreset;
 
   @InjectView(R.id.sync_loader)
@@ -132,7 +135,12 @@ public class MainActivity extends Activity {
     }
     mCameraAdapter = new CameraArrayAdapter(this, cameras);
 
-    mDialogSavePreset = createSavePresetDialog();
+
+    // Init. Save Preset Dialog
+    mSavePresetDialogFragment = new SavePresetDialogFragment((Context)this);
+    mSavePresetDialogFragment.onCreateDialog(savedInstanceState);
+
+    // Init. value of loading spinner
     mLoaderSpinner.setVisibility(View.GONE);
   }
 
@@ -177,7 +185,8 @@ public class MainActivity extends Activity {
         startActivity(new Intent(this, SettingsActivity.class));
         return true;
       case R.id.action_save_preset:
-        mDialogSavePreset.show();
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        mSavePresetDialogFragment.show(ft, "Alert Dialog");
         return true;
       case R.id.action_sync_presets:
         mLoaderSpinner.setVisibility(View.VISIBLE);
@@ -256,35 +265,6 @@ public class MainActivity extends Activity {
       }
     }
     mPresetAdapter.notifyDataSetChanged();
-  }
-
-  // TODO: Move this to its own class
-  private AlertDialog createSavePresetDialog() {
-    AlertDialog.Builder builderSavePreset = new AlertDialog.Builder(this);
-    builderSavePreset.setTitle(R.string.dialog_save_preset_title);
-
-    // Set an EditText view to get user input
-    final EditText input = new EditText(this);
-    builderSavePreset.setView(input);
-
-    builderSavePreset.setPositiveButton(
-        R.string.dialog_ok,
-        new DialogInterface.OnClickListener() {
-          public void onClick(DialogInterface dialog, int id) {
-            mLoaderSpinner.setVisibility(View.GONE);
-            // TODO: get camera state and save preset with name from "input"
-          }
-        }
-    );
-    builderSavePreset.setNegativeButton(
-        R.string.dialog_cancel,
-        new DialogInterface.OnClickListener() {
-          public void onClick(DialogInterface dialog, int id) {
-            // User cancelled the dialog
-          }
-        }
-    );
-    return builderSavePreset.create();
   }
 
   @SuppressWarnings("unused")

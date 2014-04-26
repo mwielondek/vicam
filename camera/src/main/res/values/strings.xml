@@ -28,6 +28,6 @@
     <string name="focus_value">Focus Value</string>
     <string name="dialog_ok">Ok</string>
     <string name="dialog_cancel">Cancel</string>
-    <string name="dialog_save_preset_title">Choose a name...</string>
+    <string name="dialog_save_preset_placeholder">Enter new preset name...</string>
 
 </resources>
