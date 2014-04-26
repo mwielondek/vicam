@@ -33,12 +33,12 @@ import com.dreamteam.vicam.model.events.PresetChangedEvent;
 import com.dreamteam.vicam.model.pojo.Camera;
 import com.dreamteam.vicam.model.pojo.Preset;
 import com.dreamteam.vicam.model.pojo.Speed;
-import com.dreamteam.vicam.model.pojo.Zoom;
 import com.dreamteam.vicam.presenter.CameraServiceManager;
 import com.dreamteam.vicam.presenter.network.camera.CameraFacade;
 import com.dreamteam.vicam.presenter.utility.Dagger;
 import com.dreamteam.vicam.view.custom.CameraArrayAdapter;
 import com.dreamteam.vicam.view.custom.PresetArrayAdapter;
+import com.dreamteam.vicam.view.custom.SeekBarChangeListener;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import de.greenrobot.event.EventBus;
@@ -115,6 +115,9 @@ public class MainActivity extends Activity {
     mDrawerToggle = new DrawerToggle(this, mDrawerLayout);
     mDrawerLayout.setDrawerListener(mDrawerToggle);
 
+    mFocusSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(this, SeekBarChangeListener.Type.FOCUS));
+    mZoomSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(this, SeekBarChangeListener.Type.ZOOM));
+
     mTouchpad.setOnTouchListener(new View.OnTouchListener() {
       @Override
       public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -187,9 +190,6 @@ public class MainActivity extends Activity {
     }
     mCameraAdapter = new CameraArrayAdapter(this, cameras);
 
-    mFocusSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(SeekBarType.FOCUS));
-    mZoomSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(SeekBarType.ZOOM));
-
     AlertDialog.Builder builderSavePreset = new AlertDialog.Builder(this);
     builderSavePreset.setTitle(R.string.dialog_save_preset_title);
 
@@ -216,8 +216,6 @@ public class MainActivity extends Activity {
     mDialogSavePreset = builderSavePreset.create();
     mLoaderSpinner.setVisibility(View.GONE);
 
-    mFocusSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(SeekBarType.FOCUS));
-    mZoomSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(SeekBarType.ZOOM));
   }
 
   @OnClick(R.id.one_touch_autofocus)
@@ -357,11 +355,11 @@ public class MainActivity extends Activity {
     return mDatabaseHelper;
   }
 
-  private CameraFacade getFacade() {
+  public CameraFacade getFacade() {
     return CameraServiceManager.getFacadeFor(mCurrentCamera);
   }
 
-  private void showToast(String msg, int length) {
+  public void showToast(String msg, int length) {
     Toast.makeText(this, msg, length).show();
   }
 
@@ -414,69 +412,4 @@ public class MainActivity extends Activity {
       getActionBar().setTitle(getString(R.string.change_preset));
     }
   }
-
-  private class SeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
-
-    private SeekBarType seekBarType;
-
-    private SeekBarChangeListener(SeekBarType seekBarType) {
-      this.seekBarType = seekBarType;
-    }
-
-    @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-    }
-
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
-    }
-
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
-      int normProgress = seekBar.getProgress()
-                         * Zoom.RANGE / seekBar.getMax()
-                         + Zoom.LOWER_BOUND;
-
-      if (seekBarType == SeekBarType.ZOOM) {
-        getFacade()
-            .zoomAbsolute(normProgress)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(Schedulers.newThread())
-            .subscribe(
-                new Action1<String>() {
-                  @Override
-                  public void call(String s) {
-                    showToast("debugZ", Toast.LENGTH_SHORT);
-                  }
-                }, new Action1<Throwable>() {
-                  @Override
-                  public void call(Throwable throwable) {
-                    showToast("ZOOM", Toast.LENGTH_SHORT);
-                  }
-                }
-            );
-      } else if (seekBarType == SeekBarType.FOCUS) {
-        getFacade()
-            .focusAbsolute(normProgress)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(Schedulers.newThread())
-            .subscribe(
-                new Action1<String>() {
-                  @Override
-                  public void call(String s) {
-                    showToast("debugF", Toast.LENGTH_SHORT);
-                  }
-                }, new Action1<Throwable>() {
-                  @Override
-                  public void call(Throwable throwable) {
-                    showToast("FOCUS", Toast.LENGTH_SHORT);
-                  }
-                }
-            );
-      }
-    }
-  }
-
-  private enum SeekBarType {FOCUS, ZOOM}
-
 }
