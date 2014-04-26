@@ -1,7 +1,6 @@
 package com.dreamteam.vicam.presenter.network.camera;
 
 
-import com.dreamteam.vicam.model.errors.NotImplementedException;
 import com.dreamteam.vicam.model.pojo.CameraState;
 import com.dreamteam.vicam.model.pojo.Focus;
 import com.dreamteam.vicam.model.pojo.Position;
@@ -13,6 +12,7 @@ import rx.Observable;
 import rx.functions.Func1;
 import rx.functions.Func2;
 import rx.functions.Func3;
+import rx.functions.Func4;
 
 /**
  * Created by fsommar on 2014-04-01.
@@ -62,8 +62,19 @@ public class CameraFacade {
   }
 
   public Observable<Boolean> setCameraState(CameraState cameraState) {
-    // TODO
-    throw new NotImplementedException();
+    Position pos = cameraState.getPosition();
+    int zoom = cameraState.getZoom().getLevel();
+    int focus = cameraState.getFocus().getLevel();
+    boolean autofocus = cameraState.isAF();
+    return Observable.zip(
+        moveAbsolute(pos), zoomAbsolute(zoom), focusAbsolute(focus), setAF(autofocus),
+        new Func4<String, String, String, String, Boolean>() {
+          @Override
+          public Boolean call(String s, String s2, String s3, String s4) {
+            return true;
+          }
+        }
+    );
   }
 
   public Observable<CameraState> getCameraState() {
@@ -97,6 +108,10 @@ public class CameraFacade {
         return new Zoom(level);
       }
     });
+  }
+
+  public Observable<String> setAF(boolean enabled) {
+    return enabled ? cameraCommands.focusAuto() : cameraCommands.focusManual();
   }
 
 }
