@@ -8,6 +8,7 @@ import com.dreamteam.vicam.presenter.utility.Utils;
 public class Zoom {
 
   public static final int LOWER_BOUND = 0x555, UPPER_BOUND = 0xFFF;
+  public static final int RANGE = UPPER_BOUND - LOWER_BOUND;
 
   private int level;
 

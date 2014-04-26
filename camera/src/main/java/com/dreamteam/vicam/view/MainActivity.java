@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -438,10 +437,18 @@ public class MainActivity extends Activity {
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
       textValue.setText(Integer.toString(progress));
-      int normProgress = progress
-                         * (Zoom.UPPER_BOUND - Zoom.LOWER_BOUND) / seekBar.getMax()
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+      int normProgress = seekBar.getProgress()
+                         * Zoom.RANGE / seekBar.getMax()
                          + Zoom.LOWER_BOUND;
-      Log.i("CUSTOM", "Normalized progress: " + normProgress);
 
       if (seekBarType == SeekBarType.ZOOM) {
         getFacade()
@@ -480,16 +487,6 @@ public class MainActivity extends Activity {
                 }
             );
       }
-    }
-
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
-
-    }
-
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
-
     }
   }
 
