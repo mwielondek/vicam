@@ -13,7 +13,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -28,6 +27,7 @@ import com.dreamteam.vicam.model.database.CameraDAO;
 import com.dreamteam.vicam.model.database.DatabaseOrmLiteHelper;
 import com.dreamteam.vicam.model.database.PresetDAO;
 import com.dreamteam.vicam.model.events.CameraChangedEvent;
+import com.dreamteam.vicam.model.events.DrawerCloseEvent;
 import com.dreamteam.vicam.model.events.PresetChangedEvent;
 import com.dreamteam.vicam.model.pojo.Camera;
 import com.dreamteam.vicam.model.pojo.Preset;
@@ -36,6 +36,7 @@ import com.dreamteam.vicam.presenter.network.camera.CameraFacade;
 import com.dreamteam.vicam.presenter.utility.Dagger;
 import com.dreamteam.vicam.view.custom.CameraArrayAdapter;
 import com.dreamteam.vicam.view.custom.CameraSpinnerItemListener;
+import com.dreamteam.vicam.view.custom.DrawerItemClickListener;
 import com.dreamteam.vicam.view.custom.DrawerToggle;
 import com.dreamteam.vicam.view.custom.PresetArrayAdapter;
 import com.dreamteam.vicam.view.custom.SeekBarChangeListener;
@@ -56,7 +57,7 @@ import butterknife.OnClick;
 public class MainActivity extends Activity {
 
   @Inject
-  EventBus eventBus;
+  EventBus mEventBus;
 
   private Camera mCurrentCamera;
   private CharSequence mTitle;
@@ -99,11 +100,9 @@ public class MainActivity extends Activity {
     getActionBar().setDisplayShowTitleEnabled(true);
 
     PresetDAO presetDao = getDatabase().getPresetDAO();
-    List<Preset> presets = presetDao.getPresets();
-    if (presets != null) {
-      mPresets = presets;
-    } else {
-      mPresets = new ArrayList<Preset>();
+    mPresets = presetDao.getPresets();
+    if (mPresets == null) {
+      mPresets = new ArrayList<>();
     }
 
     mPresetAdapter = new PresetArrayAdapter(this, mPresets);
@@ -123,7 +122,7 @@ public class MainActivity extends Activity {
     CameraDAO cameraDao = getDatabase().getCameraDAO();
     List<Camera> cameras = cameraDao.getCameras();
     if (cameras == null) {
-      cameras = new ArrayList<Camera>();
+      cameras = new ArrayList<>();
     }
     if (cameras.isEmpty()) {
       cameraDao.insertCamera(new Camera("127.0.0.1", "Camera 1", null));
@@ -133,73 +132,9 @@ public class MainActivity extends Activity {
     }
     mCameraAdapter = new CameraArrayAdapter(this, cameras);
 
-    AlertDialog.Builder builderSavePreset = new AlertDialog.Builder(this);
-    builderSavePreset.setTitle(R.string.dialog_save_preset_title);
-
-    // Set an EditText view to get user input
-    final EditText input = new EditText(this);
-    builderSavePreset.setView(input);
-
-    builderSavePreset.setPositiveButton(
-        R.string.dialog_ok,
-        new DialogInterface.OnClickListener() {
-          public void onClick(DialogInterface dialog, int id) {
-            mLoaderSpinner.setVisibility(View.GONE);
-          }
-        }
-    );
-    builderSavePreset.setNegativeButton(
-        R.string.dialog_cancel,
-        new DialogInterface.OnClickListener() {
-          public void onClick(DialogInterface dialog, int id) {
-            // User cancelled the dialog
-          }
-        }
-    );
-    mDialogSavePreset = builderSavePreset.create();
+    mDialogSavePreset = createSavePresetDialog();
     mLoaderSpinner.setVisibility(View.GONE);
 
-  }
-
-  @OnClick(R.id.one_touch_autofocus)
-  public void OneTouchAutofocusClick(Button button) {
-
-  }
-
-  public void insertPreset(Preset preset) {
-    PresetDAO presetDao = getDatabase().getPresetDAO();
-    presetDao.insertPreset(preset);
-    mPresets.add(preset);
-    mPresetAdapter.notifyDataSetChanged();
-  }
-
-  public void updatePreset(Preset preset) {
-    PresetDAO presetDao = getDatabase().getPresetDAO();
-    presetDao.updatePreset(preset);
-    for (int i = 0; i < mPresets.size(); i++) {
-      if (mPresets.get(i).getId() == preset.getId()) {
-        mPresets.set(i, preset);
-        break;
-      }
-    }
-    mPresetAdapter.notifyDataSetChanged();
-  }
-
-  public void deletePreset(Preset preset) {
-    PresetDAO presetDao = getDatabase().getPresetDAO();
-    presetDao.deletePreset(preset.getId());
-    for (int i = 0; i < mPresets.size(); i++) {
-      if (mPresets.get(i).getId() == preset.getId()) {
-        mPresets.remove(i);
-        break;
-      }
-    }
-    mPresetAdapter.notifyDataSetChanged();
-  }
-
-  // Load to loader spinner
-  public void load(View view) {
-    mLoaderSpinner.setVisibility(View.VISIBLE);
   }
 
   @Override
@@ -246,7 +181,7 @@ public class MainActivity extends Activity {
         mDialogSavePreset.show();
         return true;
       case R.id.action_sync_presets:
-        load(mLoaderSpinner);
+        mLoaderSpinner.setVisibility(View.VISIBLE);
         return true;
       default:
         return super.onOptionsItemSelected(item);
@@ -262,13 +197,13 @@ public class MainActivity extends Activity {
   @Override
   protected void onResume() {
     super.onResume();
-    eventBus.register(this);
+    mEventBus.register(this);
   }
 
   @Override
   protected void onPause() {
     super.onPause();
-    eventBus.unregister(this);
+    mEventBus.unregister(this);
   }
 
   @Override
@@ -295,22 +230,83 @@ public class MainActivity extends Activity {
     Toast.makeText(this, msg, length).show();
   }
 
+  private AlertDialog createSavePresetDialog() {
+    AlertDialog.Builder builderSavePreset = new AlertDialog.Builder(this);
+    builderSavePreset.setTitle(R.string.dialog_save_preset_title);
+
+    // Set an EditText view to get user input
+    final EditText input = new EditText(this);
+    builderSavePreset.setView(input);
+
+    builderSavePreset.setPositiveButton(
+        R.string.dialog_ok,
+        new DialogInterface.OnClickListener() {
+          public void onClick(DialogInterface dialog, int id) {
+            mLoaderSpinner.setVisibility(View.GONE);
+          }
+        }
+    );
+    builderSavePreset.setNegativeButton(
+        R.string.dialog_cancel,
+        new DialogInterface.OnClickListener() {
+          public void onClick(DialogInterface dialog, int id) {
+            // User cancelled the dialog
+          }
+        }
+    );
+    return builderSavePreset.create();
+  }
+
+  @OnClick(R.id.one_touch_autofocus)
+  public void OneTouchAutofocusClick(Button button) {
+
+  }
+
+  public void insertPreset(Preset preset) {
+    PresetDAO presetDao = getDatabase().getPresetDAO();
+    presetDao.insertPreset(preset);
+    mPresets.add(preset);
+    mPresetAdapter.notifyDataSetChanged();
+  }
+
+  public void updatePreset(Preset preset) {
+    PresetDAO presetDao = getDatabase().getPresetDAO();
+    presetDao.updatePreset(preset);
+    for (int i = 0; i < mPresets.size(); i++) {
+      if (mPresets.get(i).getId() == preset.getId()) {
+        mPresets.set(i, preset);
+        break;
+      }
+    }
+    mPresetAdapter.notifyDataSetChanged();
+  }
+
+  public void deletePreset(Preset preset) {
+    PresetDAO presetDao = getDatabase().getPresetDAO();
+    presetDao.deletePreset(preset.getId());
+    for (int i = 0; i < mPresets.size(); i++) {
+      if (mPresets.get(i).getId() == preset.getId()) {
+        mPresets.remove(i);
+        break;
+      }
+    }
+    mPresetAdapter.notifyDataSetChanged();
+  }
+
+  @SuppressWarnings("unused")
   public void onEventMainThread(CameraChangedEvent e) {
     mCurrentCamera = e.camera;
     showToast("Current Camera: " + e.camera, Toast.LENGTH_SHORT);
   }
 
+  @SuppressWarnings("unused")
   public void onEventMainThread(PresetChangedEvent e) {
     showToast("Selected Preset: " + e.preset, Toast.LENGTH_SHORT);
   }
 
-  private class DrawerItemClickListener implements ListView.OnItemClickListener {
-
-    @Override
-    public void onItemClick(AdapterView parent, View view, int position, long id) {
-      Preset preset = (Preset) parent.getItemAtPosition(position);
-      mDrawerLayout.closeDrawer(mDrawerList);
-      eventBus.post(new PresetChangedEvent(preset));
-    }
+  @SuppressWarnings("unused")
+  public void onEventMainThread(DrawerCloseEvent e) {
+    mDrawerLayout.closeDrawer(mDrawerList);
   }
+
 }

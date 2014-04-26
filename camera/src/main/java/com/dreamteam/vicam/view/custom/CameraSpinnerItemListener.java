@@ -16,7 +16,7 @@ import javax.inject.Inject;
  */
 public class CameraSpinnerItemListener implements AdapterView.OnItemSelectedListener {
   @Inject
-  EventBus eventBus;
+  EventBus mEventBus;
 
   public CameraSpinnerItemListener() {
     Dagger.inject(this);
@@ -26,7 +26,7 @@ public class CameraSpinnerItemListener implements AdapterView.OnItemSelectedList
   public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
     Camera camera = (Camera) parent.getItemAtPosition(position);
     if (camera != null) {
-      eventBus.post(new CameraChangedEvent(camera));
+      mEventBus.post(new CameraChangedEvent(camera));
     }
   }
 
