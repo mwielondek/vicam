@@ -92,6 +92,7 @@ public class MainActivity extends Activity {
     PreferenceManager.setDefaultValues(this, R.xml.camera_preferences, false);
     // Get set camera_preferences
     SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+    // TODO: restore selected camera position from shared preferences
 
     mTitle = getString(R.string.app_name);
 
@@ -196,6 +197,8 @@ public class MainActivity extends Activity {
   protected void onResume() {
     super.onResume();
     mEventBus.register(this);
+    // TODO: Fetch CameraState from camera and update the GUI
+    // If it doesn't work, use some indication for it
   }
 
   @Override
@@ -208,6 +211,7 @@ public class MainActivity extends Activity {
   protected void onDestroy() {
     super.onDestroy();
     mDAOFactory.close();
+    // TODO: save selected camera in shared preferences
   }
 
   public CameraFacade getFacade() {
@@ -254,6 +258,7 @@ public class MainActivity extends Activity {
     mPresetAdapter.notifyDataSetChanged();
   }
 
+  // TODO: Move this to its own class
   private AlertDialog createSavePresetDialog() {
     AlertDialog.Builder builderSavePreset = new AlertDialog.Builder(this);
     builderSavePreset.setTitle(R.string.dialog_save_preset_title);
@@ -267,6 +272,7 @@ public class MainActivity extends Activity {
         new DialogInterface.OnClickListener() {
           public void onClick(DialogInterface dialog, int id) {
             mLoaderSpinner.setVisibility(View.GONE);
+            // TODO: get camera state and save preset with name from "input"
           }
         }
     );
