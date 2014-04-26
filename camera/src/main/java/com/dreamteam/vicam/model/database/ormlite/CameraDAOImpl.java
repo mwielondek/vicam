@@ -1,5 +1,6 @@
-package com.dreamteam.vicam.model.database;
+package com.dreamteam.vicam.model.database.ormlite;
 
+import com.dreamteam.vicam.model.database.CameraDAO;
 import com.dreamteam.vicam.model.pojo.Camera;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;

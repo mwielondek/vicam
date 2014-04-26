@@ -1,9 +1,12 @@
-package com.dreamteam.vicam.model.database;
+package com.dreamteam.vicam.model.database.ormlite;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.dreamteam.vicam.model.database.CameraDAO;
+import com.dreamteam.vicam.model.database.DAOFactory;
+import com.dreamteam.vicam.model.database.PresetDAO;
 import com.dreamteam.vicam.model.pojo.Camera;
 import com.dreamteam.vicam.model.pojo.CameraState;
 import com.dreamteam.vicam.model.pojo.Focus;

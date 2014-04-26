@@ -1,5 +1,6 @@
-package com.dreamteam.vicam.model.database;
+package com.dreamteam.vicam.model.database.ormlite;
 
+import com.dreamteam.vicam.model.database.PresetDAO;
 import com.dreamteam.vicam.model.pojo.CameraState;
 import com.dreamteam.vicam.model.pojo.Focus;
 import com.dreamteam.vicam.model.pojo.Position;

@@ -24,7 +24,7 @@ import android.widget.Toast;
 
 import com.dreamteam.camera.R;
 import com.dreamteam.vicam.model.database.CameraDAO;
-import com.dreamteam.vicam.model.database.DatabaseOrmLiteHelper;
+import com.dreamteam.vicam.model.database.ormlite.DatabaseOrmLiteHelper;
 import com.dreamteam.vicam.model.database.PresetDAO;
 import com.dreamteam.vicam.model.events.CameraChangedEvent;
 import com.dreamteam.vicam.model.events.DrawerCloseEvent;
