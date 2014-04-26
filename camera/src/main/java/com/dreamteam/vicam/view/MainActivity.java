@@ -12,7 +12,6 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -32,13 +31,13 @@ import com.dreamteam.vicam.model.events.CameraChangedEvent;
 import com.dreamteam.vicam.model.events.PresetChangedEvent;
 import com.dreamteam.vicam.model.pojo.Camera;
 import com.dreamteam.vicam.model.pojo.Preset;
-import com.dreamteam.vicam.model.pojo.Speed;
 import com.dreamteam.vicam.presenter.CameraServiceManager;
 import com.dreamteam.vicam.presenter.network.camera.CameraFacade;
 import com.dreamteam.vicam.presenter.utility.Dagger;
 import com.dreamteam.vicam.view.custom.CameraArrayAdapter;
 import com.dreamteam.vicam.view.custom.PresetArrayAdapter;
 import com.dreamteam.vicam.view.custom.SeekBarChangeListener;
+import com.dreamteam.vicam.view.custom.TouchpadTouchListener;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import de.greenrobot.event.EventBus;
@@ -51,9 +50,6 @@ import javax.inject.Inject;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 
 public class MainActivity extends Activity {
 
@@ -115,67 +111,12 @@ public class MainActivity extends Activity {
     mDrawerToggle = new DrawerToggle(this, mDrawerLayout);
     mDrawerLayout.setDrawerListener(mDrawerToggle);
 
-    mFocusSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(this, SeekBarChangeListener.Type.FOCUS));
-    mZoomSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(this, SeekBarChangeListener.Type.ZOOM));
+    mFocusSeekBar.setOnSeekBarChangeListener(
+        new SeekBarChangeListener(this, SeekBarChangeListener.Type.FOCUS));
+    mZoomSeekBar.setOnSeekBarChangeListener(
+        new SeekBarChangeListener(this, SeekBarChangeListener.Type.ZOOM));
 
-    mTouchpad.setOnTouchListener(new View.OnTouchListener() {
-      @Override
-      public boolean onTouch(View view, MotionEvent motionEvent) {
-        float eventX = motionEvent.getX();
-        float eventY = motionEvent.getY();
-
-        int normX = (int) (eventX / mTouchpad.getWidth() * Speed.UPPER_BOUND + Speed.LOWER_BOUND);
-        int normY = (int) (eventY / mTouchpad.getHeight() * Speed.UPPER_BOUND + Speed.LOWER_BOUND);
-
-        if (normX < Speed.LOWER_BOUND || normX > Speed.UPPER_BOUND
-            || normY < Speed.LOWER_BOUND || normY > Speed.UPPER_BOUND) {
-          return false;
-        }
-
-        switch (motionEvent.getAction()) {
-          case MotionEvent.ACTION_DOWN:
-          case MotionEvent.ACTION_MOVE:
-            getFacade()
-                .moveStart(new Speed(normX, normY))
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.newThread())
-                .subscribe(
-                    new Action1<String>() {
-                      @Override
-                      public void call(String s) {
-                        showToast("debug", Toast.LENGTH_SHORT);
-                      }
-                    }, new Action1<Throwable>() {
-                      @Override
-                      public void call(Throwable throwable) {
-                        showToast("ERRRR", Toast.LENGTH_SHORT);
-                      }
-                    }
-                );
-            return true;
-          case MotionEvent.ACTION_UP:
-            getFacade()
-                .moveStop()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.newThread()).subscribe(
-                new Action1<String>() {
-                  @Override
-                  public void call(String s) {
-                    showToast("debugstop", Toast.LENGTH_SHORT);
-                  }
-                }, new Action1<Throwable>() {
-                  @Override
-                  public void call(Throwable throwable) {
-                    showToast("ERRRRopp", Toast.LENGTH_SHORT);
-                  }
-                }
-            );
-            return true;
-          default:
-            return false;
-        }
-      }
-    });
+    mTouchpad.setOnTouchListener(new TouchpadTouchListener(this));
 
     CameraDAO cameraDao = getDatabase().getCameraDAO();
     List<Camera> cameras = cameraDao.getCameras();
