@@ -20,8 +20,6 @@ public class SavePresetDialogFragment extends DialogFragment {
 
   public SavePresetDialogFragment(Context context) {
     mMainActivity = (Activity) context;
-
-
   }
 
   @Override

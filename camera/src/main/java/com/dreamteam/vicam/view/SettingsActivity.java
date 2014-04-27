@@ -24,9 +24,11 @@ public class SettingsActivity extends PreferenceActivity {
   @Override
   public void onBuildHeaders(List<Header> target) {
     loadHeadersFromResource(R.xml.preference_headers, target);
+
   }
 
   public static class CameraFragment extends PreferenceFragment {
+
 
     public CameraFragment() {
     }
@@ -34,9 +36,8 @@ public class SettingsActivity extends PreferenceActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
-
-      // Load the camera_preferences from an XML resource
       addPreferencesFromResource(R.xml.camera_preferences);
+      //setContentView(R.layout.camera_preferences_buttons);
     }
   }
 

@@ -22,7 +22,8 @@
         <activity
                 android:name="com.dreamteam.vicam.view.SettingsActivity"
                 android:label="@string/title_activity_settings"
-                android:parentActivityName="com.dreamteam.vicam.view.MainActivity">
+                android:parentActivityName="com.dreamteam.vicam.view.MainActivity"
+                android:screenOrientation="landscape">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value="MainActivity"/>
