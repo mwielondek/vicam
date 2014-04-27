@@ -29,5 +29,6 @@
     <string name="dialog_ok">Ok</string>
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_save_preset_placeholder">Enter new preset name...</string>
+    <string name="add_new_camera">Add new camera</string>
 
 </resources>
