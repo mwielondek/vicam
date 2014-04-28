@@ -29,8 +29,13 @@ import com.dreamteam.vicam.model.database.PresetDAO;
 import com.dreamteam.vicam.model.events.CameraChangedEvent;
 import com.dreamteam.vicam.model.events.DrawerCloseEvent;
 import com.dreamteam.vicam.model.events.PresetChangedEvent;
+import com.dreamteam.vicam.model.events.PresetSaveEvent;
 import com.dreamteam.vicam.model.pojo.Camera;
+import com.dreamteam.vicam.model.pojo.CameraState;
+import com.dreamteam.vicam.model.pojo.Focus;
+import com.dreamteam.vicam.model.pojo.Position;
 import com.dreamteam.vicam.model.pojo.Preset;
+import com.dreamteam.vicam.model.pojo.Zoom;
 import com.dreamteam.vicam.presenter.CameraServiceManager;
 import com.dreamteam.vicam.presenter.network.camera.CameraFacade;
 import com.dreamteam.vicam.presenter.utility.Dagger;
@@ -135,9 +140,8 @@ public class MainActivity extends Activity {
     }
     mCameraAdapter = new CameraArrayAdapter(this, cameras);
 
-
     // Init. Save Preset Dialog
-    mSavePresetDialogFragment = new SavePresetDialogFragment((Context)this);
+    mSavePresetDialogFragment = new SavePresetDialogFragment((Context) this);
     mSavePresetDialogFragment.onCreateDialog(savedInstanceState);
 
     // Init. value of loading spinner
@@ -281,6 +285,15 @@ public class MainActivity extends Activity {
   @SuppressWarnings("unused")
   public void onEventMainThread(DrawerCloseEvent e) {
     mDrawerLayout.closeDrawer(mDrawerList);
+  }
+
+  @SuppressWarnings("unused")
+  public void onEventMainThread(PresetSaveEvent e) {
+    insertPreset(new Preset(e.name, mCurrentCamera,
+                            new CameraState(new Position(0x5000, 0x5000),
+                                            new Zoom(0x666),
+                                            new Focus(0x777, true))
+    ));
   }
 
   private CameraDAO getCameraDAO() {

@@ -3,6 +3,7 @@ package com.dreamteam.vicam.presenter.modules;
 import com.dreamteam.vicam.view.MainActivity;
 import com.dreamteam.vicam.view.custom.CameraSpinnerItemListener;
 import com.dreamteam.vicam.view.custom.DrawerItemClickListener;
+import com.dreamteam.vicam.view.custom.SavePresetDialogFragment;
 
 import de.greenrobot.event.EventBus;
 
@@ -18,7 +19,8 @@ import dagger.Provides;
     injects = {
         MainActivity.class,
         CameraSpinnerItemListener.class,
-        DrawerItemClickListener.class
+        DrawerItemClickListener.class,
+        SavePresetDialogFragment.class
     },
     complete = false,
     library = true
