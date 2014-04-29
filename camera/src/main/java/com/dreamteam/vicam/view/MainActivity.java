@@ -211,7 +211,7 @@ public class MainActivity extends Activity {
     super.onResume();
     mEventBus.register(this);
     // TODO: Fetch CameraState from camera and update the GUI
-    // If it doesn't work, use some indication for it
+    // If it doesn't work, use some indication for it (TODO for GUI)
   }
 
   @Override
@@ -224,6 +224,11 @@ public class MainActivity extends Activity {
   protected void onDestroy() {
     super.onDestroy();
     mDAOFactory.close();
+  }
+
+  @Override
+  protected void onSaveInstanceState(Bundle outState) {
+    super.onSaveInstanceState(outState);
     // TODO: save selected camera in shared preferences
   }
 
@@ -274,6 +279,7 @@ public class MainActivity extends Activity {
   @SuppressWarnings("unused")
   public void onEventMainThread(CameraChangedEvent e) {
     mCurrentCamera = e.camera;
+    // TODO: get current camera state and update GUI
     showToast("Current Camera: " + e.camera, Toast.LENGTH_SHORT);
   }
 
@@ -289,6 +295,8 @@ public class MainActivity extends Activity {
 
   @SuppressWarnings("unused")
   public void onEventMainThread(PresetSaveEvent e) {
+    // TODO: fetch camera state via getFacade and then if successful create a new preset
+    // the code below is only a placeholder
     insertPreset(new Preset(e.name, mCurrentCamera,
                             new CameraState(new Position(0x5000, 0x5000),
                                             new Zoom(0x666),
