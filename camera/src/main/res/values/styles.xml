@@ -12,8 +12,8 @@
         <item name="android:adjustViewBounds">true</item>
         <item name="android:maxWidth">@dimen/touchpad_max_size</item>
         <item name="android:maxHeight">@dimen/touchpad_max_size</item>
-        <item name="android:layout_marginBottom">@dimen/activity_horizontal_margin</item>
-        <item name="android:layout_marginRight">@dimen/activity_horizontal_margin</item>
+        <item name="android:layout_margin">@dimen/activity_horizontal_margin</item>
+        <!--<item name="android:layout_marginRight">@dimen/activity_horizontal_margin</item>-->
     </style>
 
 </resources>
