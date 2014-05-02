@@ -7,7 +7,7 @@
 
 
     <EditText
-            android:id="@+id/add_camera_edittext"
+            android:id="@+id/add_camera_name"
             android:hint="@string/dialog_add_camera_camera_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -19,8 +19,20 @@
             />
 
     <EditText
-            android:id="@+id/add_camera_edittext2"
+            android:id="@+id/add_camera_ip"
             android:hint="@string/dialog_add_camera_ip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginBottom="4dp"
+            android:imeOptions="flagNoExtractUi"
+            />
+
+    <EditText
+            android:id="@+id/add_camera_port"
+            android:hint="@string/dialog_add_camera_port"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
