@@ -10,13 +10,15 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
+import android.os.Handler;
+
 /**
  * Created by fsommar on 2014-04-26.
  */
 public class TouchpadTouchListener implements View.OnTouchListener {
   private final MainActivity activity;
   private final Object lock = new Object();
-  private long lastEventTime;
+  private long lastEventTime = 0;
 
 
   public TouchpadTouchListener(MainActivity activity) {
@@ -27,17 +29,18 @@ public class TouchpadTouchListener implements View.OnTouchListener {
   public boolean onTouch(View view, MotionEvent motionEvent) {
     int delayTime = 130;
 
-
+    /*
+       Delay between each event (onTouch)
+     */
     synchronized (lock) {
-      if (System.currentTimeMillis() - lastEventTime < delayTime) {
-        lastEventTime = System.currentTimeMillis();
+      if (System.currentTimeMillis() - lastEventTime >= delayTime) {
+        System.out.println("Request sent");
+          lastEventTime = System.currentTimeMillis();
       } else {
-        return false;
+          System.out.println("Delay");
+          return false;
       }
     }
-
-
-
 
     float eventX = motionEvent.getX();
     float eventY = motionEvent.getY();
@@ -64,7 +67,7 @@ public class TouchpadTouchListener implements View.OnTouchListener {
                 }, new Action1<Throwable>() {
                   @Override
                   public void call(Throwable throwable) {
-                    activity.showToast("ERRRR", Toast.LENGTH_SHORT);
+                    activity.showToast("MoveDown", Toast.LENGTH_SHORT);
                   }
                 }
             );
