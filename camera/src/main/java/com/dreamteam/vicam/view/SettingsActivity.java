@@ -1,14 +1,27 @@
 package com.dreamteam.vicam.view;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 
 import com.dreamteam.camera.R;
+import com.dreamteam.vicam.view.custom.AddCameraDialogFragment;
 
 import java.util.List;
 
 public class SettingsActivity extends PreferenceActivity {
+
+  private AddCameraDialogFragment mAddCameraDialogFragment;
+
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+
+    // Settings Init. Add camera
+    mAddCameraDialogFragment = new AddCameraDialogFragment((Context)this);
+    mAddCameraDialogFragment.onCreateDialog(savedInstanceState);
+  }
 
   @Override
   public boolean onIsMultiPane() {
@@ -30,6 +43,7 @@ public class SettingsActivity extends PreferenceActivity {
   public static class CameraFragment extends PreferenceFragment {
 
 
+
     public CameraFragment() {
     }
 
@@ -38,6 +52,9 @@ public class SettingsActivity extends PreferenceActivity {
       super.onCreate(savedInstanceState);
       addPreferencesFromResource(R.xml.camera_preferences);
       //setContentView(R.layout.camera_preferences_buttons);
+
+
+
     }
   }
 

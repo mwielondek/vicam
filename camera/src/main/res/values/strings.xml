@@ -29,6 +29,9 @@
     <string name="dialog_ok">Ok</string>
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_save_preset_placeholder">Enter new preset name...</string>
+    <string name="dialog_add_camera_camera_name">Camera name</string>
     <string name="add_new_camera">Add new camera</string>
+    <string name="edit_camera">Edit camera</string>
+    <string name="dialog_add_camera_ip">IP-Address</string>
 
 </resources>

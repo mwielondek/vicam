@@ -19,17 +19,18 @@ import de.greenrobot.event.EventBus;
 
 import javax.inject.Inject;
 
+import dagger.Module;
+
 /**
- * Manages a custom layout for the SavePreset dialog
+ * Manages a custom layout for the Add Camera dialog in settings
  */
-public class SavePresetDialogFragment extends DialogFragment {
+public class AddCameraDialogFragment extends DialogFragment {
 
   Activity mContext;
-  @Inject
-  EventBus eventBus;
 
-  public SavePresetDialogFragment(Context context) {
-    Dagger.inject(this);
+
+  public AddCameraDialogFragment(Context context) {
+
     mContext = (Activity) context;
   }
 
@@ -37,13 +38,13 @@ public class SavePresetDialogFragment extends DialogFragment {
   public Dialog onCreateDialog(Bundle savedInstanceState) {
     AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 
-    // Don't know if title is too much?
-    // builder.setTitle(R.string.dialog_save_preset_title);
-
     // Get the layout inflater
     LayoutInflater inflater = mContext.getLayoutInflater();
-    View view = inflater.inflate(R.layout.dialog_save_preset, null);
-    final EditText editText = (EditText) view.findViewById(R.id.edit_text_save_preset);
+    View view = inflater.inflate(R.layout.dialog_add_camera, null);
+
+    //final EditText addCameraEditText = (EditText) view.findViewById(R.id.add_camera_edittext);
+
+    //final EditText addCameraEditText2 = (EditText) view.findViewById(R.id.add_camera_edittext2);
 
     // Inflate and set the layout for the dialog
     // Pass null as the parent view because its going in the dialog layout
@@ -53,7 +54,7 @@ public class SavePresetDialogFragment extends DialogFragment {
           @Override
           public void onClick(DialogInterface dialog, int id) {
             // Add the preset to database
-            eventBus.post(new PresetSaveEvent(dialog, editText.getText().toString()));
+         //  eventBus.post(new PresetSaveEvent(dialog, addCameraEditText.getText().toString()));
           }
         })
         .setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {

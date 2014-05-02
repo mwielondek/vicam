@@ -3,15 +3,17 @@
             android:title="@string/manage_camera"
             android:key="pref_key_sync_settings">
     </PreferenceCategory>
+
     <EditTextPreference
-        android:title="@string/add_new_camera"
-     />
+            android:title="@string/add_new_camera"
+            android:dialogTitle=""
+            android:dialogLayout="@layout/dialog_add_camera"
+            />
+
     <ListPreference
             android:key="list_preference"
-            android:title="test"
-            android:summary="test2"
-            android:entries="@array/entries_list_preference"
-            android:entryValues="@array/entryvalues_list_preference"
-            android:dialogTitle="test3" />
+            android:title="@string/edit_camera"
+            android:dialogLayout="@layout/dialog_edit_camera"
+            android:dialogTitle="" />
 
 </PreferenceScreen>

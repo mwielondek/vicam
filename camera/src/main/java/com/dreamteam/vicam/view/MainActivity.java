@@ -39,6 +39,7 @@ import com.dreamteam.vicam.model.pojo.Zoom;
 import com.dreamteam.vicam.presenter.CameraServiceManager;
 import com.dreamteam.vicam.presenter.network.camera.CameraFacade;
 import com.dreamteam.vicam.presenter.utility.Dagger;
+import com.dreamteam.vicam.view.custom.AddCameraDialogFragment;
 import com.dreamteam.vicam.view.custom.CameraArrayAdapter;
 import com.dreamteam.vicam.view.custom.CameraSpinnerItemListener;
 import com.dreamteam.vicam.view.custom.DrawerItemClickListener;
@@ -74,6 +75,7 @@ public class MainActivity extends Activity {
   private CameraArrayAdapter mCameraAdapter;
   private PresetArrayAdapter mPresetAdapter;
   private SavePresetDialogFragment mSavePresetDialogFragment;
+
 
   private AlertDialog mDialogSavePreset;
 
@@ -146,6 +148,8 @@ public class MainActivity extends Activity {
 
     // Init. value of loading spinner
     mLoaderSpinner.setVisibility(View.GONE);
+
+
   }
 
   @Override
