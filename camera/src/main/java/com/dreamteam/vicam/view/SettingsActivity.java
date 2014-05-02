@@ -53,8 +53,6 @@ public class SettingsActivity extends PreferenceActivity {
       addPreferencesFromResource(R.xml.camera_preferences);
       //setContentView(R.layout.camera_preferences_buttons);
 
-
-
     }
   }
 

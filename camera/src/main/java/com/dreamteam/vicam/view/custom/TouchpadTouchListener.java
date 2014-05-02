@@ -2,27 +2,42 @@ package com.dreamteam.vicam.view.custom;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
+
 import com.dreamteam.vicam.model.pojo.Speed;
 import com.dreamteam.vicam.view.MainActivity;
+
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
-
-import static java.lang.Thread.sleep;
 
 /**
  * Created by fsommar on 2014-04-26.
  */
 public class TouchpadTouchListener implements View.OnTouchListener {
   private final MainActivity activity;
+  private final Object lock = new Object();
+  private long lastEventTime;
+
+
   public TouchpadTouchListener(MainActivity activity) {
     this.activity = activity;
   }
+
   @Override
   public boolean onTouch(View view, MotionEvent motionEvent) {
+    int delayTime = 130;
 
-    int runTime = 130;
-    long startTime = System.currentTimeMillis();
+
+    synchronized (lock) {
+      if (System.currentTimeMillis() - lastEventTime < delayTime) {
+        lastEventTime = System.currentTimeMillis();
+      } else {
+        return false;
+      }
+    }
+
+
+
 
     float eventX = motionEvent.getX();
     float eventY = motionEvent.getY();
@@ -75,17 +90,14 @@ public class TouchpadTouchListener implements View.OnTouchListener {
             }
           );
 
-        long currentTime = runTime - startTime;
 
-        try {
-          Thread.sleep(currentTime);
-        } catch (InterruptedException e) {
-          e.printStackTrace();
-        }
+
+        lastEventTime = System.currentTimeMillis();
 
         return true;
       default:
         return false;
     }
+
   }
 }

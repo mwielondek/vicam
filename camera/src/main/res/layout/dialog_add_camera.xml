@@ -5,7 +5,6 @@
               android:layout_width="wrap_content"
               android:layout_height="wrap_content">
 
-
     <EditText
             android:id="@+id/add_camera_name"
             android:hint="@string/dialog_add_camera_camera_name"
