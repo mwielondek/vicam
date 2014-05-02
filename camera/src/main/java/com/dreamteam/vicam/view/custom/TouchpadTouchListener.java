@@ -1,4 +1,6 @@
 package com.dreamteam.vicam.view.custom;
+
+import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
@@ -10,15 +12,14 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
-import android.os.Handler;
-
 /**
  * Created by fsommar on 2014-04-26.
  */
 public class TouchpadTouchListener implements View.OnTouchListener {
   private final MainActivity activity;
   private final Object lock = new Object();
-  private long lastEventTime = 0;
+  private boolean blocked;
+  private Handler handler = new Handler();
 
 
   public TouchpadTouchListener(MainActivity activity) {
@@ -29,17 +30,18 @@ public class TouchpadTouchListener implements View.OnTouchListener {
   public boolean onTouch(View view, MotionEvent motionEvent) {
     int delayTime = 130;
 
-    /*
-       Delay between each event (onTouch)
-     */
-    synchronized (lock) {
-      if (System.currentTimeMillis() - lastEventTime >= delayTime) {
-        System.out.println("Request sent");
-          lastEventTime = System.currentTimeMillis();
-      } else {
-          System.out.println("Delay");
-          return false;
-      }
+    if (!blocked) {
+      blocked = true;
+      handler.postDelayed(new Runnable() {
+        @Override
+        public void run() {
+          blocked = false;
+        }
+      }, delayTime);
+      System.out.println("SENT REQUEST");
+    } else {
+      System.out.println("BLOCKED");
+      return false;
     }
 
     float eventX = motionEvent.getX();
