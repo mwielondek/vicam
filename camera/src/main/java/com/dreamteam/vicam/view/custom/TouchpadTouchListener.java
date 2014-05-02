@@ -17,7 +17,7 @@ import rx.schedulers.Schedulers;
  */
 public class TouchpadTouchListener implements View.OnTouchListener {
   private final MainActivity activity;
-  private final Object lock = new Object();
+
   private boolean blocked;
   private Handler handler = new Handler();
 
@@ -30,32 +30,35 @@ public class TouchpadTouchListener implements View.OnTouchListener {
   public boolean onTouch(View view, MotionEvent motionEvent) {
     int delayTime = 130;
 
-    if (!blocked) {
-      blocked = true;
-      handler.postDelayed(new Runnable() {
-        @Override
-        public void run() {
-          blocked = false;
-        }
-      }, delayTime);
-      System.out.println("SENT REQUEST");
-    } else {
-      System.out.println("BLOCKED");
-      return false;
+    if (motionEvent.getAction() != MotionEvent.ACTION_UP ) {
+      if (!blocked) {
+        blocked = true;
+        handler.postDelayed(new Runnable() {
+          @Override
+          public void run() {
+            blocked = false;
+          }
+        }, delayTime);
+        System.out.println("SENT REQUEST");
+      } else {
+        System.out.println("BLOCKED");
+        return false;
+      }
     }
 
-    float eventX = motionEvent.getX();
-    float eventY = motionEvent.getY();
-    int normX = (int) (eventX / view.getWidth() * Speed.UPPER_BOUND + Speed.LOWER_BOUND);
-    int normY = (int) (eventY / view.getHeight() * Speed.UPPER_BOUND + Speed.LOWER_BOUND);
-
-    if (normX < Speed.LOWER_BOUND || normX > Speed.UPPER_BOUND
-        || normY < Speed.LOWER_BOUND || normY > Speed.UPPER_BOUND) {
-      return false;
-    }
     switch (motionEvent.getAction()) {
       case MotionEvent.ACTION_DOWN:
       case MotionEvent.ACTION_MOVE:
+        float eventX = motionEvent.getX();
+        float eventY = motionEvent.getY();
+        int normX = (int) (eventX / view.getWidth() * Speed.UPPER_BOUND + Speed.LOWER_BOUND);
+        int normY = (int) (eventY / view.getHeight() * Speed.UPPER_BOUND + Speed.LOWER_BOUND);
+
+        if (normX < Speed.LOWER_BOUND || normX > Speed.UPPER_BOUND
+            || normY < Speed.LOWER_BOUND || normY > Speed.UPPER_BOUND) {
+          return false;
+        }
+
         activity.getFacade()
             .moveStart(new Speed(normX, normY))
             .observeOn(AndroidSchedulers.mainThread())
@@ -69,7 +72,7 @@ public class TouchpadTouchListener implements View.OnTouchListener {
                 }, new Action1<Throwable>() {
                   @Override
                   public void call(Throwable throwable) {
-                    activity.showToast("MoveDown", Toast.LENGTH_SHORT);
+                    System.out.println("ACTION_DOWN!!!");
                   }
                 }
             );
@@ -90,15 +93,10 @@ public class TouchpadTouchListener implements View.OnTouchListener {
             }, new Action1<Throwable>() {
               @Override
               public void call(Throwable throwable) {
-                activity.showToast("ERRRRopp", Toast.LENGTH_SHORT);
+                System.out.println("ACTION_UP!!!");
               }
             }
           );
-
-
-
-        lastEventTime = System.currentTimeMillis();
-
         return true;
       default:
         return false;

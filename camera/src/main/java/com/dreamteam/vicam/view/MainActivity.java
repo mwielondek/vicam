@@ -100,6 +100,7 @@ public class MainActivity extends Activity {
     ButterKnife.inject(this);
     // Sets default values defined in camera_preferences if empty
     PreferenceManager.setDefaultValues(this, R.xml.camera_preferences, false);
+
     // Get set camera_preferences
     SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
     // TODO: restore selected camera position from shared preferences
