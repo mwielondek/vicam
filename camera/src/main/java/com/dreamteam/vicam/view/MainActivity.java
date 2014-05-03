@@ -97,6 +97,8 @@ public class MainActivity extends Activity {
   ImageView mTouchpad;
   @InjectView(R.id.one_touch_autofocus)
   Button autofocusButton;
+  @InjectView(R.id.autofocus_switch)
+  Switch autofocusSwitch;
 
 
 
@@ -267,7 +269,7 @@ public class MainActivity extends Activity {
         }, new Action1<Throwable>() {
           @Override
           public void call(Throwable throwable) {
-            showToast("one touch AF", Toast.LENGTH_SHORT);
+            showToast("Error", Toast.LENGTH_SHORT);
           }
         }
     );
@@ -293,7 +295,7 @@ public class MainActivity extends Activity {
           }, new Action1<Throwable>() {
             @Override
             public void call(Throwable throwable) {
-              showToast("AF on", Toast.LENGTH_SHORT);
+              showToast("Error", Toast.LENGTH_SHORT);
             }
           }
       );
@@ -312,7 +314,7 @@ public class MainActivity extends Activity {
           }, new Action1<Throwable>() {
             @Override
             public void call(Throwable throwable) {
-              showToast("AF off", Toast.LENGTH_SHORT);
+              showToast("Error", Toast.LENGTH_SHORT);
             }
           }
       );
@@ -362,7 +364,29 @@ public class MainActivity extends Activity {
   @SuppressWarnings("unused")
   public void onEventMainThread(PresetChangedEvent e) {
     showToast("Selected Preset: " + e.preset, Toast.LENGTH_SHORT);
+    final CameraState cameraState = e.preset.getCameraState();
+    getFacade()
+        .setCameraState(cameraState)
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribeOn(Schedulers.newThread()).subscribe(
+        new Action1<Boolean>() {
+          @Override
+          public void call(Boolean b) {
+            showToast("debugstop", Toast.LENGTH_SHORT);
+            mFocusSeekBar.setProgress(cameraState.getFocus().getLevel());
+            mZoomSeekBar.setProgress(cameraState.getZoom().getLevel());
+            autofocusSwitch.setChecked(cameraState.isAF());
+          }
+        }, new Action1<Throwable>() {
+          @Override
+          public void call(Throwable throwable) {
+            showToast("Error", Toast.LENGTH_SHORT);
+          }
+        }
+    );
   }
+
+
 
   @SuppressWarnings("unused")
   public void onEventMainThread(DrawerCloseEvent e) {
