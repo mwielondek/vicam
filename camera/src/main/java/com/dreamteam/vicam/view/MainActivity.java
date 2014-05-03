@@ -293,13 +293,29 @@ public class MainActivity extends Activity {
           }, new Action1<Throwable>() {
             @Override
             public void call(Throwable throwable) {
-              showToast("AF", Toast.LENGTH_SHORT);
+              showToast("AF on", Toast.LENGTH_SHORT);
             }
           }
       );
     } else {
       autofocusButton.setEnabled(true);
       mFocusSeekBar.setEnabled(true);
+      getFacade()
+          .setAF(false)
+          .observeOn(AndroidSchedulers.mainThread())
+          .subscribeOn(Schedulers.newThread()).subscribe(
+          new Action1<String>() {
+            @Override
+            public void call(String s) {
+              showToast("debugstop", Toast.LENGTH_SHORT);
+            }
+          }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+              showToast("AF off", Toast.LENGTH_SHORT);
+            }
+          }
+      );
     }
 
   }
