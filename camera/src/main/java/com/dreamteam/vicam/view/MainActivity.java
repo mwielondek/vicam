@@ -60,6 +60,9 @@ import javax.inject.Inject;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 public class MainActivity extends Activity {
 
@@ -262,6 +265,22 @@ public class MainActivity extends Activity {
     if (on) {
       autofocusButton.setEnabled(false);
       mFocusSeekBar.setEnabled(false);
+      getFacade()
+          .setAF(true)
+          .observeOn(AndroidSchedulers.mainThread())
+          .subscribeOn(Schedulers.newThread()).subscribe(
+          new Action1<String>() {
+            @Override
+            public void call(String s) {
+              showToast("debugstop", Toast.LENGTH_SHORT);
+            }
+          }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+              showToast("AF", Toast.LENGTH_SHORT);
+            }
+          }
+      );
     } else {
       autofocusButton.setEnabled(true);
       mFocusSeekBar.setEnabled(true);
