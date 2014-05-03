@@ -20,6 +20,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.dreamteam.camera.R;
@@ -91,6 +92,10 @@ public class MainActivity extends Activity {
   SeekBar mZoomSeekBar;
   @InjectView(R.id.camera_touchpad)
   ImageView mTouchpad;
+  @InjectView(R.id.one_touch_autofocus)
+  Button autofocusButton;
+
+
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -249,6 +254,21 @@ public class MainActivity extends Activity {
   public void OneTouchAutofocusClick(Button button) {
 
   }
+
+  @OnClick(R.id.autofocus_switch)
+  public void AutofocusClick(View view) {
+    boolean on = ((Switch) view).isChecked();
+
+    if (on) {
+      autofocusButton.setEnabled(false);
+      mFocusSeekBar.setEnabled(false);
+    } else {
+      autofocusButton.setEnabled(true);
+      mFocusSeekBar.setEnabled(true);
+    }
+
+  }
+
 
   public void insertPreset(Preset preset) {
     PresetDAO presetDao = getPresetDAO();
