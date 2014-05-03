@@ -255,6 +255,22 @@ public class MainActivity extends Activity {
 
   @OnClick(R.id.one_touch_autofocus)
   public void OneTouchAutofocusClick(Button button) {
+    getFacade()
+        .oneTouchFocus()
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribeOn(Schedulers.newThread()).subscribe(
+        new Action1<String>() {
+          @Override
+          public void call(String s) {
+            showToast("debugstop", Toast.LENGTH_SHORT);
+          }
+        }, new Action1<Throwable>() {
+          @Override
+          public void call(Throwable throwable) {
+            showToast("one touch AF", Toast.LENGTH_SHORT);
+          }
+        }
+    );
 
   }
 
