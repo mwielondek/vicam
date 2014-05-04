@@ -34,5 +34,8 @@
     <string name="edit_camera">Edit camera</string>
     <string name="dialog_add_camera_ip">IP-Address</string>
     <string name="dialog_add_camera_port">Port</string>
+    <string name="delete_preset">Delete preset</string>
+    <string name="edit_preset">Edit preset</string>
+    <string name="delete_presets">Delete presets</string>
 
 </resources>

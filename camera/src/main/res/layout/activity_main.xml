@@ -6,31 +6,30 @@
         android:layout_height="match_parent"
         android:background="#eee">
 
-
-
     <!-- Main content view -->
     <RelativeLayout
             android:id="@+id/content_frame"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:focusableInTouchMode="false"
-            >
+            android:focusableInTouchMode="false">
 
+        <!-- Toolbox -->
         <include
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:layout_centerVertical="true"
-
                 layout="@layout/toolbox"/>
 
+        <!-- Touchpad -->
         <ImageView
                 android:id="@+id/camera_touchpad"
                 android:src="@drawable/controller"
                 style="@style/touchpad"
                 android:contentDescription="@string/touchpad_description"/>
     </RelativeLayout>
+
 
     <!-- Navigation drawer -->
     <ListView
@@ -39,12 +38,10 @@
             android:layout_height="match_parent"
             android:layout_gravity="start"
             android:choiceMode="singleChoice"
-            android:divider="@android:color/transparent"
-            android:dividerHeight="0dp"
             android:background="#FFF"
             tools:listitem="@layout/drawer_list_item"/>
 
-
+    <!-- Loading spinner -->
     <include
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -53,9 +50,5 @@
             android:layout_centerVertical="true"
             android:layout_alignParentTop="@+id/content_frame"
             layout="@layout/loader_spinner"/>
-
-
-
-
 
 </android.support.v4.widget.DrawerLayout>

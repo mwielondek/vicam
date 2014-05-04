@@ -9,17 +9,8 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
 
 import com.dreamteam.camera.R;
-import com.dreamteam.vicam.model.events.PresetSaveEvent;
-import com.dreamteam.vicam.presenter.utility.Dagger;
-
-import de.greenrobot.event.EventBus;
-
-import javax.inject.Inject;
-
-import dagger.Module;
 
 /**
  * Manages a custom layout for the Add Camera dialog in settings

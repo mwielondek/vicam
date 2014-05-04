@@ -1,9 +1,7 @@
 package com.dreamteam.vicam.view;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.FragmentTransaction;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -28,9 +26,11 @@ import com.dreamteam.vicam.model.database.CameraDAO;
 import com.dreamteam.vicam.model.database.DAOFactory;
 import com.dreamteam.vicam.model.database.PresetDAO;
 import com.dreamteam.vicam.model.events.CameraChangedEvent;
-import com.dreamteam.vicam.model.events.DrawerCloseEvent;
+import com.dreamteam.vicam.model.events.DeletePresetsEvent;
+import com.dreamteam.vicam.model.events.EditPresetEvent;
+import com.dreamteam.vicam.model.events.OnDrawerCloseEvent;
 import com.dreamteam.vicam.model.events.PresetChangedEvent;
-import com.dreamteam.vicam.model.events.PresetSaveEvent;
+import com.dreamteam.vicam.model.events.SavePresetEvent;
 import com.dreamteam.vicam.model.pojo.Camera;
 import com.dreamteam.vicam.model.pojo.CameraState;
 import com.dreamteam.vicam.model.pojo.Focus;
@@ -40,10 +40,10 @@ import com.dreamteam.vicam.model.pojo.Zoom;
 import com.dreamteam.vicam.presenter.CameraServiceManager;
 import com.dreamteam.vicam.presenter.network.camera.CameraFacade;
 import com.dreamteam.vicam.presenter.utility.Dagger;
-import com.dreamteam.vicam.view.custom.AddCameraDialogFragment;
 import com.dreamteam.vicam.view.custom.CameraArrayAdapter;
 import com.dreamteam.vicam.view.custom.CameraSpinnerItemListener;
 import com.dreamteam.vicam.view.custom.DrawerItemClickListener;
+import com.dreamteam.vicam.view.custom.DrawerMultiChoiceListener;
 import com.dreamteam.vicam.view.custom.DrawerToggle;
 import com.dreamteam.vicam.view.custom.PresetArrayAdapter;
 import com.dreamteam.vicam.view.custom.SavePresetDialogFragment;
@@ -60,8 +60,10 @@ import javax.inject.Inject;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 public class MainActivity extends Activity {
@@ -70,18 +72,6 @@ public class MainActivity extends Activity {
   EventBus mEventBus;
   @Inject
   DAOFactory mDAOFactory;
-
-  private Camera mCurrentCamera;
-  private CharSequence mTitle;
-  private List<Preset> mPresets;
-
-  private ActionBarDrawerToggle mDrawerToggle;
-  private CameraArrayAdapter mCameraAdapter;
-  private PresetArrayAdapter mPresetAdapter;
-  private SavePresetDialogFragment mSavePresetDialogFragment;
-
-
-  private AlertDialog mDialogSavePreset;
 
   @InjectView(R.id.sync_loader)
   RelativeLayout mLoaderSpinner;
@@ -96,9 +86,16 @@ public class MainActivity extends Activity {
   @InjectView(R.id.camera_touchpad)
   ImageView mTouchpad;
   @InjectView(R.id.one_touch_autofocus)
-  Button autofocusButton;
+  Button mAutofocusButton;
 
-
+  private Camera mCurrentCamera;
+  private CharSequence mTitle;
+  private List<Preset> mPresets;
+  private ActionBarDrawerToggle mDrawerToggle;
+  private CameraArrayAdapter mCameraAdapter;
+  private PresetArrayAdapter mPresetAdapter;
+  private SavePresetDialogFragment mSavePresetDialogFragment;
+  private DrawerMultiChoiceListener mMultiChoiceListener;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -127,7 +124,7 @@ public class MainActivity extends Activity {
     mPresetAdapter = new PresetArrayAdapter(this, mPresets);
 
     mDrawerList.setAdapter(mPresetAdapter);
-    mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+    mDrawerList.setOnItemClickListener(new DrawerItemClickListener(this));
     mDrawerToggle = new DrawerToggle(this, mDrawerLayout);
     mDrawerLayout.setDrawerListener(mDrawerToggle);
 
@@ -152,13 +149,15 @@ public class MainActivity extends Activity {
     mCameraAdapter = new CameraArrayAdapter(this, cameras);
 
     // Init. Save Preset Dialog
-    mSavePresetDialogFragment = new SavePresetDialogFragment((Context) this);
+    mSavePresetDialogFragment = new SavePresetDialogFragment(this);
     mSavePresetDialogFragment.onCreateDialog(savedInstanceState);
 
     // Init. value of loading spinner
     mLoaderSpinner.setVisibility(View.GONE);
 
-
+    mDrawerList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+    mMultiChoiceListener = new DrawerMultiChoiceListener(this, mDrawerList);
+    mDrawerList.setMultiChoiceModeListener(mMultiChoiceListener);
   }
 
   @Override
@@ -254,6 +253,7 @@ public class MainActivity extends Activity {
   }
 
   @OnClick(R.id.one_touch_autofocus)
+  @SuppressWarnings("unused")
   public void OneTouchAutofocusClick(Button button) {
     getFacade()
         .oneTouchFocus()
@@ -275,35 +275,38 @@ public class MainActivity extends Activity {
   }
 
   @OnClick(R.id.autofocus_switch)
-  public void AutofocusClick(View view) {
-    boolean on = ((Switch) view).isChecked();
+  @SuppressWarnings("unused")
+  public void AutofocusClick(Switch switchButton) {
+    boolean on = switchButton.isChecked();
 
-    if (on) {
-      autofocusButton.setEnabled(false);
-      mFocusSeekBar.setEnabled(false);
-      getFacade()
-          .setAF(true)
-          .observeOn(AndroidSchedulers.mainThread())
-          .subscribeOn(Schedulers.newThread()).subscribe(
-          new Action1<String>() {
-            @Override
-            public void call(String s) {
-              showToast("debugstop", Toast.LENGTH_SHORT);
-            }
-          }, new Action1<Throwable>() {
-            @Override
-            public void call(Throwable throwable) {
-              showToast("AF", Toast.LENGTH_SHORT);
-            }
+    getFacade()
+        .setAF(on)
+        .flatMap(new Func1<String, Observable<CameraState>>() {
+          @Override
+          public Observable<CameraState> call(String s) {
+            // after AF has changed we fetch the new state from camera
+            // (focus has probably changed since last time we got its information)
+            return getFacade().getCameraState();
           }
-      );
-    } else {
-      autofocusButton.setEnabled(true);
-      mFocusSeekBar.setEnabled(true);
-    }
+        })
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribeOn(Schedulers.newThread()).subscribe(
+        new Action1<CameraState>() {
+          @Override
+          public void call(CameraState cameraState) {
+            showToast("debugstop", Toast.LENGTH_SHORT);
+          }
+        }, new Action1<Throwable>() {
+          @Override
+          public void call(Throwable throwable) {
+            showToast("AF", Toast.LENGTH_SHORT);
+          }
+        }
+    );
+    mAutofocusButton.setEnabled(!on);
+    mFocusSeekBar.setEnabled(!on);
 
   }
-
 
   public void insertPreset(Preset preset) {
     PresetDAO presetDao = getPresetDAO();
@@ -324,13 +327,15 @@ public class MainActivity extends Activity {
     mPresetAdapter.notifyDataSetChanged();
   }
 
-  public void deletePreset(Preset preset) {
+  public void deletePresets(List<Preset> presets) {
     PresetDAO presetDao = getPresetDAO();
-    presetDao.deletePreset(preset.getId());
-    for (int i = 0; i < mPresets.size(); i++) {
-      if (mPresets.get(i).getId() == preset.getId()) {
-        mPresets.remove(i);
-        break;
+    for (Preset p : presets) {
+      presetDao.deletePreset(p.getId());
+      for (int i = 0; i < mPresets.size(); i++) {
+        if (mPresets.get(i).getId() == p.getId()) {
+          mPresets.remove(i);
+          break;
+        }
       }
     }
     mPresetAdapter.notifyDataSetChanged();
@@ -349,12 +354,12 @@ public class MainActivity extends Activity {
   }
 
   @SuppressWarnings("unused")
-  public void onEventMainThread(DrawerCloseEvent e) {
-    mDrawerLayout.closeDrawer(mDrawerList);
+  public void onEventMainThread(OnDrawerCloseEvent e) {
+    mMultiChoiceListener.close();
   }
 
   @SuppressWarnings("unused")
-  public void onEventMainThread(PresetSaveEvent e) {
+  public void onEventMainThread(SavePresetEvent e) {
     // TODO: fetch camera state via getFacade and then if successful create a new preset
     // the code below is only a placeholder
     insertPreset(new Preset(e.name, mCurrentCamera,
@@ -362,6 +367,16 @@ public class MainActivity extends Activity {
                                             new Zoom(0x666),
                                             new Focus(0x777, true))
     ));
+  }
+
+  @SuppressWarnings("unused")
+  public void onEventMainThread(DeletePresetsEvent e) {
+    deletePresets(e.presets);
+  }
+
+  @SuppressWarnings("unused")
+  public void onEventMainThread(EditPresetEvent e) {
+    // TODO: show dialog for editing preset
   }
 
   private CameraDAO getCameraDAO() {
@@ -372,4 +387,7 @@ public class MainActivity extends Activity {
     return mDAOFactory.getPresetDAO();
   }
 
+  public void closeDrawer() {
+    mDrawerLayout.closeDrawer(mDrawerList);
+  }
 }

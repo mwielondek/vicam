@@ -12,7 +12,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.dreamteam.camera.R;
-import com.dreamteam.vicam.model.events.PresetSaveEvent;
+import com.dreamteam.vicam.model.events.SavePresetEvent;
 import com.dreamteam.vicam.presenter.utility.Dagger;
 
 import de.greenrobot.event.EventBus;
@@ -53,7 +53,7 @@ public class SavePresetDialogFragment extends DialogFragment {
           @Override
           public void onClick(DialogInterface dialog, int id) {
             // Add the preset to database
-            eventBus.post(new PresetSaveEvent(dialog, editText.getText().toString()));
+            eventBus.post(new SavePresetEvent(dialog, editText.getText().toString()));
           }
         })
         .setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
