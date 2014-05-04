@@ -224,8 +224,24 @@ public class MainActivity extends Activity {
   protected void onResume() {
     super.onResume();
     mEventBus.register(this);
-    // TODO: Fetch CameraState from camera and update the GUI
-    // If it doesn't work, use some indication for it (TODO for GUI)
+    getFacade()
+        .getCameraState()
+        .subscribeOn(Schedulers.newThread())
+        .observeOn(AndroidSchedulers.mainThread()).subscribe(
+        new Action1<CameraState>() {
+          @Override
+          public void call(CameraState cameraState) {
+            updateWithCameraState(cameraState);
+          }
+        },
+        new Action1<Throwable>() {
+          @Override
+          public void call(Throwable throwable) {
+            showToast("Failed getting latest state from camera", Toast.LENGTH_SHORT);
+            // TODO for GUI: use some indication for failed request
+          }
+        }
+    );
   }
 
   @Override
@@ -362,9 +378,7 @@ public class MainActivity extends Activity {
           @Override
           public void call(Boolean b) {
             showToast("debugstop", Toast.LENGTH_SHORT);
-            mFocusSeekBar.setProgress(cameraState.getFocus().getLevel());
-            mZoomSeekBar.setProgress(cameraState.getZoom().getLevel());
-            mAutofocusSwitch.setChecked(cameraState.isAF());
+            updateWithCameraState(cameraState);
           }
         }, new Action1<Throwable>() {
           @Override
@@ -373,6 +387,12 @@ public class MainActivity extends Activity {
           }
         }
     );
+  }
+
+  private void updateWithCameraState(CameraState cameraState) {
+    mFocusSeekBar.setProgress(cameraState.getFocus().getLevel());
+    mZoomSeekBar.setProgress(cameraState.getZoom().getLevel());
+    mAutofocusSwitch.setChecked(cameraState.isAF());
   }
 
   @SuppressWarnings("unused")
