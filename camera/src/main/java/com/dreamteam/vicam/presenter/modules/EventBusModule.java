@@ -1,6 +1,7 @@
 package com.dreamteam.vicam.presenter.modules;
 
 import com.dreamteam.vicam.view.MainActivity;
+import com.dreamteam.vicam.view.custom.AddCameraDialogFragment;
 import com.dreamteam.vicam.view.custom.CameraSpinnerItemListener;
 import com.dreamteam.vicam.view.custom.DrawerItemClickListener;
 import com.dreamteam.vicam.view.custom.DrawerMultiChoiceListener;
@@ -24,7 +25,8 @@ import dagger.Provides;
         DrawerItemClickListener.class,
         SavePresetDialogFragment.class,
         DrawerToggle.class,
-        DrawerMultiChoiceListener.class
+        DrawerMultiChoiceListener.class,
+        AddCameraDialogFragment.class
     },
     complete = false,
     library = true

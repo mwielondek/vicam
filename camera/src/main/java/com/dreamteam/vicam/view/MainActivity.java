@@ -1,6 +1,7 @@
 package com.dreamteam.vicam.view;
 
 import android.app.Activity;
+import android.app.DialogFragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -30,6 +31,7 @@ import com.dreamteam.vicam.model.events.DeletePresetsEvent;
 import com.dreamteam.vicam.model.events.EditPresetEvent;
 import com.dreamteam.vicam.model.events.OnDrawerCloseEvent;
 import com.dreamteam.vicam.model.events.PresetChangedEvent;
+import com.dreamteam.vicam.model.events.SaveCameraEvent;
 import com.dreamteam.vicam.model.events.SavePresetEvent;
 import com.dreamteam.vicam.model.pojo.Camera;
 import com.dreamteam.vicam.model.pojo.CameraState;
@@ -40,6 +42,7 @@ import com.dreamteam.vicam.model.pojo.Zoom;
 import com.dreamteam.vicam.presenter.CameraServiceManager;
 import com.dreamteam.vicam.presenter.network.camera.CameraFacade;
 import com.dreamteam.vicam.presenter.utility.Dagger;
+import com.dreamteam.vicam.view.custom.AddCameraDialogFragment;
 import com.dreamteam.vicam.view.custom.CameraArrayAdapter;
 import com.dreamteam.vicam.view.custom.CameraSpinnerItemListener;
 import com.dreamteam.vicam.view.custom.DrawerItemClickListener;
@@ -93,11 +96,14 @@ public class MainActivity extends Activity {
   private Camera mCurrentCamera;
   private CharSequence mTitle;
   private List<Preset> mPresets;
+  private List<Camera> mCameras;
   private ActionBarDrawerToggle mDrawerToggle;
   private CameraArrayAdapter mCameraAdapter;
   private PresetArrayAdapter mPresetAdapter;
   private SavePresetDialogFragment mSavePresetDialogFragment;
   private DrawerMultiChoiceListener mMultiChoiceListener;
+  private AddCameraDialogFragment mAddCameraDialogFragment;
+  private Spinner mCameraSpinner;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -133,21 +139,25 @@ public class MainActivity extends Activity {
     mTouchpad.setOnTouchListener(new TouchpadTouchListener(this));
 
     CameraDAO cameraDao = getCameraDAO();
-    List<Camera> cameras = cameraDao.getCameras();
-    if (cameras == null) {
-      cameras = new ArrayList<>();
+    mCameras = cameraDao.getCameras();
+    if (mCameras == null) {
+      mCameras = new ArrayList<>();
     }
-    if (cameras.isEmpty()) {
+    if (mCameras.isEmpty()) {
       cameraDao.insertCamera(new Camera("127.0.0.1", "Camera 1", null));
       cameraDao.insertCamera(new Camera("localhost", "Camera 2", null));
       cameraDao.insertCamera(new Camera("localhost", "Camera 3", null));
-      cameras = cameraDao.getCameras();
+      mCameras = cameraDao.getCameras();
     }
-    mCameraAdapter = new CameraArrayAdapter(this, cameras);
+    mCameraAdapter = new CameraArrayAdapter(this, mCameras);
 
     // Init. Save Preset Dialog
     mSavePresetDialogFragment = new SavePresetDialogFragment(this);
     mSavePresetDialogFragment.onCreateDialog(savedInstanceState);
+
+    // Init Add Camera Dialog
+    mAddCameraDialogFragment = new AddCameraDialogFragment(this);
+    mAddCameraDialogFragment.onCreateDialog(savedInstanceState);
 
     // Init. value of loading spinner
     mLoaderSpinner.setVisibility(View.GONE);
@@ -167,9 +177,9 @@ public class MainActivity extends Activity {
     MenuItem cameraSpinner = menu.findItem(R.id.action_change_camera);
     View view = cameraSpinner.getActionView();
     if (view instanceof Spinner) {
-      Spinner spinner = (Spinner) view;
-      spinner.setAdapter(mCameraAdapter);
-      spinner.setOnItemSelectedListener(new CameraSpinnerItemListener());
+      mCameraSpinner = (Spinner) view;
+      mCameraSpinner.setAdapter(mCameraAdapter);
+      mCameraSpinner.setOnItemSelectedListener(new CameraSpinnerItemListener());
     }
     return true;
   }
@@ -199,9 +209,11 @@ public class MainActivity extends Activity {
       case R.id.action_settings:
         startActivity(new Intent(this, SettingsActivity.class));
         return true;
+      case R.id.action_add_camera:
+        showDialog(mAddCameraDialogFragment);
+        return true;
       case R.id.action_save_preset:
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        mSavePresetDialogFragment.show(ft, "Alert Dialog");
+        showDialog(mSavePresetDialogFragment);
         return true;
       case R.id.action_sync_presets:
         mLoaderSpinner.setVisibility(View.VISIBLE);
@@ -309,6 +321,11 @@ public class MainActivity extends Activity {
     mDrawerLayout.closeDrawer(mDrawerList);
   }
 
+  private void showDialog(DialogFragment dialog) {
+    FragmentTransaction ft = getFragmentManager().beginTransaction();
+    dialog.show(ft, "Alert Dialog");
+  }
+
   private void updateWithCameraState(CameraState cameraState) {
     mFocusSeekBar.setProgress(cameraState.getFocus().getLevel());
     mZoomSeekBar.setProgress(cameraState.getZoom().getLevel());
@@ -345,6 +362,21 @@ public class MainActivity extends Activity {
     mPresetAdapter.notifyDataSetChanged();
     updateCameraState();
     showToast("Current Camera: " + e.camera, Toast.LENGTH_SHORT);
+  }
+
+  @SuppressWarnings("unused")
+  public void onEventMainThread(SaveCameraEvent e) {
+    String portString = e.port.trim();
+    Short port = null;
+    if (!portString.isEmpty()) {
+      try {
+        port = Short.parseShort(portString);
+      } catch (NumberFormatException ignored) {
+        // Ignore formatting exceptions
+      }
+    }
+    insertCamera(new Camera(e.ip, e.name, port));
+    mCameraSpinner.setSelection(mCameras.size() - 1);
   }
 
   @SuppressWarnings("unused")
@@ -450,5 +482,12 @@ public class MainActivity extends Activity {
       }
     }
     mPresetAdapter.notifyDataSetChanged();
+  }
+
+  public void insertCamera(Camera camera) {
+    CameraDAO cameraDAO = getCameraDAO();
+    cameraDAO.insertCamera(camera);
+    mCameras.add(camera);
+    mCameraAdapter.notifyDataSetChanged();
   }
 }

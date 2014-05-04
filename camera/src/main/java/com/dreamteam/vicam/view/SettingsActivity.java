@@ -1,6 +1,5 @@
 package com.dreamteam.vicam.view;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
@@ -19,7 +18,7 @@ public class SettingsActivity extends PreferenceActivity {
     super.onCreate(savedInstanceState);
 
     // Settings Init. Add camera
-    mAddCameraDialogFragment = new AddCameraDialogFragment((Context)this);
+    mAddCameraDialogFragment = new AddCameraDialogFragment(this);
     mAddCameraDialogFragment.onCreateDialog(savedInstanceState);
   }
 

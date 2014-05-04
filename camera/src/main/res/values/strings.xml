@@ -20,17 +20,15 @@
     <string name="title_activity_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="sync_server">Sync server</string>
-    <string name="sync_server_msg">Syncing...</string>
+    <string name="sync_server_msg">Syncing…</string>
     <string name="manage_camera">Manage camera</string>
     <string name="change_camera">Change Camera</string>
 
     <string name="zoom_value">Zoom Value</string>
     <string name="focus_value">Focus Value</string>
-    <string name="dialog_ok">Ok</string>
-    <string name="dialog_cancel">Cancel</string>
-    <string name="dialog_save_preset_placeholder">Enter new preset name...</string>
+    <string name="dialog_save_preset_placeholder">Enter name for preset…</string>
     <string name="dialog_add_camera_camera_name">Camera name</string>
-    <string name="add_new_camera">Add new camera</string>
+    <string name="add_new_camera">Add camera</string>
     <string name="edit_camera">Edit camera</string>
     <string name="dialog_add_camera_ip">IP-Address</string>
     <string name="dialog_add_camera_port">Port</string>
