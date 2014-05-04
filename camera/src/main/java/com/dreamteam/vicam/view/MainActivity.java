@@ -33,10 +33,7 @@ import com.dreamteam.vicam.model.events.PresetChangedEvent;
 import com.dreamteam.vicam.model.events.SavePresetEvent;
 import com.dreamteam.vicam.model.pojo.Camera;
 import com.dreamteam.vicam.model.pojo.CameraState;
-import com.dreamteam.vicam.model.pojo.Focus;
-import com.dreamteam.vicam.model.pojo.Position;
 import com.dreamteam.vicam.model.pojo.Preset;
-import com.dreamteam.vicam.model.pojo.Zoom;
 import com.dreamteam.vicam.presenter.CameraServiceManager;
 import com.dreamteam.vicam.presenter.network.camera.CameraFacade;
 import com.dreamteam.vicam.presenter.utility.Dagger;
@@ -401,14 +398,24 @@ public class MainActivity extends Activity {
   }
 
   @SuppressWarnings("unused")
-  public void onEventMainThread(SavePresetEvent e) {
-    // TODO: fetch camera state via getFacade and then if successful create a new preset
-    // the code below is only a placeholder
-    insertPreset(new Preset(e.name, mCurrentCamera,
-                            new CameraState(new Position(0x5000, 0x5000),
-                                            new Zoom(0x666),
-                                            new Focus(0x777, true))
-    ));
+  public void onEventMainThread(final SavePresetEvent e) {
+    getFacade()
+        .getCameraState()
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribeOn(Schedulers.newThread()).subscribe(
+        new Action1<CameraState>() {
+          @Override
+          public void call(CameraState cameraState) {
+            insertPreset(new Preset(e.name, mCurrentCamera, cameraState));
+          }
+        },
+        new Action1<Throwable>() {
+          @Override
+          public void call(Throwable throwable) {
+            showToast("Failed getting state from camera when saving preset", Toast.LENGTH_SHORT);
+          }
+        }
+    );
   }
 
   @SuppressWarnings("unused")
