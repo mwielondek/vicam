@@ -23,11 +23,15 @@
                 layout="@layout/toolbox"/>
 
         <!-- Touchpad -->
-        <ImageView
+        <com.dreamteam.vicam.view.custom.Touchpad
+                android:id="@+id/camera_touchpad"
+                android:src="@drawable/controller"
+                style="@style/touchpad"/>
+        <!--<ImageView
                 android:id="@+id/camera_touchpad"
                 android:src="@drawable/controller"
                 style="@style/touchpad"
-                android:contentDescription="@string/touchpad_description"/>
+                android:contentDescription="@string/touchpad_description"/>-->
     </RelativeLayout>
 
 

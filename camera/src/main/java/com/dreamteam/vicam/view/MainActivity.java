@@ -16,7 +16,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -93,7 +92,7 @@ public class MainActivity extends Activity {
   @InjectView(R.id.zoom_seekbar)
   SeekBar mZoomSeekBar;
   @InjectView(R.id.camera_touchpad)
-  ImageView mTouchpad;
+  View mTouchpad;
   @InjectView(R.id.one_touch_autofocus)
   Button mAutofocusButton;
   @InjectView(R.id.autofocus_switch)
