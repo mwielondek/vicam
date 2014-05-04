@@ -75,6 +75,8 @@ import static com.dreamteam.vicam.view.custom.SeekBarChangeListener.Type;
 
 public class MainActivity extends Activity {
 
+  private final String SELECTED_CAMERA = "SELECTED_CAMERA";
+
   @Inject
   EventBus mEventBus;
   @Inject
@@ -98,6 +100,7 @@ public class MainActivity extends Activity {
   Switch mAutofocusSwitch;
 
   private Camera mCurrentCamera;
+  private int mSelectedCameraPos;
   private CharSequence mTitle;
   private List<Preset> mPresets;
   private List<Camera> mCameras;
@@ -105,7 +108,7 @@ public class MainActivity extends Activity {
   private CameraArrayAdapter mCameraAdapter;
   private PresetArrayAdapter mPresetAdapter;
   private SavePresetDialogFragment mSavePresetDialogFragment;
-  private DrawerMultiChoiceListener mMultiChoiceListener;
+  private DrawerMultiChoiceListener mContextualActionBar;
   private AddCameraDialogFragment mAddCameraDialogFragment;
   private Spinner mCameraSpinner;
   private SharedPreferences mSharedPreferences;
@@ -134,8 +137,8 @@ public class MainActivity extends Activity {
     mDrawerList.setAdapter(mPresetAdapter);
     mDrawerList.setOnItemClickListener(new DrawerItemClickListener(this));
     mDrawerList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-    mMultiChoiceListener = new DrawerMultiChoiceListener(this, mDrawerList);
-    mDrawerList.setMultiChoiceModeListener(mMultiChoiceListener);
+    mContextualActionBar = new DrawerMultiChoiceListener(this, mDrawerList);
+    mDrawerList.setMultiChoiceModeListener(mContextualActionBar);
     mDrawerToggle = new DrawerToggle(this, mDrawerLayout);
     mDrawerLayout.setDrawerListener(mDrawerToggle);
 
@@ -160,8 +163,6 @@ public class MainActivity extends Activity {
 
     // Init. value of loading spinner
     mLoaderSpinner.setVisibility(View.GONE);
-
-    // TODO: restore selected camera position from shared preferences
   }
 
   @Override
@@ -175,6 +176,8 @@ public class MainActivity extends Activity {
       mCameraSpinner = (Spinner) view;
       mCameraSpinner.setAdapter(mCameraAdapter);
       mCameraSpinner.setOnItemSelectedListener(new CameraSpinnerItemListener());
+      int selected = mSharedPreferences.getInt(SELECTED_CAMERA, 0);
+      mCameraSpinner.setSelection(selected);
     }
     return true;
   }
@@ -257,12 +260,11 @@ public class MainActivity extends Activity {
   protected void onDestroy() {
     super.onDestroy();
     mDAOFactory.close();
-  }
-
-  @Override
-  protected void onSaveInstanceState(Bundle outState) {
-    super.onSaveInstanceState(outState);
-    // TODO: save selected camera in shared preferences
+    if (mCameraSpinner != null) {
+      mSharedPreferences.edit()
+          .putInt(SELECTED_CAMERA, mCameraSpinner.getSelectedItemPosition())
+          .commit();
+    }
   }
 
   public CameraFacade getFacade() {
@@ -297,8 +299,8 @@ public class MainActivity extends Activity {
 
   @OnClick(R.id.autofocus_switch)
   @SuppressWarnings("unused")
-  public void AutofocusClick(Switch switchButton) {
-    boolean on = switchButton.isChecked();
+  public void AutofocusClick(Switch autofocusSwitch) {
+    boolean on = autofocusSwitch.isChecked();
 
     getFacade()
         .setAF(on)
@@ -387,6 +389,7 @@ public class MainActivity extends Activity {
       }
     }
     insertCamera(new Camera(e.ip, e.name, port));
+    // Selects the inserted camera as current
     mCameraSpinner.setSelection(mCameras.size() - 1);
   }
 
@@ -415,7 +418,7 @@ public class MainActivity extends Activity {
 
   @SuppressWarnings("unused")
   public void onEventMainThread(OnDrawerCloseEvent e) {
-    mMultiChoiceListener.close();
+    mContextualActionBar.close();
   }
 
   @SuppressWarnings("unused")
