@@ -1,6 +1,7 @@
 package com.dreamteam.vicam.model.database.ormlite;
 
 import com.dreamteam.vicam.model.database.PresetDAO;
+import com.dreamteam.vicam.model.pojo.Camera;
 import com.dreamteam.vicam.model.pojo.CameraState;
 import com.dreamteam.vicam.model.pojo.Focus;
 import com.dreamteam.vicam.model.pojo.Position;
@@ -93,5 +94,15 @@ public class PresetDAOImpl implements PresetDAO {
   @Override
   public List<Preset> getPresets() {
     return ORMLite.getAll(presetDao);
+  }
+
+  @Override
+  public List<Preset> getPresetsForCamera(Camera c) {
+    try {
+      return presetDao.queryForEq("camera_id", c.getId());
+    } catch (SQLException e) {
+      Utils.databaseLog(String.format("Error while getting presets for camera %s", c), e);
+      return null;
+    }
   }
 }

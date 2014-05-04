@@ -33,7 +33,10 @@ import com.dreamteam.vicam.model.events.PresetChangedEvent;
 import com.dreamteam.vicam.model.events.SavePresetEvent;
 import com.dreamteam.vicam.model.pojo.Camera;
 import com.dreamteam.vicam.model.pojo.CameraState;
+import com.dreamteam.vicam.model.pojo.Focus;
+import com.dreamteam.vicam.model.pojo.Position;
 import com.dreamteam.vicam.model.pojo.Preset;
+import com.dreamteam.vicam.model.pojo.Zoom;
 import com.dreamteam.vicam.presenter.CameraServiceManager;
 import com.dreamteam.vicam.presenter.network.camera.CameraFacade;
 import com.dreamteam.vicam.presenter.utility.Dagger;
@@ -107,7 +110,6 @@ public class MainActivity extends Activity {
 
     // Get set camera_preferences
     SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-    // TODO: restore selected camera position from shared preferences
 
     mTitle = getString(R.string.app_name);
 
@@ -115,11 +117,7 @@ public class MainActivity extends Activity {
     getActionBar().setHomeButtonEnabled(true);
     getActionBar().setDisplayShowTitleEnabled(true);
 
-    PresetDAO presetDao = getPresetDAO();
-    mPresets = presetDao.getPresets();
-    if (mPresets == null) {
-      mPresets = new ArrayList<>();
-    }
+    mPresets = new ArrayList<>();
     mPresetAdapter = new PresetArrayAdapter(this, mPresets);
 
     mDrawerList.setAdapter(mPresetAdapter);
@@ -157,6 +155,8 @@ public class MainActivity extends Activity {
     mDrawerList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
     mMultiChoiceListener = new DrawerMultiChoiceListener(this, mDrawerList);
     mDrawerList.setMultiChoiceModeListener(mMultiChoiceListener);
+
+    // TODO: restore selected camera position from shared preferences
   }
 
   @Override
@@ -221,24 +221,6 @@ public class MainActivity extends Activity {
   protected void onResume() {
     super.onResume();
     mEventBus.register(this);
-    getFacade()
-        .getCameraState()
-        .subscribeOn(Schedulers.newThread())
-        .observeOn(AndroidSchedulers.mainThread()).subscribe(
-        new Action1<CameraState>() {
-          @Override
-          public void call(CameraState cameraState) {
-            updateWithCameraState(cameraState);
-          }
-        },
-        new Action1<Throwable>() {
-          @Override
-          public void call(Throwable throwable) {
-            showToast("Failed getting latest state from camera", Toast.LENGTH_SHORT);
-            // TODO for GUI: use some indication for failed request
-          }
-        }
-    );
   }
 
   @Override
@@ -323,6 +305,120 @@ public class MainActivity extends Activity {
 
   }
 
+  public void closeDrawer() {
+    mDrawerLayout.closeDrawer(mDrawerList);
+  }
+
+  private void updateWithCameraState(CameraState cameraState) {
+    mFocusSeekBar.setProgress(cameraState.getFocus().getLevel());
+    mZoomSeekBar.setProgress(cameraState.getZoom().getLevel());
+    mAutofocusSwitch.setChecked(cameraState.isAF());
+  }
+
+  private void updateCameraState() {
+    getFacade()
+        .getCameraState()
+        .subscribeOn(Schedulers.newThread())
+        .observeOn(AndroidSchedulers.mainThread()).subscribe(
+        new Action1<CameraState>() {
+          @Override
+          public void call(CameraState cameraState) {
+            updateWithCameraState(cameraState);
+          }
+        },
+        new Action1<Throwable>() {
+          @Override
+          public void call(Throwable throwable) {
+            showToast("Failed getting latest state from camera", Toast.LENGTH_SHORT);
+            // TODO for GUI: use some indication for failed request
+          }
+        }
+    );
+  }
+
+  @SuppressWarnings("unused")
+  public void onEventMainThread(CameraChangedEvent e) {
+    mCurrentCamera = e.camera;
+    List<Preset> presets = getPresetDAO().getPresetsForCamera(mCurrentCamera);
+    mPresets.clear();
+    mPresets.addAll(presets);
+    mPresetAdapter.notifyDataSetChanged();
+    updateCameraState();
+    showToast("Current Camera: " + e.camera, Toast.LENGTH_SHORT);
+  }
+
+  @SuppressWarnings("unused")
+  public void onEventMainThread(PresetChangedEvent e) {
+    showToast("Selected Preset: " + e.preset, Toast.LENGTH_SHORT);
+    final CameraState cameraState = e.preset.getCameraState();
+    getFacade()
+        .setCameraState(cameraState)
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribeOn(Schedulers.newThread()).subscribe(
+        new Action1<Boolean>() {
+          @Override
+          public void call(Boolean b) {
+            showToast("debugstop", Toast.LENGTH_SHORT);
+            updateWithCameraState(cameraState);
+          }
+        }, new Action1<Throwable>() {
+          @Override
+          public void call(Throwable throwable) {
+            showToast("Error", Toast.LENGTH_SHORT);
+          }
+        }
+    );
+  }
+
+  @SuppressWarnings("unused")
+  public void onEventMainThread(OnDrawerCloseEvent e) {
+    mMultiChoiceListener.close();
+  }
+
+  @SuppressWarnings("unused")
+  public void onEventMainThread(final SavePresetEvent e) {
+    getFacade()
+        .getCameraState()
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribeOn(Schedulers.newThread()).subscribe(
+        new Action1<CameraState>() {
+          @Override
+          public void call(CameraState cameraState) {
+            insertPreset(new Preset(e.name, mCurrentCamera, cameraState));
+          }
+        },
+        new Action1<Throwable>() {
+          @Override
+          public void call(Throwable throwable) {
+            showToast("Failed getting state from camera when saving preset", Toast.LENGTH_SHORT);
+            // TODO Remove when done with debugging
+            insertPreset(new Preset(e.name, mCurrentCamera, new CameraState(
+                new Position(0x5000, 0x5000),
+                new Zoom(0x666),
+                new Focus(0x777, true))));
+          }
+        }
+    );
+  }
+
+  @SuppressWarnings("unused")
+  public void onEventMainThread(DeletePresetsEvent e) {
+    deletePresets(e.presets);
+  }
+
+  @SuppressWarnings("unused")
+  public void onEventMainThread(EditPresetEvent e) {
+    // TODO: show dialog for editing preset
+  }
+
+  private CameraDAO getCameraDAO() {
+    return mDAOFactory.getCameraDAO();
+  }
+
+  private PresetDAO getPresetDAO() {
+    return mDAOFactory.getPresetDAO();
+  }
+
   public void insertPreset(Preset preset) {
     PresetDAO presetDao = getPresetDAO();
     presetDao.insertPreset(preset);
@@ -354,89 +450,5 @@ public class MainActivity extends Activity {
       }
     }
     mPresetAdapter.notifyDataSetChanged();
-  }
-
-  @SuppressWarnings("unused")
-  public void onEventMainThread(CameraChangedEvent e) {
-    mCurrentCamera = e.camera;
-    // TODO: get current camera state and update GUI
-    showToast("Current Camera: " + e.camera, Toast.LENGTH_SHORT);
-  }
-
-  @SuppressWarnings("unused")
-  public void onEventMainThread(PresetChangedEvent e) {
-    showToast("Selected Preset: " + e.preset, Toast.LENGTH_SHORT);
-    final CameraState cameraState = e.preset.getCameraState();
-    getFacade()
-        .setCameraState(cameraState)
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribeOn(Schedulers.newThread()).subscribe(
-        new Action1<Boolean>() {
-          @Override
-          public void call(Boolean b) {
-            showToast("debugstop", Toast.LENGTH_SHORT);
-            updateWithCameraState(cameraState);
-          }
-        }, new Action1<Throwable>() {
-          @Override
-          public void call(Throwable throwable) {
-            showToast("Error", Toast.LENGTH_SHORT);
-          }
-        }
-    );
-  }
-
-  private void updateWithCameraState(CameraState cameraState) {
-    mFocusSeekBar.setProgress(cameraState.getFocus().getLevel());
-    mZoomSeekBar.setProgress(cameraState.getZoom().getLevel());
-    mAutofocusSwitch.setChecked(cameraState.isAF());
-  }
-
-  @SuppressWarnings("unused")
-  public void onEventMainThread(OnDrawerCloseEvent e) {
-    mMultiChoiceListener.close();
-  }
-
-  @SuppressWarnings("unused")
-  public void onEventMainThread(final SavePresetEvent e) {
-    getFacade()
-        .getCameraState()
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribeOn(Schedulers.newThread()).subscribe(
-        new Action1<CameraState>() {
-          @Override
-          public void call(CameraState cameraState) {
-            insertPreset(new Preset(e.name, mCurrentCamera, cameraState));
-          }
-        },
-        new Action1<Throwable>() {
-          @Override
-          public void call(Throwable throwable) {
-            showToast("Failed getting state from camera when saving preset", Toast.LENGTH_SHORT);
-          }
-        }
-    );
-  }
-
-  @SuppressWarnings("unused")
-  public void onEventMainThread(DeletePresetsEvent e) {
-    deletePresets(e.presets);
-  }
-
-  @SuppressWarnings("unused")
-  public void onEventMainThread(EditPresetEvent e) {
-    // TODO: show dialog for editing preset
-  }
-
-  private CameraDAO getCameraDAO() {
-    return mDAOFactory.getCameraDAO();
-  }
-
-  private PresetDAO getPresetDAO() {
-    return mDAOFactory.getPresetDAO();
-  }
-
-  public void closeDrawer() {
-    mDrawerLayout.closeDrawer(mDrawerList);
   }
 }

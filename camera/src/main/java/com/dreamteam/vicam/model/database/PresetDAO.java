@@ -1,5 +1,6 @@
 package com.dreamteam.vicam.model.database;
 
+import com.dreamteam.vicam.model.pojo.Camera;
 import com.dreamteam.vicam.model.pojo.Preset;
 
 import java.util.List;
@@ -18,4 +19,6 @@ public interface PresetDAO {
   public boolean deletePreset(int id);
 
   public List<Preset> getPresets();
+
+  public List<Preset> getPresetsForCamera(Camera c);
 }
