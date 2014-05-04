@@ -69,6 +69,8 @@ import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
+import static com.dreamteam.vicam.view.custom.SeekBarChangeListener.Type;
+
 public class MainActivity extends Activity {
 
   @Inject
@@ -104,6 +106,7 @@ public class MainActivity extends Activity {
   private DrawerMultiChoiceListener mMultiChoiceListener;
   private AddCameraDialogFragment mAddCameraDialogFragment;
   private Spinner mCameraSpinner;
+  private SharedPreferences mSharedPreferences;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -115,7 +118,7 @@ public class MainActivity extends Activity {
     PreferenceManager.setDefaultValues(this, R.xml.camera_preferences, false);
 
     // Get set camera_preferences
-    SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+    mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
     mTitle = getString(R.string.app_name);
 
@@ -128,26 +131,20 @@ public class MainActivity extends Activity {
 
     mDrawerList.setAdapter(mPresetAdapter);
     mDrawerList.setOnItemClickListener(new DrawerItemClickListener(this));
+    mDrawerList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+    mMultiChoiceListener = new DrawerMultiChoiceListener(this, mDrawerList);
+    mDrawerList.setMultiChoiceModeListener(mMultiChoiceListener);
     mDrawerToggle = new DrawerToggle(this, mDrawerLayout);
     mDrawerLayout.setDrawerListener(mDrawerToggle);
 
-    mFocusSeekBar.setOnSeekBarChangeListener(
-        new SeekBarChangeListener(this, SeekBarChangeListener.Type.FOCUS));
-    mZoomSeekBar.setOnSeekBarChangeListener(
-        new SeekBarChangeListener(this, SeekBarChangeListener.Type.ZOOM));
+    mFocusSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(this, Type.FOCUS));
+    mZoomSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(this, Type.ZOOM));
 
     mTouchpad.setOnTouchListener(new TouchpadTouchListener(this));
 
-    CameraDAO cameraDao = getCameraDAO();
-    mCameras = cameraDao.getCameras();
+    mCameras = getCameraDAO().getCameras();
     if (mCameras == null) {
       mCameras = new ArrayList<>();
-    }
-    if (mCameras.isEmpty()) {
-      cameraDao.insertCamera(new Camera("127.0.0.1", "Camera 1", null));
-      cameraDao.insertCamera(new Camera("localhost", "Camera 2", null));
-      cameraDao.insertCamera(new Camera("localhost", "Camera 3", null));
-      mCameras = cameraDao.getCameras();
     }
     mCameraAdapter = new CameraArrayAdapter(this, mCameras);
 
@@ -161,10 +158,6 @@ public class MainActivity extends Activity {
 
     // Init. value of loading spinner
     mLoaderSpinner.setVisibility(View.GONE);
-
-    mDrawerList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-    mMultiChoiceListener = new DrawerMultiChoiceListener(this, mDrawerList);
-    mDrawerList.setMultiChoiceModeListener(mMultiChoiceListener);
 
     // TODO: restore selected camera position from shared preferences
   }
@@ -314,7 +307,6 @@ public class MainActivity extends Activity {
     );
     mAutofocusButton.setEnabled(!on);
     mFocusSeekBar.setEnabled(!on);
-
   }
 
   public void closeDrawer() {
