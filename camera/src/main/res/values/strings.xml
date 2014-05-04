@@ -35,5 +35,7 @@
     <string name="delete_preset">Delete preset</string>
     <string name="edit_preset">Edit preset</string>
     <string name="delete_presets">Delete presets</string>
+    <string name="delete_camera">Delete camera</string>
+    <string name="delete_camera_confirmation">\'%s\' will be removed.</string>
 
 </resources>

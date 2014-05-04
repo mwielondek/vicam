@@ -26,14 +26,19 @@
           android:orderInCategory="3"
           android:showAsAction="collapseActionView"/>
 
+    <item android:id="@+id/action_delete_camera"
+          android:title="@string/delete_camera"
+          android:orderInCategory="4"
+          android:showAsAction="collapseActionView"/>
+
     <item android:id="@+id/action_settings"
           android:title="@string/action_settings"
-          android:orderInCategory="4"
+          android:orderInCategory="5"
           android:showAsAction="collapseActionView"/>
 
     <item android:id="@+id/action_about"
           android:title="@string/action_about"
-          android:orderInCategory="5"
+          android:orderInCategory="6"
           android:showAsAction="collapseActionView"/>
 
 

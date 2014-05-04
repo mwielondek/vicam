@@ -1,8 +1,10 @@
 package com.dreamteam.vicam.view;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.app.FragmentTransaction;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -204,6 +206,23 @@ public class MainActivity extends Activity {
         return true;
       case R.id.action_add_camera:
         showDialog(mAddCameraDialogFragment);
+        return true;
+      case R.id.action_delete_camera:
+        if (mCurrentCamera == null) {
+          showToast("There's no camera to be deleted!", Toast.LENGTH_SHORT);
+          return true;
+        }
+        new AlertDialog.Builder(this)
+            .setTitle(getString(R.string.delete_camera))
+            .setMessage(getString(R.string.delete_camera_confirmation, mCurrentCamera.getName()))
+            .setCancelable(false)
+            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+              public void onClick(DialogInterface dialog, int id) {
+                deleteCamera(mCurrentCamera);
+              }
+            })
+            .setNegativeButton(android.R.string.cancel, null)
+            .show();
         return true;
       case R.id.action_save_preset:
         showDialog(mSavePresetDialogFragment);
@@ -482,4 +501,17 @@ public class MainActivity extends Activity {
     mCameras.add(camera);
     mCameraAdapter.notifyDataSetChanged();
   }
+
+  public void deleteCamera(Camera camera) {
+    CameraDAO cameraDAO = getCameraDAO();
+    cameraDAO.deleteCamera(camera.getId());
+    for (int i = 0; i < mCameras.size(); i++) {
+      if (mCameras.get(i).getId() == camera.getId()) {
+        mCameras.remove(i);
+        break;
+      }
+    }
+    mCameraAdapter.notifyDataSetChanged();
+  }
+
 }
