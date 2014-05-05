@@ -10,11 +10,10 @@ import rx.Observable;
 public interface CameraService {
 
   static final String CGI_BIN = "/cgi-bin";
-  static final String RES_1 = "?res=1";
 
-  @GET(CGI_BIN + "/aw_ptz" + RES_1)
-  public Observable<String> sendCommand(@Query("cmd") String command);
+  @GET(CGI_BIN + "/aw_ptz")
+  public Observable<String> sendCommand(@Query("cmd") String command, @Query("res") int res);
 
-  @GET(CGI_BIN + "/aw_cam" + RES_1)
-  public Observable<String> sendControl(@Query("cmd") String control);
+  @GET(CGI_BIN + "/aw_cam")
+  public Observable<String> sendControl(@Query("cmd") String control, @Query("res") int res);
 }

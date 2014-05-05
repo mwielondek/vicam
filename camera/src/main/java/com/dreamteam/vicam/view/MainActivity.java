@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -56,6 +57,8 @@ import com.dreamteam.vicam.view.custom.TouchpadTouchListener;
 
 import de.greenrobot.event.EventBus;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,6 +67,7 @@ import javax.inject.Inject;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import retrofit.RetrofitError;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -99,7 +103,6 @@ public class MainActivity extends Activity {
   Switch mAutofocusSwitch;
 
   private Camera mCurrentCamera;
-  private int mSelectedCameraPos;
   private CharSequence mTitle;
   private List<Preset> mPresets;
   private List<Camera> mCameras;
@@ -267,6 +270,7 @@ public class MainActivity extends Activity {
   }
 
   public CameraFacade getFacade() {
+    // TODO: Handle null camera
     return CameraServiceManager.getFacadeFor(mCurrentCamera);
   }
 
@@ -352,13 +356,23 @@ public class MainActivity extends Activity {
         new Action1<CameraState>() {
           @Override
           public void call(CameraState cameraState) {
+            Log.i("MYTAG", "Test!");
             updateWithCameraState(cameraState);
           }
         },
         new Action1<Throwable>() {
           @Override
           public void call(Throwable throwable) {
-            showToast("Failed getting latest state from camera", Toast.LENGTH_SHORT);
+            if (throwable instanceof RetrofitError) {
+              RetrofitError err = (RetrofitError) throwable;
+              Log.e("MYTAG", "RetroFitError: "+err.getUrl());
+            }
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            throwable.printStackTrace(pw);
+
+            showToast("Failed getting latest state from camera; "+sw.toString(), Toast.LENGTH_LONG);
+            Log.e("MYTAG", "Error "+sw.toString());
             // TODO for GUI: use some indication for failed request
           }
         }

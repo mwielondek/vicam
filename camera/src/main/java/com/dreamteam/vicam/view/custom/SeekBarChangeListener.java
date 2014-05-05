@@ -72,6 +72,7 @@ public class SeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
               }, new Action1<Throwable>() {
                 @Override
                 public void call(Throwable throwable) {
+
                   activity.showToast("FOCUS", Toast.LENGTH_SHORT);
                 }
               }

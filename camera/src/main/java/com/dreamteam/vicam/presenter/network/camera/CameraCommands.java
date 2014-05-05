@@ -1,5 +1,7 @@
 package com.dreamteam.vicam.presenter.network.camera;
 
+import android.util.Log;
+
 import com.dreamteam.vicam.model.errors.CameraResponseException;
 import com.dreamteam.vicam.model.pojo.Position;
 
@@ -14,7 +16,7 @@ import rx.functions.Func1;
  */
 public class CameraCommands {
 
-  private static final String COMMAND_PREFIX = "%23"; // HTML-encoded '#'
+  private static final String COMMAND_PREFIX = "#"; // HTML-encoded '#'
 
   private static final Pattern PAN_TILT_RESPONSE = Pattern.compile("aPC([\\da-fA-F]{4})([\\da-fA-F]{4})");
   private static final Pattern ZOOM_LEVEL_RESPONSE = Pattern.compile("gz([\\da-fA-F]{3})");
@@ -36,7 +38,7 @@ public class CameraCommands {
   }
 
   public Observable<String> panTilt(int panSpeed, int tiltSpeed) {
-    return sendCommand("PTS", padTwoHex(panSpeed), padTwoHex(tiltSpeed));
+    return sendCommand("PTS", padZeroes(panSpeed, 2), padZeroes(tiltSpeed, 2));
   }
 
   public Observable<String> zoom(int zoomSpeed) {
@@ -56,7 +58,7 @@ public class CameraCommands {
   }
 
   public Observable<String> panTiltAbsolute(int panPosition, int tiltPosition) {
-    return sendCommand("APC", padTwoHex(panPosition), padTwoHex(tiltPosition));
+    return sendCommand("APC", padThreeHex(panPosition), padThreeHex(tiltPosition));
   }
 
   public Observable<String> zoomAbsolute(int zoomLevel) {
@@ -135,25 +137,34 @@ public class CameraCommands {
     });
   }
 
+  private Observable<String> forTheGloryOfSatan(String command) {
+    Log.i("MYTAG", String.format("Sending command %s", command));
+    return cameraService.sendCommand(command, 1);
+  }
+
   private Observable<String> sendCommand(String command) {
-    return cameraService.sendCommand(String.format("%s%s", COMMAND_PREFIX, command));
+    return forTheGloryOfSatan(String.format("%s%s", COMMAND_PREFIX, command));
   }
 
   private Observable<String> sendCommand(String command, String data) {
-    return cameraService.sendCommand(String.format("%s%s%s", COMMAND_PREFIX, command, data));
+    return forTheGloryOfSatan(String.format("%s%s%s", COMMAND_PREFIX, command, data));
   }
 
   private Observable<String> sendCommand(String command, String dataOne, String dataTwo) {
-    return cameraService.sendCommand(
+    return forTheGloryOfSatan(
         String.format("%s%s%s%s", COMMAND_PREFIX, command, dataOne, dataTwo));
   }
 
   private Observable<String> sendControl(String control) {
-    return cameraService.sendControl(control);
+    return cameraService.sendControl(control, 1);
   }
 
   private Observable<String> sendControl(String control, int data) {
-    return cameraService.sendControl(control + Integer.toString(data));
+    return cameraService.sendControl(control + Integer.toString(data), 1);
+  }
+
+  private String padZeroes(int value, int decimalPlaces) {
+    return String.format("%0" + decimalPlaces + "d", value);
   }
 
   private String padZeroesHex(int hexValue, int decimalPlaces) {

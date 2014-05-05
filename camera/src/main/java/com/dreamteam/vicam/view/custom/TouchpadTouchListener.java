@@ -1,9 +1,9 @@
 package com.dreamteam.vicam.view.custom;
 
 import android.os.Handler;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
 
 import com.dreamteam.vicam.model.pojo.Speed;
 import com.dreamteam.vicam.view.MainActivity;
@@ -16,11 +16,12 @@ import rx.schedulers.Schedulers;
  * Created by fsommar on 2014-04-26.
  */
 public class TouchpadTouchListener implements View.OnTouchListener {
+
   private final MainActivity activity;
 
-  private boolean blocked;
-  private Handler handler = new Handler();
-
+  private volatile boolean blocked;
+  private Handler blockedHandler = new Handler();
+  private Handler tapHandler = new Handler();
 
   public TouchpadTouchListener(MainActivity activity) {
     this.activity = activity;
@@ -28,17 +29,17 @@ public class TouchpadTouchListener implements View.OnTouchListener {
 
   @Override
   public boolean onTouch(View view, MotionEvent motionEvent) {
-    int delayTime = 130;
+    int delayTimeMillis = 130;
 
-    if (motionEvent.getAction() != MotionEvent.ACTION_UP ) {
+    if (motionEvent.getAction() != MotionEvent.ACTION_UP) {
       if (!blocked) {
         blocked = true;
-        handler.postDelayed(new Runnable() {
+        blockedHandler.postDelayed(new Runnable() {
           @Override
           public void run() {
             blocked = false;
           }
-        }, delayTime);
+        }, delayTimeMillis);
         System.out.println("SENT REQUEST");
       } else {
         System.out.println("BLOCKED");
@@ -46,13 +47,22 @@ public class TouchpadTouchListener implements View.OnTouchListener {
       }
     }
 
+    Runnable tapRunnable = new Runnable() {
+      @Override
+      public void run() {
+        stopCameraMoving();
+      }
+    };
+
     switch (motionEvent.getAction()) {
       case MotionEvent.ACTION_DOWN:
+        tapHandler.postDelayed(tapRunnable, delayTimeMillis);
       case MotionEvent.ACTION_MOVE:
         float eventX = motionEvent.getX();
         float eventY = motionEvent.getY();
         int normX = (int) (eventX / view.getWidth() * Speed.UPPER_BOUND + Speed.LOWER_BOUND);
         int normY = (int) (eventY / view.getHeight() * Speed.UPPER_BOUND + Speed.LOWER_BOUND);
+        Log.i("MYTAG", String.format("norm: (%d, %d)", normX, normY));
 
         if (normX < Speed.LOWER_BOUND || normX > Speed.UPPER_BOUND
             || normY < Speed.LOWER_BOUND || normY > Speed.UPPER_BOUND) {
@@ -67,7 +77,7 @@ public class TouchpadTouchListener implements View.OnTouchListener {
                 new Action1<String>() {
                   @Override
                   public void call(String s) {
-                    activity.showToast("debug", Toast.LENGTH_SHORT);
+                    // activity.showToast("debug", Toast.LENGTH_SHORT);
                   }
                 }, new Action1<Throwable>() {
                   @Override
@@ -78,29 +88,33 @@ public class TouchpadTouchListener implements View.OnTouchListener {
             );
         return true;
 
-
       case MotionEvent.ACTION_UP:
-
-        activity.getFacade()
-            .moveStop()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(Schedulers.newThread()).subscribe(
-            new Action1<String>() {
-              @Override
-              public void call(String s) {
-                activity.showToast("debugstop", Toast.LENGTH_SHORT);
-              }
-            }, new Action1<Throwable>() {
-              @Override
-              public void call(Throwable throwable) {
-                System.out.println("ACTION_UP!!!");
-              }
-            }
-          );
+        // interrupt tap handler
+        tapHandler.removeCallbacks(tapRunnable);
+        stopCameraMoving();
         return true;
       default:
         return false;
     }
 
+  }
+
+  private void stopCameraMoving() {
+    activity.getFacade()
+        .moveStop()
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribeOn(Schedulers.newThread()).subscribe(
+        new Action1<String>() {
+          @Override
+          public void call(String s) {
+            // activity.showToast("debugstop", Toast.LENGTH_SHORT);
+          }
+        }, new Action1<Throwable>() {
+          @Override
+          public void call(Throwable throwable) {
+            System.out.println("ACTION_UP!!!");
+          }
+        }
+    );
   }
 }
