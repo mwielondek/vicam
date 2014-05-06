@@ -114,6 +114,7 @@ public class MainActivity extends Activity {
   private AddCameraDialogFragment mAddCameraDialogFragment;
   private Spinner mCameraSpinner;
   private SharedPreferences mSharedPreferences;
+  private MenuItem mConnectedIcon;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -181,6 +182,7 @@ public class MainActivity extends Activity {
       int selected = mSharedPreferences.getInt(SELECTED_CAMERA, 0);
       mCameraSpinner.setSelection(selected);
     }
+    mConnectedIcon = menu.findItem(R.id.connection_state);
     return true;
   }
 
@@ -206,7 +208,7 @@ public class MainActivity extends Activity {
     }
     // Handle menu items
     switch (item.getItemId()) {
-      case R.id.action_settings:
+     case R.id.action_settings:
         startActivity(new Intent(this, SettingsActivity.class));
         return true;
       case R.id.action_add_camera:
@@ -298,6 +300,14 @@ public class MainActivity extends Activity {
         }
     );
 
+  }
+
+  public void connectionSuccess(){
+    mConnectedIcon.setIcon(android.R.drawable.presence_online);
+  }
+
+  public void connectionError(){
+    mConnectedIcon.setIcon(android.R.drawable.presence_busy);
   }
 
   @OnClick(R.id.autofocus_switch)
