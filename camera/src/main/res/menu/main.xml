@@ -1,6 +1,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
      >
-
+ <!--           android:icon="@android:drawable/presence_offline" for no connection -->
+    <item android:id="@+id/connection_state"
+          android:title="Connection State"
+          android:orderInCategory="1"
+          android:showAsAction="always"
+          android:icon="@android:drawable/presence_busy"
+          android:enabled="false"
+            />
 
     <item android:id="@+id/action_change_camera"
           android:title="@string/change_camera"
