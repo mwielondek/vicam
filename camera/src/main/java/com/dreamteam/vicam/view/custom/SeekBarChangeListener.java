@@ -6,23 +6,21 @@ import android.widget.Toast;
 import com.dreamteam.vicam.model.pojo.Zoom;
 import com.dreamteam.vicam.view.MainActivity;
 
-import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by fsommar on 2014-04-26.
  */
 public class SeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
 
-  private final MainActivity activity;
+  private final MainActivity mActivity;
 
   public enum Type {FOCUS, ZOOM}
 
   private Type seekBarType;
 
   public SeekBarChangeListener(MainActivity activity, Type seekBarType) {
-    this.activity = activity;
+    this.mActivity = activity;
     this.seekBarType = seekBarType;
   }
 
@@ -39,42 +37,31 @@ public class SeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
     int normProgress = progressToLevel(seekBar);
 
     if (seekBarType == Type.ZOOM) {
-      activity.getFacade()
-          .zoomAbsolute(normProgress)
-          .observeOn(AndroidSchedulers.mainThread())
-          .subscribeOn(Schedulers.newThread())
-          .subscribe(
-              new Action1<String>() {
-                @Override
-                public void call(String s) {
-                  activity.showToast("debugZ", Toast.LENGTH_SHORT);
-                }
-              }, new Action1<Throwable>() {
-                @Override
-                public void call(Throwable throwable) {
-                  activity.showToast("ZOOM", Toast.LENGTH_SHORT);
-                }
-              }
-          );
+      mActivity.prepareObservable(mActivity.getFacade().zoomAbsolute(normProgress)).subscribe(
+          new Action1<String>() {
+            @Override
+            public void call(String s) {
+              mActivity.showToast("ZOOM", Toast.LENGTH_SHORT);
+            }
+          }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+            }
+          }
+      );
     } else if (seekBarType == Type.FOCUS) {
-      activity.getFacade()
-          .focusAbsolute(normProgress)
-          .observeOn(AndroidSchedulers.mainThread())
-          .subscribeOn(Schedulers.newThread())
-          .subscribe(
-              new Action1<String>() {
-                @Override
-                public void call(String s) {
-                  activity.showToast("debugF", Toast.LENGTH_SHORT);
-                }
-              }, new Action1<Throwable>() {
-                @Override
-                public void call(Throwable throwable) {
-
-                  activity.showToast("FOCUS", Toast.LENGTH_SHORT);
-                }
-              }
-          );
+      mActivity.prepareObservable(mActivity.getFacade().focusAbsolute(normProgress)).subscribe(
+          new Action1<String>() {
+            @Override
+            public void call(String s) {
+              mActivity.showToast("FOCUS", Toast.LENGTH_SHORT);
+            }
+          }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+            }
+          }
+      );
     }
   }
 

@@ -35,7 +35,7 @@ public class DrawerToggle extends ActionBarDrawerToggle {
   @Override
   public void onDrawerClosed(View view) {
     eventBus.post(new OnDrawerCloseEvent(view));
-    activity.getActionBar().setTitle(activity.getString(R.string.app_name));
+    activity.setTitle(activity.getString(R.string.app_name));
   }
 
   /**
@@ -43,6 +43,6 @@ public class DrawerToggle extends ActionBarDrawerToggle {
    */
   @Override
   public void onDrawerOpened(View view) {
-    activity.getActionBar().setTitle(activity.getString(R.string.change_preset));
+    activity.setTitle(activity.getString(R.string.change_preset));
   }
 }

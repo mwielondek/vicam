@@ -1,21 +1,19 @@
 package com.dreamteam.vicam.view.custom;
 
 import android.widget.CompoundButton;
-import android.widget.Toast;
 
-import com.dreamteam.vicam.presenter.utility.Utils;
+import com.dreamteam.vicam.presenter.network.camera.CameraFacade;
 import com.dreamteam.vicam.view.MainActivity;
 
 import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by fsommar on 2014-05-06.
  */
 public class SwitchButtonCheckedListener implements CompoundButton.OnCheckedChangeListener {
+
   MainActivity mActivity;
 
   public SwitchButtonCheckedListener(MainActivity mActivity) {
@@ -24,8 +22,7 @@ public class SwitchButtonCheckedListener implements CompoundButton.OnCheckedChan
 
   @Override
   public void onCheckedChanged(CompoundButton buttonView, final boolean isAutofocus) {
-    mActivity.getFacade()
-        .setAF(isAutofocus)
+    mActivity.prepareObservable(mActivity.getFacade().setAF(isAutofocus))
         .flatMap(new Func1<String, Observable<Integer>>() {
           @Override
           public Observable<Integer> call(String s) {
@@ -33,26 +30,21 @@ public class SwitchButtonCheckedListener implements CompoundButton.OnCheckedChan
             // (focus has probably changed since last time we got its information)
             if (isAutofocus) {
               // The focus level doesn't need to be updated since autofocus was selected
-              return Observable.just(-1);
+              return Observable.empty();
             }
-            Utils.delaySleep();
-            return mActivity.getFacade().getFocusLevel();
+            return CameraFacade.accountForDelay(mActivity.getFacade().getFocusLevel());
           }
-        })
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribeOn(Schedulers.newThread()).subscribe(
+        }).subscribe(
         new Action1<Integer>() {
           @Override
           public void call(Integer focusLevel) {
-            if (focusLevel > 0) {
-              mActivity.updateFocusLevel(focusLevel);
-            }
+            mActivity.updateFocusLevel(focusLevel);
           }
         }, new Action1<Throwable>() {
           @Override
           public void call(Throwable throwable) {
-            mActivity.showToast("AF", Toast.LENGTH_SHORT);
           }
-        });
+        }
+    );
   }
 }

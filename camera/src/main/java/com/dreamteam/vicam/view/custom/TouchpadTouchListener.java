@@ -9,23 +9,21 @@ import com.dreamteam.vicam.model.pojo.Speed;
 import com.dreamteam.vicam.presenter.utility.Utils;
 import com.dreamteam.vicam.view.MainActivity;
 
-import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by fsommar on 2014-04-26.
  */
 public class TouchpadTouchListener implements View.OnTouchListener {
 
-  private final MainActivity activity;
+  private final MainActivity mActivity;
 
   private volatile boolean blocked;
   private Handler blockedHandler = new Handler();
   private Handler tapHandler = new Handler();
 
   public TouchpadTouchListener(MainActivity activity) {
-    this.activity = activity;
+    this.mActivity = activity;
   }
 
   @Override
@@ -69,22 +67,19 @@ public class TouchpadTouchListener implements View.OnTouchListener {
           return false;
         }
 
-        activity.getFacade()
-            .moveStart(new Speed(normX, normY))
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(Schedulers.newThread())
-            .subscribe(
-                new Action1<String>() {
-                  @Override
-                  public void call(String s) {
-                  }
-                }, new Action1<Throwable>() {
-                  @Override
-                  public void call(Throwable throwable) {
-                    System.out.println("ACTION_DOWN!!!");
-                  }
-                }
-            );
+        mActivity.prepareObservable(
+            mActivity.getFacade().moveStart(new Speed(normX, normY))).subscribe(
+            new Action1<String>() {
+              @Override
+              public void call(String s) {
+
+              }
+            }, new Action1<Throwable>() {
+              @Override
+              public void call(Throwable throwable) {
+              }
+            }
+        );
         return true;
 
       case MotionEvent.ACTION_UP:
@@ -99,20 +94,7 @@ public class TouchpadTouchListener implements View.OnTouchListener {
   }
 
   private void stopCameraMoving() {
-    activity.getFacade()
-        .moveStop()
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribeOn(Schedulers.newThread()).subscribe(
-        new Action1<String>() {
-          @Override
-          public void call(String s) {
-          }
-        }, new Action1<Throwable>() {
-          @Override
-          public void call(Throwable throwable) {
-            System.out.println("ACTION_UP!!!");
-          }
-        }
-    );
+    mActivity.prepareObservable(
+        mActivity.getFacade().moveStop()).subscribe();
   }
 }

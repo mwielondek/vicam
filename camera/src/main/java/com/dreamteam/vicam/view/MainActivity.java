@@ -45,7 +45,6 @@ import com.dreamteam.vicam.model.pojo.Zoom;
 import com.dreamteam.vicam.presenter.CameraServiceManager;
 import com.dreamteam.vicam.presenter.network.camera.CameraFacade;
 import com.dreamteam.vicam.presenter.utility.Dagger;
-import com.dreamteam.vicam.presenter.utility.Utils;
 import com.dreamteam.vicam.view.custom.AddCameraDialogFragment;
 import com.dreamteam.vicam.view.custom.CameraArrayAdapter;
 import com.dreamteam.vicam.view.custom.CameraSpinnerItemListener;
@@ -152,12 +151,13 @@ public class MainActivity extends Activity {
 
     mTouchpad.setOnTouchListener(new TouchpadTouchListener(this));
 
-    mAutofocusSwitch.setOnCheckedChangeListener(new SwitchButtonCheckedListener(this));
+    final SwitchButtonCheckedListener switchListener = new SwitchButtonCheckedListener(this);
     mAutofocusSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
       @Override
       public void onCheckedChanged(CompoundButton switchButton, boolean isAutofocus) {
         mAutofocusButton.setEnabled(!isAutofocus);
         mFocusSeekBar.setEnabled(!isAutofocus);
+        switchListener.onCheckedChanged(switchButton, isAutofocus);
       }
     });
 
@@ -286,6 +286,27 @@ public class MainActivity extends Activity {
     return CameraServiceManager.getFacadeFor(mCurrentCamera);
   }
 
+  public <T> Observable<T> prepareObservable(Observable<T> observable) {
+    return observable
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribeOn(Schedulers.io())
+        .doOnError(new Action1<Throwable>() {
+          @Override
+          public void call(Throwable throwable) {
+            if (throwable instanceof RetrofitError) {
+              RetrofitError err = (RetrofitError) throwable;
+              Log.e("MYTAG", "RetroFitError: " + err.getUrl());
+            }
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            throwable.printStackTrace(pw);
+
+            Log.e("MYTAG", "Error " + sw.toString());
+            // TODO for GUI: use some indication for failed request
+          }
+        });
+  }
+
   public void showToast(String msg, int length) {
     Toast.makeText(this, msg, length).show();
   }
@@ -293,17 +314,13 @@ public class MainActivity extends Activity {
   @OnClick(R.id.one_touch_autofocus)
   @SuppressWarnings("unused")
   public void OneTouchAutofocusClick(Button button) {
-    getFacade()
-        .oneTouchFocus()
+    prepareObservable(getFacade().oneTouchFocus())
         .flatMap(new Func1<String, Observable<Integer>>() {
           @Override
           public Observable<Integer> call(String s) {
-            Utils.delaySleep();
-            return getFacade().getFocusLevel();
+            return CameraFacade.accountForDelay(getFacade().getFocusLevel());
           }
-        })
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribeOn(Schedulers.newThread()).subscribe(
+        }).subscribe(
         new Action1<Integer>() {
           @Override
           public void call(Integer focusLevel) {
@@ -312,7 +329,6 @@ public class MainActivity extends Activity {
         }, new Action1<Throwable>() {
           @Override
           public void call(Throwable throwable) {
-            showToast("Error", Toast.LENGTH_SHORT);
           }
         }
     );
@@ -343,31 +359,16 @@ public class MainActivity extends Activity {
   }
 
   private void updateCameraState() {
-    getFacade()
-        .getCameraState()
-        .subscribeOn(Schedulers.newThread())
-        .observeOn(AndroidSchedulers.mainThread()).subscribe(
+    prepareObservable(getFacade().getCameraState()).subscribe(
         new Action1<CameraState>() {
           @Override
           public void call(CameraState cameraState) {
-            Log.i("MYTAG", "Test!");
             updateWithCameraState(cameraState);
           }
-        },
-        new Action1<Throwable>() {
+        }, new Action1<Throwable>() {
           @Override
           public void call(Throwable throwable) {
-            if (throwable instanceof RetrofitError) {
-              RetrofitError err = (RetrofitError) throwable;
-              Log.e("MYTAG", "RetroFitError: " + err.getUrl());
-            }
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            throwable.printStackTrace(pw);
-
             showToast("Failed getting latest state from camera", Toast.LENGTH_LONG);
-            Log.e("MYTAG", "Error " + sw.toString());
-            // TODO for GUI: use some indication for failed request
           }
         }
     );
@@ -381,7 +382,6 @@ public class MainActivity extends Activity {
     mPresets.addAll(presets);
     mPresetAdapter.notifyDataSetChanged();
     updateCameraState();
-    showToast("Current Camera: " + e.camera, Toast.LENGTH_SHORT);
   }
 
   @SuppressWarnings("unused")
@@ -404,20 +404,15 @@ public class MainActivity extends Activity {
   public void onEventMainThread(PresetChangedEvent e) {
     showToast("Selected Preset: " + e.preset, Toast.LENGTH_SHORT);
     final CameraState cameraState = e.preset.getCameraState();
-    getFacade()
-        .setCameraState(cameraState)
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribeOn(Schedulers.newThread()).subscribe(
+    prepareObservable(getFacade().setCameraState(cameraState)).subscribe(
         new Action1<Boolean>() {
           @Override
           public void call(Boolean b) {
-            showToast("debugstop", Toast.LENGTH_SHORT);
             updateWithCameraState(cameraState);
           }
         }, new Action1<Throwable>() {
           @Override
           public void call(Throwable throwable) {
-            showToast("Error", Toast.LENGTH_SHORT);
           }
         }
     );
@@ -430,10 +425,7 @@ public class MainActivity extends Activity {
 
   @SuppressWarnings("unused")
   public void onEventMainThread(final SavePresetEvent e) {
-    getFacade()
-        .getCameraState()
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribeOn(Schedulers.newThread()).subscribe(
+    prepareObservable(getFacade().getCameraState()).subscribe(
         new Action1<CameraState>() {
           @Override
           public void call(CameraState cameraState) {

@@ -34,14 +34,6 @@ public class Utils {
     }
   }
 
-  public static void delaySleep() {
-    try {
-      Thread.sleep(DELAY_TIME_MILLIS);
-    } catch (InterruptedException e) {
-      // do nothing
-    }
-  }
-
   public static class ORMLite {
 
     public static <T extends Identifiable> int insert(Dao<T, ?> dao, T obj) {

@@ -8,8 +8,9 @@ import com.dreamteam.vicam.model.pojo.Speed;
 import com.dreamteam.vicam.model.pojo.Zoom;
 import com.dreamteam.vicam.presenter.utility.Utils;
 
+import java.util.concurrent.TimeUnit;
+
 import rx.Observable;
-import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.functions.Func2;
 import rx.functions.Func3;
@@ -68,8 +69,8 @@ public class CameraFacade {
     boolean autofocus = cameraState.isAF();
 
     return Observable.zip(
-        accountForDelay(moveAbsolute(pos)), accountForDelay(zoomAbsolute(zoom)),
-        accountForDelay(focusAbsolute(focus)), setAF(autofocus),
+        moveAbsolute(pos), accountForDelay(zoomAbsolute(zoom)),
+        accountForDelay(focusAbsolute(focus)), accountForDelay(setAF(autofocus)),
         new Func4<String, String, String, String, Boolean>() {
           @Override
           public Boolean call(String s, String s2, String s3, String s4) {
@@ -81,7 +82,7 @@ public class CameraFacade {
 
   public Observable<CameraState> getCameraState() {
     return Observable.zip(
-        accountForDelay(cameraCommands.getPanTilt()), accountForDelay(getZoom()), getFocus(),
+        cameraCommands.getPanTilt(), accountForDelay(getZoom()), accountForDelay(getFocus()),
         new Func3<Position, Zoom, Focus, CameraState>() {
           @Override
           public CameraState call(Position position, Zoom zoom, Focus focus) {
@@ -93,7 +94,7 @@ public class CameraFacade {
 
   public Observable<Focus> getFocus() {
     return Observable.zip(
-        accountForDelay(cameraCommands.getFocusLevel()), cameraCommands.getAF(),
+        cameraCommands.getFocusLevel(), accountForDelay(cameraCommands.getAF()),
         new Func2<Integer, Boolean, Focus>() {
           @Override
           public Focus call(Integer level, Boolean AF) {
@@ -120,16 +121,7 @@ public class CameraFacade {
     return cameraCommands.getFocusLevel();
   }
 
-  private <T> Observable<T> accountForDelay(Observable<T> obs) {
-    return obs.doOnNext(new Action1<T>() {
-      @Override
-      public void call(T t) {
-        try {
-          Thread.sleep(Utils.DELAY_TIME_MILLIS);
-        } catch (InterruptedException e) {
-          // :3
-        }
-      }
-    });
+  public static <T> Observable<T> accountForDelay(Observable<T> obs) {
+    return obs.delay(Utils.DELAY_TIME_MILLIS, TimeUnit.MILLISECONDS);
   }
 }
