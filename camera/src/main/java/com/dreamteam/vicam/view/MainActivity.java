@@ -72,6 +72,7 @@ import butterknife.OnClick;
 import retrofit.RetrofitError;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
@@ -292,9 +293,16 @@ public class MainActivity extends Activity {
     return observable
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeOn(Schedulers.io())
+        .doOnCompleted(new Action0() {
+          @Override
+          public void call() {
+            connectionSuccess();
+          }
+        })
         .doOnError(new Action1<Throwable>() {
           @Override
           public void call(Throwable throwable) {
+            connectionError();
             if (throwable instanceof RetrofitError) {
               RetrofitError err = (RetrofitError) throwable;
               Log.e("MYTAG", "RetroFitError: " + err.getUrl());
@@ -313,11 +321,11 @@ public class MainActivity extends Activity {
     Toast.makeText(this, msg, length).show();
   }
 
-  public void connectionSuccess(){
+  public void connectionSuccess() {
     mConnectedIcon.setIcon(android.R.drawable.presence_online);
   }
 
-  public void connectionError(){
+  public void connectionError() {
     mConnectedIcon.setIcon(android.R.drawable.presence_busy);
   }
 
