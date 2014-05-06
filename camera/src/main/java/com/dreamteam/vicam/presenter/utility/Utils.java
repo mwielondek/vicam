@@ -9,6 +9,8 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
 
+import rx.functions.Action1;
+
 /**
  * Created by fsommar on 2014-04-12.
  */
@@ -21,6 +23,14 @@ public class Utils {
       throw new IllegalArgumentException(
           String.format("Parameter needs to be in range [%d, %d] - was %d.", lower, upper, param));
     }
+  }
+
+  public static <T> Action1<T> noop() {
+    return new Action1<T>() {
+      @Override
+      public void call(T t) {
+      }
+    };
   }
 
   public static String streamToString(java.io.InputStream is) {

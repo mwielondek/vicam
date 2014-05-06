@@ -4,9 +4,13 @@ import android.widget.SeekBar;
 import android.widget.Toast;
 
 import com.dreamteam.vicam.model.pojo.Zoom;
+import com.dreamteam.vicam.presenter.network.camera.CameraFacade;
+import com.dreamteam.vicam.presenter.utility.Utils;
 import com.dreamteam.vicam.view.MainActivity;
 
+import rx.Observable;
 import rx.functions.Action1;
+import rx.functions.Func1;
 
 /**
  * Created by fsommar on 2014-04-26.
@@ -34,33 +38,39 @@ public class SeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
 
   @Override
   public void onStopTrackingTouch(SeekBar seekBar) {
-    int normProgress = progressToLevel(seekBar);
+    final int normProgress = progressToLevel(seekBar);
 
     if (seekBarType == Type.ZOOM) {
-      mActivity.prepareObservable(mActivity.getFacade().zoomAbsolute(normProgress)).subscribe(
+      mActivity.prepareObservable(
+          mActivity.getFacade().flatMap(new Func1<CameraFacade, Observable<String>>() {
+            @Override
+            public Observable<String> call(CameraFacade cameraFacade) {
+              return cameraFacade.zoomAbsolute(normProgress);
+            }
+          })
+      ).subscribe(
           new Action1<String>() {
             @Override
             public void call(String s) {
               mActivity.showToast("ZOOM", Toast.LENGTH_SHORT);
             }
-          }, new Action1<Throwable>() {
-            @Override
-            public void call(Throwable throwable) {
-            }
-          }
+          }, Utils.<Throwable>noop()
       );
     } else if (seekBarType == Type.FOCUS) {
-      mActivity.prepareObservable(mActivity.getFacade().focusAbsolute(normProgress)).subscribe(
+      mActivity.prepareObservable(
+          mActivity.getFacade().flatMap(new Func1<CameraFacade, Observable<String>>() {
+            @Override
+            public Observable<String> call(CameraFacade cameraFacade) {
+              return cameraFacade.focusAbsolute(normProgress);
+            }
+          })
+      ).subscribe(
           new Action1<String>() {
             @Override
             public void call(String s) {
               mActivity.showToast("FOCUS", Toast.LENGTH_SHORT);
             }
-          }, new Action1<Throwable>() {
-            @Override
-            public void call(Throwable throwable) {
-            }
-          }
+          }, Utils.<Throwable>noop()
       );
     }
   }

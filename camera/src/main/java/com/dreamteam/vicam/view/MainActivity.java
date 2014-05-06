@@ -29,6 +29,7 @@ import com.dreamteam.camera.R;
 import com.dreamteam.vicam.model.database.CameraDAO;
 import com.dreamteam.vicam.model.database.DAOFactory;
 import com.dreamteam.vicam.model.database.PresetDAO;
+import com.dreamteam.vicam.model.errors.CameraDoesNotExistException;
 import com.dreamteam.vicam.model.events.CameraChangedEvent;
 import com.dreamteam.vicam.model.events.DeletePresetsEvent;
 import com.dreamteam.vicam.model.events.EditPresetEvent;
@@ -45,6 +46,7 @@ import com.dreamteam.vicam.model.pojo.Zoom;
 import com.dreamteam.vicam.presenter.CameraServiceManager;
 import com.dreamteam.vicam.presenter.network.camera.CameraFacade;
 import com.dreamteam.vicam.presenter.utility.Dagger;
+import com.dreamteam.vicam.presenter.utility.Utils;
 import com.dreamteam.vicam.view.custom.AddCameraDialogFragment;
 import com.dreamteam.vicam.view.custom.CameraArrayAdapter;
 import com.dreamteam.vicam.view.custom.CameraSpinnerItemListener;
@@ -118,6 +120,8 @@ public class MainActivity extends Activity {
   private Spinner mCameraSpinner;
   private SharedPreferences mSharedPreferences;
   private MenuItem mConnectedIcon;
+  private Action1<Throwable> mErrorHandler;
+  private Action0 mSuccessHandler;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -179,6 +183,29 @@ public class MainActivity extends Activity {
 
     // Init. value of loading spinner
     mLoaderSpinner.setVisibility(View.GONE);
+
+    mErrorHandler = new Action1<Throwable>() {
+      @Override
+      public void call(Throwable throwable) {
+        if (throwable instanceof RetrofitError) {
+          RetrofitError err = (RetrofitError) throwable;
+          Log.e("MYTAG", "RetroFitError: " + err.getUrl());
+        }
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        throwable.printStackTrace(pw);
+
+        Log.e("MYTAG", "Error " + sw.toString());
+        connectionError();
+      }
+    };
+
+    mSuccessHandler = new Action0() {
+      @Override
+      public void call() {
+        connectionSuccess();
+      }
+    };
   }
 
   @Override
@@ -284,37 +311,21 @@ public class MainActivity extends Activity {
     }
   }
 
-  public CameraFacade getFacade() {
-    // TODO: Handle null camera
-    return CameraServiceManager.getFacadeFor(mCurrentCamera);
+  public Observable<CameraFacade> getFacade() {
+    if (mCurrentCamera == null) {
+      return Observable.error(
+          new CameraDoesNotExistException("No camera is currently selected."));
+    } else {
+      return Observable.just(CameraServiceManager.getFacadeFor(mCurrentCamera));
+    }
   }
 
   public <T> Observable<T> prepareObservable(Observable<T> observable) {
     return observable
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeOn(Schedulers.io())
-        .doOnCompleted(new Action0() {
-          @Override
-          public void call() {
-            connectionSuccess();
-          }
-        })
-        .doOnError(new Action1<Throwable>() {
-          @Override
-          public void call(Throwable throwable) {
-            connectionError();
-            if (throwable instanceof RetrofitError) {
-              RetrofitError err = (RetrofitError) throwable;
-              Log.e("MYTAG", "RetroFitError: " + err.getUrl());
-            }
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            throwable.printStackTrace(pw);
-
-            Log.e("MYTAG", "Error " + sw.toString());
-            // TODO for GUI: use some indication for failed request
-          }
-        });
+        .doOnError(mErrorHandler)
+        .doOnCompleted(mSuccessHandler);
   }
 
   public void showToast(String msg, int length) {
@@ -332,25 +343,29 @@ public class MainActivity extends Activity {
   @OnClick(R.id.one_touch_autofocus)
   @SuppressWarnings("unused")
   public void OneTouchAutofocusClick(Button button) {
-    prepareObservable(getFacade().oneTouchFocus())
-        .flatMap(new Func1<String, Observable<Integer>>() {
-          @Override
-          public Observable<Integer> call(String s) {
-            return CameraFacade.accountForDelay(getFacade().getFocusLevel());
-          }
-        }).subscribe(
+    prepareObservable(
+        getFacade()
+            .flatMap(new Func1<CameraFacade, Observable<Integer>>() {
+              @Override
+              public Observable<Integer> call(final CameraFacade cameraFacade) {
+                return cameraFacade.oneTouchFocus().flatMap(
+                    new Func1<String, Observable<Integer>>() {
+                      @Override
+                      public Observable<Integer> call(String s) {
+                        return CameraFacade.accountForDelay(cameraFacade.getFocusLevel());
+                      }
+                    }
+                );
+              }
+            })
+    ).subscribe(
         new Action1<Integer>() {
           @Override
           public void call(Integer focusLevel) {
             updateFocusLevel(focusLevel);
           }
-        }, new Action1<Throwable>() {
-          @Override
-          public void call(Throwable throwable) {
-          }
-        }
+        }, Utils.<Throwable>noop()
     );
-
   }
 
   public void closeDrawer() {
@@ -377,7 +392,14 @@ public class MainActivity extends Activity {
   }
 
   private void updateCameraState() {
-    prepareObservable(getFacade().getCameraState()).subscribe(
+    prepareObservable(
+        getFacade().flatMap(new Func1<CameraFacade, Observable<CameraState>>() {
+          @Override
+          public Observable<CameraState> call(CameraFacade cameraFacade) {
+            return cameraFacade.getCameraState();
+          }
+        })
+    ).subscribe(
         new Action1<CameraState>() {
           @Override
           public void call(CameraState cameraState) {
@@ -422,17 +444,21 @@ public class MainActivity extends Activity {
   public void onEventMainThread(PresetChangedEvent e) {
     showToast("Selected Preset: " + e.preset, Toast.LENGTH_SHORT);
     final CameraState cameraState = e.preset.getCameraState();
-    prepareObservable(getFacade().setCameraState(cameraState)).subscribe(
+
+    prepareObservable(
+        getFacade().flatMap(new Func1<CameraFacade, Observable<Boolean>>() {
+          @Override
+          public Observable<Boolean> call(CameraFacade cameraFacade) {
+            return cameraFacade.setCameraState(cameraState);
+          }
+        })
+    ).subscribe(
         new Action1<Boolean>() {
           @Override
           public void call(Boolean b) {
             updateWithCameraState(cameraState);
           }
-        }, new Action1<Throwable>() {
-          @Override
-          public void call(Throwable throwable) {
-          }
-        }
+        }, Utils.<Throwable>noop()
     );
   }
 
@@ -443,7 +469,14 @@ public class MainActivity extends Activity {
 
   @SuppressWarnings("unused")
   public void onEventMainThread(final SavePresetEvent e) {
-    prepareObservable(getFacade().getCameraState()).subscribe(
+    prepareObservable(
+        getFacade().flatMap(new Func1<CameraFacade, Observable<CameraState>>() {
+          @Override
+          public Observable<CameraState> call(CameraFacade cameraFacade) {
+            return cameraFacade.getCameraState();
+          }
+        })
+    ).subscribe(
         new Action1<CameraState>() {
           @Override
           public void call(CameraState cameraState) {
@@ -534,4 +567,7 @@ public class MainActivity extends Activity {
     mCameraAdapter.notifyDataSetChanged();
   }
 
+  public Action1<Throwable> getErrorHandler() {
+    return mErrorHandler;
+  }
 }

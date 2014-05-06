@@ -1,7 +1,5 @@
 package com.dreamteam.vicam.presenter.network.camera;
 
-import android.util.Log;
-
 import com.dreamteam.vicam.model.errors.CameraResponseException;
 import com.dreamteam.vicam.model.pojo.Position;
 
@@ -137,21 +135,20 @@ public class CameraCommands {
     });
   }
 
-  private Observable<String> forTheGloryOfSatan(String command) {
-    Log.i("MYTAG", String.format("Sending command %s", command));
+  private Observable<String> sendCommandFix(String command) {
     return cameraService.sendCommand(command, 1);
   }
 
   private Observable<String> sendCommand(String command) {
-    return forTheGloryOfSatan(String.format("%s%s", COMMAND_PREFIX, command));
+    return sendCommandFix(String.format("%s%s", COMMAND_PREFIX, command));
   }
 
   private Observable<String> sendCommand(String command, String data) {
-    return forTheGloryOfSatan(String.format("%s%s%s", COMMAND_PREFIX, command, data));
+    return sendCommandFix(String.format("%s%s%s", COMMAND_PREFIX, command, data));
   }
 
   private Observable<String> sendCommand(String command, String dataOne, String dataTwo) {
-    return forTheGloryOfSatan(
+    return sendCommandFix(
         String.format("%s%s%s%s", COMMAND_PREFIX, command, dataOne, dataTwo));
   }
 

@@ -1,15 +1,16 @@
 package com.dreamteam.vicam.view.custom;
 
 import android.os.Handler;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 import com.dreamteam.vicam.model.pojo.Speed;
+import com.dreamteam.vicam.presenter.network.camera.CameraFacade;
 import com.dreamteam.vicam.presenter.utility.Utils;
 import com.dreamteam.vicam.view.MainActivity;
 
-import rx.functions.Action1;
+import rx.Observable;
+import rx.functions.Func1;
 
 /**
  * Created by fsommar on 2014-04-26.
@@ -60,26 +61,13 @@ public class TouchpadTouchListener implements View.OnTouchListener {
         float eventY = motionEvent.getY();
         int normX = (int) (eventX / view.getWidth() * Speed.UPPER_BOUND + Speed.LOWER_BOUND);
         int normY = (int) (eventY / view.getHeight() * Speed.UPPER_BOUND + Speed.LOWER_BOUND);
-        Log.i("MYTAG", String.format("norm: (%d, %d)", normX, normY));
 
         if (normX < Speed.LOWER_BOUND || normX > Speed.UPPER_BOUND
             || normY < Speed.LOWER_BOUND || normY > Speed.UPPER_BOUND) {
           return false;
         }
 
-        mActivity.prepareObservable(
-            mActivity.getFacade().moveStart(new Speed(normX, normY))).subscribe(
-            new Action1<String>() {
-              @Override
-              public void call(String s) {
-
-              }
-            }, new Action1<Throwable>() {
-              @Override
-              public void call(Throwable throwable) {
-              }
-            }
-        );
+        startCameraMoving(new Speed(normX, normY));
         return true;
 
       case MotionEvent.ACTION_UP:
@@ -93,8 +81,25 @@ public class TouchpadTouchListener implements View.OnTouchListener {
 
   }
 
+  private void startCameraMoving(final Speed speed) {
+    mActivity.prepareObservable(
+        mActivity.getFacade().flatMap(new Func1<CameraFacade, Observable<String>>() {
+          @Override
+          public Observable<String> call(CameraFacade cameraFacade) {
+            return cameraFacade.moveStart(speed);
+          }
+        })
+    ).subscribe(Utils.noop(), Utils.<Throwable>noop());
+  }
+
   private void stopCameraMoving() {
     mActivity.prepareObservable(
-        mActivity.getFacade().moveStop()).subscribe();
+        mActivity.getFacade().flatMap(new Func1<CameraFacade, Observable<String>>() {
+          @Override
+          public Observable<String> call(CameraFacade cameraFacade) {
+            return cameraFacade.moveStop();
+          }
+        })
+    ).subscribe(Utils.noop(), Utils.<Throwable>noop());
   }
 }
