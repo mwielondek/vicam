@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -148,6 +149,14 @@ public class MainActivity extends Activity {
     mZoomSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(this, Type.ZOOM));
 
     mTouchpad.setOnTouchListener(new TouchpadTouchListener(this));
+
+    mAutofocusSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+      @Override
+      public void onCheckedChanged(CompoundButton buttonView, boolean isAutofocus) {
+        mAutofocusButton.setEnabled(!isAutofocus);
+        mFocusSeekBar.setEnabled(!isAutofocus);
+      }
+    });
 
     mCameras = getCameraDAO().getCameras();
     if (mCameras == null) {
@@ -329,8 +338,6 @@ public class MainActivity extends Activity {
           }
         }
     );
-    mAutofocusButton.setEnabled(!on);
-    mFocusSeekBar.setEnabled(!on);
   }
 
   public void closeDrawer() {
@@ -371,7 +378,7 @@ public class MainActivity extends Activity {
             PrintWriter pw = new PrintWriter(sw);
             throwable.printStackTrace(pw);
 
-            showToast("Failed getting latest state from camera; "+sw.toString(), Toast.LENGTH_LONG);
+            showToast("Failed getting latest state from camera", Toast.LENGTH_LONG);
             Log.e("MYTAG", "Error "+sw.toString());
             // TODO for GUI: use some indication for failed request
           }
