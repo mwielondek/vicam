@@ -45,6 +45,7 @@ import com.dreamteam.vicam.model.pojo.Zoom;
 import com.dreamteam.vicam.presenter.CameraServiceManager;
 import com.dreamteam.vicam.presenter.network.camera.CameraFacade;
 import com.dreamteam.vicam.presenter.utility.Dagger;
+import com.dreamteam.vicam.presenter.utility.Utils;
 import com.dreamteam.vicam.view.custom.AddCameraDialogFragment;
 import com.dreamteam.vicam.view.custom.CameraArrayAdapter;
 import com.dreamteam.vicam.view.custom.CameraSpinnerItemListener;
@@ -54,6 +55,7 @@ import com.dreamteam.vicam.view.custom.DrawerToggle;
 import com.dreamteam.vicam.view.custom.PresetArrayAdapter;
 import com.dreamteam.vicam.view.custom.SavePresetDialogFragment;
 import com.dreamteam.vicam.view.custom.SeekBarChangeListener;
+import com.dreamteam.vicam.view.custom.SwitchButtonCheckedListener;
 import com.dreamteam.vicam.view.custom.TouchpadTouchListener;
 
 import de.greenrobot.event.EventBus;
@@ -150,9 +152,10 @@ public class MainActivity extends Activity {
 
     mTouchpad.setOnTouchListener(new TouchpadTouchListener(this));
 
+    mAutofocusSwitch.setOnCheckedChangeListener(new SwitchButtonCheckedListener(this));
     mAutofocusSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
       @Override
-      public void onCheckedChanged(CompoundButton buttonView, boolean isAutofocus) {
+      public void onCheckedChanged(CompoundButton switchButton, boolean isAutofocus) {
         mAutofocusButton.setEnabled(!isAutofocus);
         mFocusSeekBar.setEnabled(!isAutofocus);
       }
@@ -292,12 +295,19 @@ public class MainActivity extends Activity {
   public void OneTouchAutofocusClick(Button button) {
     getFacade()
         .oneTouchFocus()
+        .flatMap(new Func1<String, Observable<Integer>>() {
+          @Override
+          public Observable<Integer> call(String s) {
+            Utils.delaySleep();
+            return getFacade().getFocusLevel();
+          }
+        })
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeOn(Schedulers.newThread()).subscribe(
-        new Action1<String>() {
+        new Action1<Integer>() {
           @Override
-          public void call(String s) {
-            showToast("debugstop", Toast.LENGTH_SHORT);
+          public void call(Integer focusLevel) {
+            updateFocusLevel(focusLevel);
           }
         }, new Action1<Throwable>() {
           @Override
@@ -307,37 +317,6 @@ public class MainActivity extends Activity {
         }
     );
 
-  }
-
-  @OnClick(R.id.autofocus_switch)
-  @SuppressWarnings("unused")
-  public void AutofocusClick(Switch autofocusSwitch) {
-    boolean on = autofocusSwitch.isChecked();
-
-    getFacade()
-        .setAF(on)
-        .flatMap(new Func1<String, Observable<CameraState>>() {
-          @Override
-          public Observable<CameraState> call(String s) {
-            // after AF has changed we fetch the new state from camera
-            // (focus has probably changed since last time we got its information)
-            return getFacade().getCameraState();
-          }
-        })
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribeOn(Schedulers.newThread()).subscribe(
-        new Action1<CameraState>() {
-          @Override
-          public void call(CameraState cameraState) {
-            showToast("debugstop", Toast.LENGTH_SHORT);
-          }
-        }, new Action1<Throwable>() {
-          @Override
-          public void call(Throwable throwable) {
-            showToast("AF", Toast.LENGTH_SHORT);
-          }
-        }
-    );
   }
 
   public void closeDrawer() {
@@ -350,9 +329,17 @@ public class MainActivity extends Activity {
   }
 
   private void updateWithCameraState(CameraState cameraState) {
-    mFocusSeekBar.setProgress(cameraState.getFocus().getLevel());
-    mZoomSeekBar.setProgress(cameraState.getZoom().getLevel());
+    updateFocusLevel(cameraState.getFocus().getLevel());
+    updateZoomLevel(cameraState.getZoom().getLevel());
     mAutofocusSwitch.setChecked(cameraState.isAF());
+  }
+
+  public void updateFocusLevel(int focusLevel) {
+    SeekBarChangeListener.levelToProgress(mFocusSeekBar, focusLevel);
+  }
+
+  public void updateZoomLevel(int focusLevel) {
+    SeekBarChangeListener.levelToProgress(mFocusSeekBar, focusLevel);
   }
 
   private void updateCameraState() {
@@ -372,14 +359,14 @@ public class MainActivity extends Activity {
           public void call(Throwable throwable) {
             if (throwable instanceof RetrofitError) {
               RetrofitError err = (RetrofitError) throwable;
-              Log.e("MYTAG", "RetroFitError: "+err.getUrl());
+              Log.e("MYTAG", "RetroFitError: " + err.getUrl());
             }
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             throwable.printStackTrace(pw);
 
             showToast("Failed getting latest state from camera", Toast.LENGTH_LONG);
-            Log.e("MYTAG", "Error "+sw.toString());
+            Log.e("MYTAG", "Error " + sw.toString());
             // TODO for GUI: use some indication for failed request
           }
         }

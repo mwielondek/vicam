@@ -36,9 +36,7 @@ public class SeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
 
   @Override
   public void onStopTrackingTouch(SeekBar seekBar) {
-    int normProgress = seekBar.getProgress()
-                       * Zoom.RANGE / seekBar.getMax()
-                       + Zoom.LOWER_BOUND;
+    int normProgress = progressToLevel(seekBar);
 
     if (seekBarType == Type.ZOOM) {
       activity.getFacade()
@@ -78,5 +76,16 @@ public class SeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
               }
           );
     }
+  }
+
+  public static int progressToLevel(SeekBar seekBar) {
+    return seekBar.getProgress()
+           * Zoom.RANGE / seekBar.getMax()
+           + Zoom.LOWER_BOUND;
+  }
+
+  public static void levelToProgress(SeekBar seekBar, int level) {
+    int progress = (level - Zoom.LOWER_BOUND) * seekBar.getMax() / Zoom.RANGE;
+    seekBar.setProgress(progress);
   }
 }

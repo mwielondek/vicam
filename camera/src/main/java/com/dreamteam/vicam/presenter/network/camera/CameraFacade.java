@@ -116,6 +116,10 @@ public class CameraFacade {
     return enabled ? cameraCommands.focusAuto() : cameraCommands.focusManual();
   }
 
+  public Observable<Integer> getFocusLevel() {
+    return cameraCommands.getFocusLevel();
+  }
+
   private <T> Observable<T> accountForDelay(Observable<T> obs) {
     return obs.doOnNext(new Action1<T>() {
       @Override
@@ -128,5 +132,4 @@ public class CameraFacade {
       }
     });
   }
-
 }
