@@ -14,6 +14,8 @@ import java.util.Scanner;
  */
 public class Utils {
 
+  public static final long DELAY_TIME_MILLIS = 130;
+
   public static void rangeCheck(int param, int lower, int upper) {
     if (param < lower || param > upper) {
       throw new IllegalArgumentException(

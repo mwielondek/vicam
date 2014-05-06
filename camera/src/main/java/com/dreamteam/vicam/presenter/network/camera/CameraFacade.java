@@ -9,6 +9,7 @@ import com.dreamteam.vicam.model.pojo.Zoom;
 import com.dreamteam.vicam.presenter.utility.Utils;
 
 import rx.Observable;
+import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.functions.Func2;
 import rx.functions.Func3;
@@ -19,7 +20,6 @@ import rx.functions.Func4;
  */
 public class CameraFacade {
 
-  // TODO: Methods returning Observable<String> should return Observable<Boolean> to show whether the action carried out or not.
   private CameraCommands cameraCommands;
 
   public CameraFacade(CameraService cameraService) {
@@ -66,8 +66,10 @@ public class CameraFacade {
     int zoom = cameraState.getZoom().getLevel();
     int focus = cameraState.getFocus().getLevel();
     boolean autofocus = cameraState.isAF();
+
     return Observable.zip(
-        moveAbsolute(pos), zoomAbsolute(zoom), focusAbsolute(focus), setAF(autofocus),
+        accountForDelay(moveAbsolute(pos)), accountForDelay(zoomAbsolute(zoom)),
+        accountForDelay(focusAbsolute(focus)), setAF(autofocus),
         new Func4<String, String, String, String, Boolean>() {
           @Override
           public Boolean call(String s, String s2, String s3, String s4) {
@@ -79,7 +81,7 @@ public class CameraFacade {
 
   public Observable<CameraState> getCameraState() {
     return Observable.zip(
-        cameraCommands.getPanTilt(), getZoom(), getFocus(),
+        accountForDelay(cameraCommands.getPanTilt()), accountForDelay(getZoom()), getFocus(),
         new Func3<Position, Zoom, Focus, CameraState>() {
           @Override
           public CameraState call(Position position, Zoom zoom, Focus focus) {
@@ -91,7 +93,7 @@ public class CameraFacade {
 
   public Observable<Focus> getFocus() {
     return Observable.zip(
-        cameraCommands.getFocusLevel(), cameraCommands.getAF(),
+        accountForDelay(cameraCommands.getFocusLevel()), cameraCommands.getAF(),
         new Func2<Integer, Boolean, Focus>() {
           @Override
           public Focus call(Integer level, Boolean AF) {
@@ -112,6 +114,19 @@ public class CameraFacade {
 
   public Observable<String> setAF(boolean enabled) {
     return enabled ? cameraCommands.focusAuto() : cameraCommands.focusManual();
+  }
+
+  private <T> Observable<T> accountForDelay(Observable<T> obs) {
+    return obs.doOnNext(new Action1<T>() {
+      @Override
+      public void call(T t) {
+        try {
+          Thread.sleep(Utils.DELAY_TIME_MILLIS);
+        } catch (InterruptedException e) {
+          // :3
+        }
+      }
+    });
   }
 
 }

@@ -6,6 +6,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.dreamteam.vicam.model.pojo.Speed;
+import com.dreamteam.vicam.presenter.utility.Utils;
 import com.dreamteam.vicam.view.MainActivity;
 
 import rx.android.schedulers.AndroidSchedulers;
@@ -29,7 +30,6 @@ public class TouchpadTouchListener implements View.OnTouchListener {
 
   @Override
   public boolean onTouch(View view, MotionEvent motionEvent) {
-    int delayTimeMillis = 130;
 
     if (motionEvent.getAction() != MotionEvent.ACTION_UP) {
       if (!blocked) {
@@ -39,7 +39,7 @@ public class TouchpadTouchListener implements View.OnTouchListener {
           public void run() {
             blocked = false;
           }
-        }, delayTimeMillis);
+        }, Utils.DELAY_TIME_MILLIS);
         System.out.println("SENT REQUEST");
       } else {
         System.out.println("BLOCKED");
@@ -56,7 +56,7 @@ public class TouchpadTouchListener implements View.OnTouchListener {
 
     switch (motionEvent.getAction()) {
       case MotionEvent.ACTION_DOWN:
-        tapHandler.postDelayed(tapRunnable, delayTimeMillis);
+        tapHandler.postDelayed(tapRunnable, Utils.DELAY_TIME_MILLIS);
       case MotionEvent.ACTION_MOVE:
         float eventX = motionEvent.getX();
         float eventY = motionEvent.getY();
@@ -77,7 +77,6 @@ public class TouchpadTouchListener implements View.OnTouchListener {
                 new Action1<String>() {
                   @Override
                   public void call(String s) {
-                    // activity.showToast("debug", Toast.LENGTH_SHORT);
                   }
                 }, new Action1<Throwable>() {
                   @Override
@@ -107,7 +106,6 @@ public class TouchpadTouchListener implements View.OnTouchListener {
         new Action1<String>() {
           @Override
           public void call(String s) {
-            // activity.showToast("debugstop", Toast.LENGTH_SHORT);
           }
         }, new Action1<Throwable>() {
           @Override
