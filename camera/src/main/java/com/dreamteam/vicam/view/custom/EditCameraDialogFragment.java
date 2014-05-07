@@ -12,24 +12,30 @@ import android.widget.EditText;
 
 import com.dreamteam.camera.R;
 import com.dreamteam.vicam.model.events.SaveCameraEvent;
+import com.dreamteam.vicam.model.pojo.Camera;
 import com.dreamteam.vicam.presenter.utility.Dagger;
+import com.dreamteam.vicam.view.MainActivity;
 
 import de.greenrobot.event.EventBus;
 
 import javax.inject.Inject;
 
 /**
- * Manages a custom layout for the Add Camera dialog in settings
+ * Manages a custom layout for the Edit Camera Dialog
  */
-public class AddCameraDialogFragment extends DialogFragment {
+public class EditCameraDialogFragment extends DialogFragment {
+  private Camera mCurrentCamera;
 
+  /*
   @Inject
   EventBus mEventBus;
-
+  */
   Activity mActivity;
 
-  public AddCameraDialogFragment(Activity activity) {
-    Dagger.inject(this);
+  public EditCameraDialogFragment(Activity activity, MainActivity currentActivity) {
+    //Dagger.inject(this);
+
+    mCurrentCamera = currentActivity.getCurrentCamera();
     mActivity = activity;
   }
 
@@ -39,26 +45,32 @@ public class AddCameraDialogFragment extends DialogFragment {
 
     // Get the layout inflater
     LayoutInflater inflater = mActivity.getLayoutInflater();
-    View view = inflater.inflate(R.layout.dialog_add_camera, null);
+    View view = inflater.inflate(R.layout.dialog_edit_camera, null);
 
-    builder.setTitle(R.string.add_new_camera);
+    builder.setTitle(R.string.edit_camera);
 
-    final EditText nameEdit = (EditText) view.findViewById(R.id.add_camera_name);
-    final EditText ipEdit = (EditText) view.findViewById(R.id.add_camera_ip);
-    final EditText portEdit = (EditText) view.findViewById(R.id.add_camera_port);
+    EditText nameEdit = (EditText) view.findViewById(R.id.edit_camera_name);
+    EditText ipEdit = (EditText) view.findViewById(R.id.edit_camera_ip);
+    EditText portEdit = (EditText) view.findViewById(R.id.edit_camera_port);
+
+    if(mCurrentCamera == null) {
+
+    } else {
+      // Show current camera as hints
+      nameEdit.setHint(mCurrentCamera.getName());
+      ipEdit.setHint(mCurrentCamera.getIp().toString());
+      portEdit.setHint(mCurrentCamera.getPort().toString());
+    }
+
+
 
     // Inflate and set the layout for the dialog
     // Pass null as the parent view because its going in the dialog layout
     builder.setView(view)
-        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+        .setPositiveButton(R.string.apply_changes, new DialogInterface.OnClickListener() {
           @Override
           public void onClick(DialogInterface dialog, int id) {
-            // Send event to save camera in database
-            mEventBus.post(new SaveCameraEvent(
-                dialog,
-                nameEdit.getText().toString(),
-                ipEdit.getText().toString(),
-                portEdit.getText().toString()));
+
           }
         })
         .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {

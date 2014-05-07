@@ -5,15 +5,43 @@
               android:layout_width="wrap_content"
               android:layout_height="wrap_content">
 
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="fill_parent"
-              android:layout_height="wrap_content"
-              android:text="New Text"
-              android:textSize="16sp"
-              android:textColor="#000"
-              android:padding="10dp"
-              android:id="@+id/editCamerasItem"/>
 
 
+    <EditText
+            android:id="@+id/edit_camera_name"
+            android:hint="@string/dialog_add_camera_camera_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginBottom="4dp"
+            android:imeOptions="flagNoExtractUi"
+            />
+
+    <EditText
+            android:id="@+id/edit_camera_ip"
+            android:hint="@string/dialog_add_camera_ip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginBottom="4dp"
+            android:imeOptions="flagNoExtractUi"
+            />
+
+    <EditText
+            android:id="@+id/edit_camera_port"
+            android:hint="@string/dialog_add_camera_port"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginBottom="4dp"
+            android:imeOptions="flagNoExtractUi"
+            android:inputType="number"
+            />
 
 </LinearLayout>
