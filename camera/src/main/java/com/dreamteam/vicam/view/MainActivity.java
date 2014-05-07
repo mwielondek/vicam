@@ -13,7 +13,6 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,6 +30,7 @@ import com.dreamteam.vicam.model.database.CameraDAO;
 import com.dreamteam.vicam.model.database.DAOFactory;
 import com.dreamteam.vicam.model.database.PresetDAO;
 import com.dreamteam.vicam.model.errors.CameraDoesNotExistException;
+import com.dreamteam.vicam.model.errors.CameraResponseException;
 import com.dreamteam.vicam.model.events.CameraChangedEvent;
 import com.dreamteam.vicam.model.events.DeletePresetsEvent;
 import com.dreamteam.vicam.model.events.EditPresetEvent;
@@ -63,8 +63,6 @@ import com.dreamteam.vicam.view.custom.TouchpadTouchListener;
 
 import de.greenrobot.event.EventBus;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -197,12 +195,14 @@ public class MainActivity extends Activity {
         if (throwable instanceof RetrofitError) {
           RetrofitError err = (RetrofitError) throwable;
           Log.e("MYTAG", "RetroFitError: " + err.getUrl());
+        } else if (throwable instanceof CameraResponseException) {
+          CameraResponseException err = (CameraResponseException) throwable;
+          Log.e("MYTAG", "CameraResponseException: " + err.getMessage());
+        } else if (throwable instanceof CameraDoesNotExistException) {
+          // TODO: Show dialog telling the user to add a camera
+          // or show the add camera dialog directly?
         }
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        throwable.printStackTrace(pw);
-
-        Log.e("MYTAG", "Error " + sw.toString());
+        Log.e("MYTAG", Utils.throwableToString(throwable));
         connectionError();
       }
     };
@@ -577,7 +577,4 @@ public class MainActivity extends Activity {
     mCameraAdapter.notifyDataSetChanged();
   }
 
-  public Action1<Throwable> getErrorHandler() {
-    return mErrorHandler;
-  }
 }

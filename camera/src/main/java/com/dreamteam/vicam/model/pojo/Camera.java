@@ -18,6 +18,10 @@ public class Camera implements Identifiable {
   private String name;
   @DatabaseField(columnName = "port")
   private Short port;
+  @DatabaseField(columnName = "invert_x", canBeNull = false)
+  private boolean invertX;
+  @DatabaseField(columnName = "invert_y", canBeNull = false)
+  private boolean invertY;
 
   Camera() {
     // ORMLite needs a no-arg constructor
@@ -29,6 +33,10 @@ public class Camera implements Identifiable {
   }
 
   public Camera(String ip, String name, Short port) {
+    this(ip, name, port, false, false);
+  }
+
+  public Camera(String ip, String name, Short port, boolean invertX, boolean invertY) {
     if (ip == null || name == null) {
       throw new IllegalArgumentException(String.format(
           "Name(%s) or IP address(%s) can't be null.", name, ip));
@@ -36,6 +44,8 @@ public class Camera implements Identifiable {
     this.ip = ip;
     this.name = name;
     this.port = port;
+    this.invertX = invertX;
+    this.invertY = invertY;
   }
 
   public String getIp() {
@@ -52,6 +62,14 @@ public class Camera implements Identifiable {
 
   public int getId() {
     return id;
+  }
+
+  public boolean isInvertX() {
+    return invertX;
+  }
+
+  public boolean isInvertY() {
+    return invertY;
   }
 
   public String getAddress() {
@@ -72,6 +90,8 @@ public class Camera implements Identifiable {
            ", ip='" + ip + '\'' +
            ", name='" + name + '\'' +
            ", port=" + port +
+           ", invertX=" + invertX +
+           ", invertY=" + invertY +
            '}';
   }
 }

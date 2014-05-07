@@ -5,6 +5,8 @@ import android.util.Log;
 import com.dreamteam.vicam.model.interfaces.Identifiable;
 import com.j256.ormlite.dao.Dao;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
@@ -42,6 +44,13 @@ public class Utils {
     if (Constants.DEBUG) {
       Log.e(Constants.DATABASE_TAG, msg, e);
     }
+  }
+
+  public static String throwableToString(Throwable throwable) {
+    StringWriter sw = new StringWriter();
+    PrintWriter pw = new PrintWriter(sw);
+    throwable.printStackTrace(pw);
+    return sw.toString();
   }
 
   public static class ORMLite {

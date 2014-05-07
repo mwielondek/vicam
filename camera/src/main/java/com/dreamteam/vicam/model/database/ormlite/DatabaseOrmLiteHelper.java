@@ -24,7 +24,7 @@ import java.sql.SQLException;
 public class DatabaseOrmLiteHelper extends OrmLiteSqliteOpenHelper {
 
   private static final String DATABASE_NAME = "vicamera.db";
-  private static final int DATABASE_VERSION = 1;
+  private static final int DATABASE_VERSION = 2;
 
   private CameraDAO cameraDao;
   private PresetDAO presetDao;
@@ -51,7 +51,11 @@ public class DatabaseOrmLiteHelper extends OrmLiteSqliteOpenHelper {
   @Override
   public void onUpgrade(SQLiteDatabase db, ConnectionSource connectionSource, int oldVersion,
                         int newVersion) {
-    // Do nothing on upgrade
+    if (oldVersion == 1) {
+      // Add columns for x and y inversion
+      db.execSQL("ALTER TABLE camera ADD invert_x INTEGER NOT NULL CHECK(invert_x IN (0,1)) DEFAULT 0;");
+      db.execSQL("ALTER TABLE camera ADD invert_y INTEGER NOT NULL CHECK(invert_y IN (0,1)) DEFAULT 0;");
+    }
   }
 
   /**
