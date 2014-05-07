@@ -1,6 +1,5 @@
 package com.dreamteam.vicam.view.custom;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -11,31 +10,24 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.dreamteam.camera.R;
-import com.dreamteam.vicam.model.events.SaveCameraEvent;
 import com.dreamteam.vicam.model.pojo.Camera;
-import com.dreamteam.vicam.presenter.utility.Dagger;
 import com.dreamteam.vicam.view.MainActivity;
-
-import de.greenrobot.event.EventBus;
-
-import javax.inject.Inject;
 
 /**
  * Manages a custom layout for the Edit Camera Dialog
  */
 public class EditCameraDialogFragment extends DialogFragment {
-  private Camera mCurrentCamera;
 
   /*
   @Inject
   EventBus mEventBus;
   */
-  Activity mActivity;
+  MainActivity mActivity;
 
-  public EditCameraDialogFragment(Activity activity, MainActivity currentActivity) {
+  public EditCameraDialogFragment(MainActivity activity) {
     //Dagger.inject(this);
 
-    mCurrentCamera = currentActivity.getCurrentCamera();
+    // camera = currentActivity.getCurrentCamera();
     mActivity = activity;
   }
 
@@ -53,13 +45,16 @@ public class EditCameraDialogFragment extends DialogFragment {
     EditText ipEdit = (EditText) view.findViewById(R.id.edit_camera_ip);
     EditText portEdit = (EditText) view.findViewById(R.id.edit_camera_port);
 
-    if(mCurrentCamera == null) {
+    Camera camera = mActivity.getCurrentCamera();
+
+    if(camera == null) {
 
     } else {
       // Show current camera as hints
-      nameEdit.setHint(mCurrentCamera.getName());
-      ipEdit.setHint(mCurrentCamera.getIp().toString());
-      portEdit.setHint(mCurrentCamera.getPort().toString());
+      nameEdit.setHint(camera.getName());
+      ipEdit.setHint(camera.getIp().toString());
+      // TODO: add null check for port (it can be null)
+      portEdit.setHint(camera.getPort().toString());
     }
 
 
