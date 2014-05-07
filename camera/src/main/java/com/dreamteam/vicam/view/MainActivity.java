@@ -50,6 +50,7 @@ import com.dreamteam.vicam.presenter.utility.Dagger;
 import com.dreamteam.vicam.presenter.utility.Utils;
 import com.dreamteam.vicam.view.custom.AboutPageDialogFragment;
 import com.dreamteam.vicam.view.custom.AddCameraDialogFragment;
+import com.dreamteam.vicam.view.custom.EditCameraDialogFragment;
 import com.dreamteam.vicam.view.custom.CameraArrayAdapter;
 import com.dreamteam.vicam.view.custom.CameraSpinnerItemListener;
 import com.dreamteam.vicam.view.custom.DrawerItemClickListener;
@@ -118,11 +119,13 @@ public class MainActivity extends Activity {
   private DrawerMultiChoiceListener mContextualActionBar;
   private AddCameraDialogFragment mAddCameraDialogFragment;
   private AboutPageDialogFragment mAboutPageDialogFragment;
+  private EditCameraDialogFragment mEditCameraDialogFragment;
   private Spinner mCameraSpinner;
   private SharedPreferences mSharedPreferences;
   private MenuItem mConnectedIcon;
   private Action1<Throwable> mErrorHandler;
   private Action0 mSuccessHandler;
+  private MainActivity currentActivity;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -130,6 +133,8 @@ public class MainActivity extends Activity {
     setContentView(R.layout.activity_main);
     Dagger.inject(this);
     ButterKnife.inject(this);
+    currentActivity = this;
+
     // Sets default values defined in camera_preferences if empty
     PreferenceManager.setDefaultValues(this, R.xml.camera_preferences, false);
 
@@ -185,6 +190,10 @@ public class MainActivity extends Activity {
     // Init About page
     mAboutPageDialogFragment = new AboutPageDialogFragment(this);
     mAboutPageDialogFragment.onCreateDialog(savedInstanceState);
+
+    // Init Edit Camera dialog
+    mEditCameraDialogFragment = new EditCameraDialogFragment(this, currentActivity);
+    mEditCameraDialogFragment.onCreateDialog(savedInstanceState);
 
     // Init. value of loading spinner
     mLoaderSpinner.setVisibility(View.GONE);
@@ -256,7 +265,8 @@ public class MainActivity extends Activity {
     // Handle menu items
     switch (item.getItemId()) {
       case R.id.action_settings:
-        startActivity(new Intent(this, SettingsActivity.class));
+        //startActivity(new Intent(this, SettingsActivity.class));
+        showDialog(mEditCameraDialogFragment);
         return true;
       case R.id.action_add_camera:
         showDialog(mAddCameraDialogFragment);
@@ -279,7 +289,7 @@ public class MainActivity extends Activity {
             .show();
         return true;
       case R.id.action_about:
-        showDialog(mAboutPageDialogFragment);
+        //showDialog(mAboutPageDialogFragment);
         return true;
       case R.id.action_save_preset:
         showDialog(mSavePresetDialogFragment);
@@ -321,6 +331,24 @@ public class MainActivity extends Activity {
     }
   }
 
+  @Override
+  public void onBackPressed() {
+    new AlertDialog.Builder(this)
+        .setIcon(android.R.drawable.ic_dialog_alert)
+        .setTitle("Exit VICAM?")
+        .setMessage("Are you sure you want to exit VICAM?")
+        .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+        {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+            finish();
+          }
+
+        })
+        .setNegativeButton("No", null)
+        .show();
+  }
+
   public Observable<CameraFacade> getFacade() {
     if (mCurrentCamera == null) {
       return Observable.error(
@@ -348,6 +376,10 @@ public class MainActivity extends Activity {
 
   public void connectionError() {
     mConnectedIcon.setIcon(android.R.drawable.presence_busy);
+  }
+
+  public Camera getCurrentCamera() {
+    return mCurrentCamera;
   }
 
   @OnClick(R.id.one_touch_autofocus)
@@ -426,12 +458,14 @@ public class MainActivity extends Activity {
 
   @SuppressWarnings("unused")
   public void onEventMainThread(CameraChangedEvent e) {
+    /*
     mCurrentCamera = e.camera;
     List<Preset> presets = getPresetDAO().getPresetsForCamera(mCurrentCamera);
     mPresets.clear();
     mPresets.addAll(presets);
     mPresetAdapter.notifyDataSetChanged();
     updateCameraState();
+    */
   }
 
   @SuppressWarnings("unused")
