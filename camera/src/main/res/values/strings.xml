@@ -37,5 +37,7 @@
     <string name="delete_presets">Delete presets</string>
     <string name="delete_camera">Delete camera</string>
     <string name="delete_camera_confirmation">\'%s\' will be removed.</string>
+    <string name="dialog_about_text">This application was created by a student group called Dream Team, for the course DD1392 Mjukvarukonstruktion at KTH.</string>
+    <string name="dialog_about_text_members">Project members: Aroshine Munasinghe, Benny Tieu, Brian Ye, Dajana Vlajic, Daniel Millevik, Daniel Szerszen, Donia Alipoor, Fredrik Sommar, Michael Wang, Milosz Wielondek and Oktay Bahceci.</string>
 
 </resources>

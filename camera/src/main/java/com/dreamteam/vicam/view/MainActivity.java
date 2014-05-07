@@ -13,6 +13,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -47,6 +48,7 @@ import com.dreamteam.vicam.presenter.CameraServiceManager;
 import com.dreamteam.vicam.presenter.network.camera.CameraFacade;
 import com.dreamteam.vicam.presenter.utility.Dagger;
 import com.dreamteam.vicam.presenter.utility.Utils;
+import com.dreamteam.vicam.view.custom.AboutPageDialogFragment;
 import com.dreamteam.vicam.view.custom.AddCameraDialogFragment;
 import com.dreamteam.vicam.view.custom.CameraArrayAdapter;
 import com.dreamteam.vicam.view.custom.CameraSpinnerItemListener;
@@ -117,6 +119,7 @@ public class MainActivity extends Activity {
   private SavePresetDialogFragment mSavePresetDialogFragment;
   private DrawerMultiChoiceListener mContextualActionBar;
   private AddCameraDialogFragment mAddCameraDialogFragment;
+  private AboutPageDialogFragment mAboutPageDialogFragment;
   private Spinner mCameraSpinner;
   private SharedPreferences mSharedPreferences;
   private MenuItem mConnectedIcon;
@@ -180,6 +183,10 @@ public class MainActivity extends Activity {
     // Init Add Camera Dialog
     mAddCameraDialogFragment = new AddCameraDialogFragment(this);
     mAddCameraDialogFragment.onCreateDialog(savedInstanceState);
+
+    // Init About page
+    mAboutPageDialogFragment = new AboutPageDialogFragment(this);
+    mAboutPageDialogFragment.onCreateDialog(savedInstanceState);
 
     // Init. value of loading spinner
     mLoaderSpinner.setVisibility(View.GONE);
@@ -270,6 +277,9 @@ public class MainActivity extends Activity {
             })
             .setNegativeButton(android.R.string.cancel, null)
             .show();
+        return true;
+      case R.id.action_about:
+        showDialog(mAboutPageDialogFragment);
         return true;
       case R.id.action_save_preset:
         showDialog(mSavePresetDialogFragment);
