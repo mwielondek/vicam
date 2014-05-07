@@ -18,16 +18,9 @@ import com.dreamteam.vicam.view.MainActivity;
  */
 public class EditCameraDialogFragment extends DialogFragment {
 
-  /*
-  @Inject
-  EventBus mEventBus;
-  */
   MainActivity mActivity;
 
   public EditCameraDialogFragment(MainActivity activity) {
-    //Dagger.inject(this);
-
-    // camera = currentActivity.getCurrentCamera();
     mActivity = activity;
   }
 
@@ -47,17 +40,15 @@ public class EditCameraDialogFragment extends DialogFragment {
 
     Camera camera = mActivity.getCurrentCamera();
 
-    if(camera == null) {
-
-    } else {
+    if (camera != null) {
       // Show current camera as hints
-      nameEdit.setHint(camera.getName());
-      ipEdit.setHint(camera.getIp().toString());
-      // TODO: add null check for port (it can be null)
-      portEdit.setHint(camera.getPort().toString());
+      nameEdit.setText(camera.getName());
+      ipEdit.setText(camera.getIp());
+      // Port can be null
+      if (camera.getPort() != null) {
+        portEdit.setHint(camera.getPort().toString());
+      }
     }
-
-
 
     // Inflate and set the layout for the dialog
     // Pass null as the parent view because its going in the dialog layout

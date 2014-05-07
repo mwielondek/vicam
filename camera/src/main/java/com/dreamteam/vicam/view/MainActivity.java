@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -50,12 +49,12 @@ import com.dreamteam.vicam.presenter.utility.Dagger;
 import com.dreamteam.vicam.presenter.utility.Utils;
 import com.dreamteam.vicam.view.custom.AboutPageDialogFragment;
 import com.dreamteam.vicam.view.custom.AddCameraDialogFragment;
-import com.dreamteam.vicam.view.custom.EditCameraDialogFragment;
 import com.dreamteam.vicam.view.custom.CameraArrayAdapter;
 import com.dreamteam.vicam.view.custom.CameraSpinnerItemListener;
 import com.dreamteam.vicam.view.custom.DrawerItemClickListener;
 import com.dreamteam.vicam.view.custom.DrawerMultiChoiceListener;
 import com.dreamteam.vicam.view.custom.DrawerToggle;
+import com.dreamteam.vicam.view.custom.EditCameraDialogFragment;
 import com.dreamteam.vicam.view.custom.PresetArrayAdapter;
 import com.dreamteam.vicam.view.custom.SavePresetDialogFragment;
 import com.dreamteam.vicam.view.custom.SeekBarChangeListener;
@@ -192,7 +191,7 @@ public class MainActivity extends Activity {
     mAboutPageDialogFragment.onCreateDialog(savedInstanceState);
 
     // Init Edit Camera dialog
-    mEditCameraDialogFragment = new EditCameraDialogFragment(this, currentActivity);
+    mEditCameraDialogFragment = new EditCameraDialogFragment(this);
     mEditCameraDialogFragment.onCreateDialog(savedInstanceState);
 
     // Init. value of loading spinner
@@ -458,14 +457,12 @@ public class MainActivity extends Activity {
 
   @SuppressWarnings("unused")
   public void onEventMainThread(CameraChangedEvent e) {
-    /*
     mCurrentCamera = e.camera;
     List<Preset> presets = getPresetDAO().getPresetsForCamera(mCurrentCamera);
     mPresets.clear();
     mPresets.addAll(presets);
     mPresetAdapter.notifyDataSetChanged();
     updateCameraState();
-    */
   }
 
   @SuppressWarnings("unused")
