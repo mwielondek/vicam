@@ -33,7 +33,7 @@ public class DrawerMultiChoiceListener implements AbsListView.MultiChoiceModeLis
   private final Context mContext;
   private final ListView mList;
   private ActionMode mActionMode;
-  private List<Preset> mSelected = new ArrayList<>();
+  private List<Preset> mSelected;
 
   public DrawerMultiChoiceListener(Context context, ListView list) {
     Dagger.inject(this);
@@ -58,8 +58,8 @@ public class DrawerMultiChoiceListener implements AbsListView.MultiChoiceModeLis
   public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
     switch (item.getItemId()) {
       case R.id.context_delete_preset:
-        mode.finish(); // Action picked, so close the CAB
         mEventBus.post(new DeletePresetsEvent(mSelected));
+        mode.finish(); // Action picked, so close the CAB
         return true;
       case R.id.context_edit_preset:
         if (mSelected.size() != 1) {
@@ -76,6 +76,7 @@ public class DrawerMultiChoiceListener implements AbsListView.MultiChoiceModeLis
   @Override
   public boolean onCreateActionMode(ActionMode mode, Menu menu) {
     mActionMode = mode;
+    mSelected = new ArrayList<>();
     MenuInflater inflater = mode.getMenuInflater();
     inflater.inflate(R.menu.context, menu);
     return true;
@@ -99,7 +100,7 @@ public class DrawerMultiChoiceListener implements AbsListView.MultiChoiceModeLis
   @Override
   public void onDestroyActionMode(ActionMode mode) {
     mActionMode = null;
-    mSelected.clear();
+    mSelected = null;
   }
 
   public void close() {
