@@ -6,7 +6,9 @@ import android.app.DialogFragment;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -15,6 +17,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ListView;
@@ -63,6 +66,7 @@ import com.dreamteam.vicam.view.custom.TouchpadTouchListener;
 
 import de.greenrobot.event.EventBus;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -142,6 +146,11 @@ public class MainActivity extends Activity {
 
     mTitle = getString(R.string.app_name);
 
+    // Landscape mode both ways
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+      setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+    }
+
     getActionBar().setDisplayHomeAsUpEnabled(true);
     getActionBar().setHomeButtonEnabled(true);
     getActionBar().setDisplayShowTitleEnabled(true);
@@ -196,6 +205,9 @@ public class MainActivity extends Activity {
 
     // Init. value of loading spinner
     mLoaderSpinner.setVisibility(View.GONE);
+
+    // Always show settings drop down (works with i.e. Samsung S3)
+    getOverflowMenu();
 
     mErrorHandler = new Action1<Throwable>() {
       @Override
@@ -288,7 +300,7 @@ public class MainActivity extends Activity {
             .show();
         return true;
       case R.id.action_about:
-        //showDialog(mAboutPageDialogFragment);
+        showDialog(mAboutPageDialogFragment);
         return true;
       case R.id.action_save_preset:
         showDialog(mSavePresetDialogFragment);
@@ -430,6 +442,20 @@ public class MainActivity extends Activity {
 
   public void updateZoomLevel(int focusLevel) {
     SeekBarChangeListener.levelToProgress(mFocusSeekBar, focusLevel);
+  }
+
+  private void getOverflowMenu() {
+
+    try {
+      ViewConfiguration config = ViewConfiguration.get(this);
+      Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
+      if(menuKeyField != null) {
+        menuKeyField.setAccessible(true);
+        menuKeyField.setBoolean(config, false);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   private void updateCameraState() {
