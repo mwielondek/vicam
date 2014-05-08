@@ -24,7 +24,7 @@ import javax.inject.Inject;
 public class SavePresetDialogFragment extends DialogFragment {
 
   @Inject
-  EventBus eventBus;
+  EventBus mEventBus;
 
   public static DialogFragment newInstance() {
     return new SavePresetDialogFragment();
@@ -50,7 +50,7 @@ public class SavePresetDialogFragment extends DialogFragment {
           @Override
           public void onClick(DialogInterface dialog, int id) {
             // Add the preset to database
-            eventBus.post(new SavePresetEvent(dialog, editText.getText().toString()));
+            mEventBus.post(new SavePresetEvent(dialog, editText.getText().toString()));
           }
         })
         .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {

@@ -33,6 +33,7 @@ import com.dreamteam.vicam.model.database.PresetDAO;
 import com.dreamteam.vicam.model.errors.CameraDoesNotExistException;
 import com.dreamteam.vicam.model.errors.CameraResponseException;
 import com.dreamteam.vicam.model.events.CameraChangedEvent;
+import com.dreamteam.vicam.model.events.DeleteCameraEvent;
 import com.dreamteam.vicam.model.events.DeletePresetsEvent;
 import com.dreamteam.vicam.model.events.EditCameraEvent;
 import com.dreamteam.vicam.model.events.EditPresetDialogEvent;
@@ -56,6 +57,7 @@ import com.dreamteam.vicam.view.custom.DrawerToggle;
 import com.dreamteam.vicam.view.custom.PresetArrayAdapter;
 import com.dreamteam.vicam.view.custom.dialogs.AboutPageDialogFragment;
 import com.dreamteam.vicam.view.custom.dialogs.AddCameraDialogFragment;
+import com.dreamteam.vicam.view.custom.dialogs.DeleteCameraDialogFragment;
 import com.dreamteam.vicam.view.custom.dialogs.EditCameraDialogFragment;
 import com.dreamteam.vicam.view.custom.dialogs.EditPresetDialogFragment;
 import com.dreamteam.vicam.view.custom.dialogs.SavePresetDialogFragment;
@@ -255,41 +257,36 @@ public class MainActivity extends Activity {
         //startActivity(new Intent(this, SettingsActivity.class));
         if (mCurrentCamera == null) {
           showToast("There's no camera to be edited!", Toast.LENGTH_SHORT);
-          return true;
+        } else {
+          showDialog(EditCameraDialogFragment.newInstance(mCurrentCamera.getId()),
+                     "edit_camera_dialog");
         }
-        showDialog(EditCameraDialogFragment.newInstance(mCurrentCamera.getId()),
-                   "edit_camera_dialog");
         return true;
-      case R.id.action_add_camera:
 
+      case R.id.action_add_camera:
         showDialog(AddCameraDialogFragment.newInstance(), "add_camera_dialog");
         return true;
+
       case R.id.action_delete_camera:
         if (mCurrentCamera == null) {
           showToast("There's no camera to be deleted!", Toast.LENGTH_SHORT);
-          return true;
+        } else {
+          showDialog(DeleteCameraDialogFragment.newInstance(mCurrentCamera.getId()), "delete_camera_dialog");
         }
-        new AlertDialog.Builder(this)
-            .setTitle(getString(R.string.delete_camera))
-            .setMessage(getString(R.string.delete_camera_confirmation, mCurrentCamera.getName()))
-            .setCancelable(false)
-            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-              public void onClick(DialogInterface dialog, int id) {
-                deleteCamera(mCurrentCamera);
-              }
-            })
-            .setNegativeButton(android.R.string.cancel, null)
-            .show();
         return true;
+
       case R.id.action_about:
         showDialog(AboutPageDialogFragment.newInstance(), "about_page_dialog");
         return true;
+
       case R.id.action_save_preset:
         showDialog(SavePresetDialogFragment.newInstance(), "save_preset_dialog");
         return true;
+
       case R.id.action_sync_presets:
         mLoaderSpinner.setVisibility(View.VISIBLE);
         return true;
+
       default:
         return super.onOptionsItemSelected(item);
     }
@@ -491,6 +488,10 @@ public class MainActivity extends Activity {
   public void onEventMainThread(EditCameraEvent e) {
     updateCamera(e.camera);
   }
+  @SuppressWarnings("unused")
+  public void onEventMainThread(DeleteCameraEvent e) {
+    deleteCamera(e.camera);
+  }
 
   @SuppressWarnings("unused")
   public void onEventMainThread(PresetChangedEvent e) {
@@ -604,7 +605,6 @@ public class MainActivity extends Activity {
     mPresetAdapter.notifyDataSetChanged();
   }
 
-
   public void insertCamera(Camera camera) {
     CameraDAO cameraDAO = getCameraDAO();
     cameraDAO.insertCamera(camera);
@@ -636,6 +636,5 @@ public class MainActivity extends Activity {
     mCurrentCamera = null;
     mCameraAdapter.notifyDataSetChanged();
   }
-
 
 }
