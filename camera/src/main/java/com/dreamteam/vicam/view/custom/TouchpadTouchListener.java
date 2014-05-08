@@ -40,9 +40,9 @@ public class TouchpadTouchListener implements View.OnTouchListener {
             blocked = false;
           }
         }, Utils.DELAY_TIME_MILLIS);
-        System.out.println("SENT REQUEST");
+        Utils.infoLog("Sent request!");
       } else {
-        System.out.println("BLOCKED");
+        Utils.infoLog("BLOCKED");
         return false;
       }
     }

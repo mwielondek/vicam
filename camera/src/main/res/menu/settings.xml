@@ -3,7 +3,7 @@
       tools:context="com.dreamteam.vicam.view.SettingsActivity"
       >
 
-    <item android:id="@+id/action_settings"
+    <item android:id="@+id/action_edit_camera"
           android:title="@string/edit_camera"
           android:orderInCategory="100"
           android:showAsAction="never"/>
