@@ -1,4 +1,4 @@
-package com.dreamteam.vicam.view.custom;
+package com.dreamteam.vicam.view.custom.listeners;
 
 import android.view.View;
 import android.widget.AdapterView;

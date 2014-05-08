@@ -3,6 +3,8 @@ package com.dreamteam.vicam.view;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DialogFragment;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -13,7 +15,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,6 +36,7 @@ import com.dreamteam.vicam.model.errors.CameraDoesNotExistException;
 import com.dreamteam.vicam.model.errors.CameraResponseException;
 import com.dreamteam.vicam.model.events.CameraChangedEvent;
 import com.dreamteam.vicam.model.events.DeletePresetsEvent;
+import com.dreamteam.vicam.model.events.EditPresetDialogEvent;
 import com.dreamteam.vicam.model.events.EditPresetEvent;
 import com.dreamteam.vicam.model.events.OnDrawerCloseEvent;
 import com.dreamteam.vicam.model.events.PresetChangedEvent;
@@ -50,19 +52,20 @@ import com.dreamteam.vicam.presenter.CameraServiceManager;
 import com.dreamteam.vicam.presenter.network.camera.CameraFacade;
 import com.dreamteam.vicam.presenter.utility.Dagger;
 import com.dreamteam.vicam.presenter.utility.Utils;
-import com.dreamteam.vicam.view.custom.AboutPageDialogFragment;
-import com.dreamteam.vicam.view.custom.AddCameraDialogFragment;
+import com.dreamteam.vicam.view.custom.dialogs.AboutPageDialogFragment;
+import com.dreamteam.vicam.view.custom.dialogs.AddCameraDialogFragment;
 import com.dreamteam.vicam.view.custom.CameraArrayAdapter;
-import com.dreamteam.vicam.view.custom.CameraSpinnerItemListener;
-import com.dreamteam.vicam.view.custom.DrawerItemClickListener;
-import com.dreamteam.vicam.view.custom.DrawerMultiChoiceListener;
+import com.dreamteam.vicam.view.custom.listeners.CameraSpinnerItemListener;
+import com.dreamteam.vicam.view.custom.listeners.DrawerItemClickListener;
+import com.dreamteam.vicam.view.custom.listeners.DrawerMultiChoiceListener;
 import com.dreamteam.vicam.view.custom.DrawerToggle;
-import com.dreamteam.vicam.view.custom.EditCameraDialogFragment;
+import com.dreamteam.vicam.view.custom.dialogs.EditCameraDialogFragment;
+import com.dreamteam.vicam.view.custom.dialogs.EditPresetDialogFragment;
 import com.dreamteam.vicam.view.custom.PresetArrayAdapter;
-import com.dreamteam.vicam.view.custom.SavePresetDialogFragment;
-import com.dreamteam.vicam.view.custom.SeekBarChangeListener;
-import com.dreamteam.vicam.view.custom.SwitchButtonCheckedListener;
-import com.dreamteam.vicam.view.custom.TouchpadTouchListener;
+import com.dreamteam.vicam.view.custom.dialogs.SavePresetDialogFragment;
+import com.dreamteam.vicam.view.custom.listeners.SeekBarChangeListener;
+import com.dreamteam.vicam.view.custom.listeners.SwitchButtonCheckedListener;
+import com.dreamteam.vicam.view.custom.listeners.TouchpadTouchListener;
 
 import de.greenrobot.event.EventBus;
 
@@ -83,7 +86,7 @@ import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
-import static com.dreamteam.vicam.view.custom.SeekBarChangeListener.Type;
+import static com.dreamteam.vicam.view.custom.listeners.SeekBarChangeListener.Type;
 
 public class MainActivity extends Activity {
 
@@ -118,17 +121,17 @@ public class MainActivity extends Activity {
   private ActionBarDrawerToggle mDrawerToggle;
   private CameraArrayAdapter mCameraAdapter;
   private PresetArrayAdapter mPresetAdapter;
-  private SavePresetDialogFragment mSavePresetDialogFragment;
   private DrawerMultiChoiceListener mContextualActionBar;
-  private AddCameraDialogFragment mAddCameraDialogFragment;
-  private AboutPageDialogFragment mAboutPageDialogFragment;
-  private EditCameraDialogFragment mEditCameraDialogFragment;
   private Spinner mCameraSpinner;
   private SharedPreferences mSharedPreferences;
   private MenuItem mConnectedIcon;
   private Action1<Throwable> mErrorHandler;
   private Action0 mSuccessHandler;
-  private MainActivity currentActivity;
+  private SavePresetDialogFragment mSavePresetDialogFragment;
+  private AddCameraDialogFragment mAddCameraDialogFragment;
+  private AboutPageDialogFragment mAboutPageDialogFragment;
+  private EditCameraDialogFragment mEditCameraDialogFragment;
+  private EditPresetDialogFragment mEditPresetDialogFragment;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -136,7 +139,6 @@ public class MainActivity extends Activity {
     setContentView(R.layout.activity_main);
     Dagger.inject(this);
     ButterKnife.inject(this);
-    currentActivity = this;
 
     // Sets default values defined in camera_preferences if empty
     PreferenceManager.setDefaultValues(this, R.xml.camera_preferences, false);
@@ -187,26 +189,17 @@ public class MainActivity extends Activity {
     }
     mCameraAdapter = new CameraArrayAdapter(this, mCameras);
 
-    // Init. Save Preset Dialog
+    // Initialize dialog fragments
     mSavePresetDialogFragment = new SavePresetDialogFragment(this);
-    mSavePresetDialogFragment.onCreateDialog(savedInstanceState);
-
-    // Init Add Camera Dialog
+    mEditPresetDialogFragment = new EditPresetDialogFragment(this);
     mAddCameraDialogFragment = new AddCameraDialogFragment(this);
-    mAddCameraDialogFragment.onCreateDialog(savedInstanceState);
-
-    // Init About page
     mAboutPageDialogFragment = new AboutPageDialogFragment(this);
-    mAboutPageDialogFragment.onCreateDialog(savedInstanceState);
-
-    // Init Edit Camera dialog
     mEditCameraDialogFragment = new EditCameraDialogFragment(this);
-    mEditCameraDialogFragment.onCreateDialog(savedInstanceState);
 
     // Init. value of loading spinner
     mLoaderSpinner.setVisibility(View.GONE);
 
-    // Always show settings drop down (works with i.e. Samsung S3)
+    // Always show settings drop down (works with e.g. Samsung S3)
     getOverflowMenu();
 
     mErrorHandler = new Action1<Throwable>() {
@@ -214,15 +207,15 @@ public class MainActivity extends Activity {
       public void call(Throwable throwable) {
         if (throwable instanceof RetrofitError) {
           RetrofitError err = (RetrofitError) throwable;
-          Log.e("MYTAG", "RetroFitError: " + err.getUrl());
+          Utils.errorLog("RetroFitError: " + err.getUrl());
         } else if (throwable instanceof CameraResponseException) {
           CameraResponseException err = (CameraResponseException) throwable;
-          Log.e("MYTAG", "CameraResponseException: " + err.getMessage());
+          Utils.errorLog("CameraResponseException: " + err.getMessage());
         } else if (throwable instanceof CameraDoesNotExistException) {
           // TODO: Show dialog telling the user to add a camera
           // or show the add camera dialog directly?
         }
-        Log.e("MYTAG", Utils.throwableToString(throwable));
+        Utils.errorLog(Utils.throwableToString(throwable));
         connectionError();
       }
     };
@@ -277,12 +270,12 @@ public class MainActivity extends Activity {
     }
     // Handle menu items
     switch (item.getItemId()) {
-      case R.id.action_settings:
+      case R.id.action_edit_camera:
         //startActivity(new Intent(this, SettingsActivity.class));
-        showDialog(mEditCameraDialogFragment);
+        showDialog(mEditCameraDialogFragment, "edit_camera_dialog");
         return true;
       case R.id.action_add_camera:
-        showDialog(mAddCameraDialogFragment);
+        showDialog(mAddCameraDialogFragment, "add_camera_dialog");
         return true;
       case R.id.action_delete_camera:
         if (mCurrentCamera == null) {
@@ -302,10 +295,10 @@ public class MainActivity extends Activity {
             .show();
         return true;
       case R.id.action_about:
-        showDialog(mAboutPageDialogFragment);
+        showDialog(mAboutPageDialogFragment, "about_page_dialog");
         return true;
       case R.id.action_save_preset:
-        showDialog(mSavePresetDialogFragment);
+        showDialog(mSavePresetDialogFragment, "save_preset_dialog");
         return true;
       case R.id.action_sync_presets:
         mLoaderSpinner.setVisibility(View.VISIBLE);
@@ -331,17 +324,17 @@ public class MainActivity extends Activity {
   protected void onPause() {
     super.onPause();
     mEventBus.unregister(this);
+    if (mCameraSpinner != null) {
+      mSharedPreferences.edit()
+          .putInt(SELECTED_CAMERA, mCameraSpinner.getSelectedItemPosition())
+          .commit();
+    }
   }
 
   @Override
   protected void onDestroy() {
     super.onDestroy();
     mDAOFactory.close();
-    if (mCameraSpinner != null) {
-      mSharedPreferences.edit()
-          .putInt(SELECTED_CAMERA, mCameraSpinner.getSelectedItemPosition())
-          .commit();
-    }
   }
 
   // Disable exit app when back pressed.
@@ -427,9 +420,15 @@ public class MainActivity extends Activity {
     mDrawerLayout.closeDrawer(mDrawerList);
   }
 
-  private void showDialog(DialogFragment dialog) {
-    FragmentTransaction ft = getFragmentManager().beginTransaction();
-    dialog.show(ft, "Alert Dialog");
+  private void showDialog(DialogFragment dialog, String tag) {
+    FragmentManager manager = getFragmentManager();
+    FragmentTransaction ft = manager.beginTransaction();
+    Fragment prev = manager.findFragmentByTag(tag);
+    if (prev != null) {
+      ft.remove(prev);
+    }
+    // Create and show the dialog.
+    dialog.show(ft, tag);
   }
 
   private void updateWithCameraState(CameraState cameraState) {
@@ -573,7 +572,13 @@ public class MainActivity extends Activity {
 
   @SuppressWarnings("unused")
   public void onEventMainThread(EditPresetEvent e) {
-    // TODO: show dialog for editing preset
+    updatePreset(e.preset);
+  }
+
+  @SuppressWarnings("unused")
+  public void onEventMainThread(EditPresetDialogEvent e) {
+    mEditPresetDialogFragment.setPresetToEdit(e.preset);
+    showDialog(mEditPresetDialogFragment, "edit_preset_dialog");
   }
 
   private CameraDAO getCameraDAO() {

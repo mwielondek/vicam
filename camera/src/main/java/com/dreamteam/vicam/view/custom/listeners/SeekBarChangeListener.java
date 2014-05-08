@@ -1,7 +1,6 @@
-package com.dreamteam.vicam.view.custom;
+package com.dreamteam.vicam.view.custom.listeners;
 
 import android.widget.SeekBar;
-import android.widget.Toast;
 
 import com.dreamteam.vicam.model.pojo.Zoom;
 import com.dreamteam.vicam.presenter.network.camera.CameraFacade;
@@ -52,7 +51,7 @@ public class SeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
           new Action1<String>() {
             @Override
             public void call(String s) {
-              mActivity.showToast("ZOOM", Toast.LENGTH_SHORT);
+              Utils.infoLog("ZOOM");
             }
           }, Utils.<Throwable>noop()
       );
@@ -68,7 +67,7 @@ public class SeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
           new Action1<String>() {
             @Override
             public void call(String s) {
-              mActivity.showToast("FOCUS", Toast.LENGTH_SHORT);
+              Utils.infoLog("FOCUS");
             }
           }, Utils.<Throwable>noop()
       );

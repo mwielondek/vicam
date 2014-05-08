@@ -19,6 +19,7 @@ import rx.functions.Action1;
 public class Utils {
 
   public static final long DELAY_TIME_MILLIS = 130;
+  private static final String TAG = "VICAM";
 
   public static void rangeCheck(int param, int lower, int upper) {
     if (param < lower || param > upper) {
@@ -51,6 +52,14 @@ public class Utils {
     PrintWriter pw = new PrintWriter(sw);
     throwable.printStackTrace(pw);
     return sw.toString();
+  }
+
+  public static void errorLog(String s) {
+    Log.e(TAG, s);
+  }
+
+  public static void infoLog(String s) {
+    Log.i(TAG, s);
   }
 
   public static class ORMLite {

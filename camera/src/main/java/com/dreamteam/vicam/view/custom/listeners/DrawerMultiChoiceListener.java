@@ -1,4 +1,4 @@
-package com.dreamteam.vicam.view.custom;
+package com.dreamteam.vicam.view.custom.listeners;
 
 
 import android.content.Context;
@@ -11,7 +11,7 @@ import android.widget.ListView;
 
 import com.dreamteam.camera.R;
 import com.dreamteam.vicam.model.events.DeletePresetsEvent;
-import com.dreamteam.vicam.model.events.EditPresetEvent;
+import com.dreamteam.vicam.model.events.EditPresetDialogEvent;
 import com.dreamteam.vicam.model.pojo.Preset;
 import com.dreamteam.vicam.presenter.utility.Dagger;
 
@@ -65,7 +65,7 @@ public class DrawerMultiChoiceListener implements AbsListView.MultiChoiceModeLis
         if (mSelected.size() != 1) {
           return false;
         }
-        mEventBus.post(new EditPresetEvent(mSelected.get(0)));
+        mEventBus.post(new EditPresetDialogEvent(mSelected.get(0)));
         mode.finish();
         return true;
       default:
@@ -99,6 +99,7 @@ public class DrawerMultiChoiceListener implements AbsListView.MultiChoiceModeLis
   @Override
   public void onDestroyActionMode(ActionMode mode) {
     mActionMode = null;
+    mSelected.clear();
   }
 
   public void close() {
