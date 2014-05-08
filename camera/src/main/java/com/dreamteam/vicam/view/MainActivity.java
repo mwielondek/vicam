@@ -40,6 +40,7 @@ import com.dreamteam.vicam.model.events.OnDrawerCloseEvent;
 import com.dreamteam.vicam.model.events.PresetChangedEvent;
 import com.dreamteam.vicam.model.events.SaveCameraEvent;
 import com.dreamteam.vicam.model.events.SavePresetEvent;
+import com.dreamteam.vicam.model.events.UpdatePresetEvent;
 import com.dreamteam.vicam.model.pojo.Camera;
 import com.dreamteam.vicam.model.pojo.CameraState;
 import com.dreamteam.vicam.model.pojo.Focus;
@@ -58,6 +59,7 @@ import com.dreamteam.vicam.view.custom.DrawerItemClickListener;
 import com.dreamteam.vicam.view.custom.DrawerMultiChoiceListener;
 import com.dreamteam.vicam.view.custom.DrawerToggle;
 import com.dreamteam.vicam.view.custom.EditCameraDialogFragment;
+import com.dreamteam.vicam.view.custom.EditPresetDialogFragment;
 import com.dreamteam.vicam.view.custom.PresetArrayAdapter;
 import com.dreamteam.vicam.view.custom.SavePresetDialogFragment;
 import com.dreamteam.vicam.view.custom.SeekBarChangeListener;
@@ -88,6 +90,7 @@ import static com.dreamteam.vicam.view.custom.SeekBarChangeListener.Type;
 public class MainActivity extends Activity {
 
   private final String SELECTED_CAMERA = "SELECTED_CAMERA";
+  public static final String PRESET_NAME = "PRESET_NAME";
 
   @Inject
   EventBus mEventBus;
@@ -129,6 +132,7 @@ public class MainActivity extends Activity {
   private Action1<Throwable> mErrorHandler;
   private Action0 mSuccessHandler;
   private MainActivity currentActivity;
+  private EditPresetDialogFragment mEditPresetDialogFragment;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -190,6 +194,9 @@ public class MainActivity extends Activity {
     // Init. Save Preset Dialog
     mSavePresetDialogFragment = new SavePresetDialogFragment(this);
     mSavePresetDialogFragment.onCreateDialog(savedInstanceState);
+
+    //Init edit preset dialog
+    mEditPresetDialogFragment = new EditPresetDialogFragment(this);
 
     // Init Add Camera Dialog
     mAddCameraDialogFragment = new AddCameraDialogFragment(this);
@@ -571,7 +578,15 @@ public class MainActivity extends Activity {
 
   @SuppressWarnings("unused")
   public void onEventMainThread(EditPresetEvent e) {
-    // TODO: show dialog for editing preset
+      Log.i("MYTAG", "Showing edit preset dialogue");
+      mEditPresetDialogFragment.setPresetToEdit(e.preset);
+      showDialog(mEditPresetDialogFragment);
+  }
+
+  @SuppressWarnings("unused")
+  public void onEventMainThread(UpdatePresetEvent e) {
+    Log.i("MYTAG", "Updating preset");
+    updatePreset(e.preset);
   }
 
   private CameraDAO getCameraDAO() {
