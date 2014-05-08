@@ -18,7 +18,7 @@ public class SettingsActivity extends PreferenceActivity {
     super.onCreate(savedInstanceState);
 
     // Settings Init. Add camera
-    mAddCameraDialogFragment = new AddCameraDialogFragment(this);
+    mAddCameraDialogFragment = new AddCameraDialogFragment();
     mAddCameraDialogFragment.onCreateDialog(savedInstanceState);
   }
 

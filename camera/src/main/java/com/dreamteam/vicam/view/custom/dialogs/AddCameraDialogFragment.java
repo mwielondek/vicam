@@ -1,16 +1,13 @@
 package com.dreamteam.vicam.view.custom.dialogs;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.dreamteam.camera.R;
@@ -29,19 +26,20 @@ public class AddCameraDialogFragment extends DialogFragment {
   @Inject
   EventBus mEventBus;
 
-  Activity mActivity;
+  public static DialogFragment newInstance() {
+    return new AddCameraDialogFragment();
+  }
 
-  public AddCameraDialogFragment(Activity activity) {
+  public AddCameraDialogFragment() {
     Dagger.inject(this);
-    mActivity = activity;
   }
 
   @Override
   public Dialog onCreateDialog(Bundle savedInstanceState) {
-    AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
     // Get the layout inflater
-    LayoutInflater inflater = mActivity.getLayoutInflater();
+    LayoutInflater inflater = getActivity().getLayoutInflater();
     View view = inflater.inflate(R.layout.dialog_add_camera, null);
 
     builder.setTitle(R.string.add_new_camera);
@@ -49,7 +47,6 @@ public class AddCameraDialogFragment extends DialogFragment {
     final EditText nameEdit = (EditText) view.findViewById(R.id.add_camera_name);
     final EditText ipEdit = (EditText) view.findViewById(R.id.add_camera_ip);
     final EditText portEdit = (EditText) view.findViewById(R.id.add_camera_port);
-
 
     // Inflate and set the layout for the dialog
     // Pass null as the parent view because its going in the dialog layout
@@ -73,8 +70,10 @@ public class AddCameraDialogFragment extends DialogFragment {
         });
     return builder.create();
   }
+
   @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+  public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                           Bundle savedInstanceState) {
     this.getDialog().setCanceledOnTouchOutside(true);
     return null;
   }

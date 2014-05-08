@@ -1,10 +1,8 @@
 package com.dreamteam.vicam.view.custom.dialogs;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.dreamteam.camera.R;
+import com.dreamteam.vicam.model.database.DAOFactory;
 import com.dreamteam.vicam.model.events.EditPresetEvent;
 import com.dreamteam.vicam.model.pojo.Preset;
 import com.dreamteam.vicam.presenter.utility.Dagger;
@@ -26,30 +25,40 @@ import javax.inject.Inject;
  */
 public class EditPresetDialogFragment extends DialogFragment {
 
-  Activity mContext;
-  @Inject
-  EventBus eventBus;
-  private Preset presetToEdit;
+  private static final String PRESET_ID_KEY = "preset_id_key";
 
-  public EditPresetDialogFragment(Context context) {
+  @Inject
+  EventBus mEventBus;
+  @Inject
+  DAOFactory mDAOFactory;
+
+  public EditPresetDialogFragment() {
     Dagger.inject(this);
-    mContext = (Activity) context;
   }
 
-  public void setPresetToEdit(Preset p) {
-    this.presetToEdit = p;
+  public static DialogFragment newInstance(int presetId) {
+    DialogFragment frag = new EditPresetDialogFragment();
+
+    Bundle args = new Bundle();
+    args.putInt(PRESET_ID_KEY, presetId);
+
+    frag.setArguments(args);
+    return frag;
   }
 
   @Override
   public Dialog onCreateDialog(Bundle savedInstanceState) {
-    AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+    int presetId = getArguments().getInt(PRESET_ID_KEY);
+    final Preset preset = mDAOFactory.getPresetDAO().findPreset(presetId);
+
+    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
     // Inflate the layout for the dialog
-    LayoutInflater inflater = mContext.getLayoutInflater();
+    LayoutInflater inflater = getActivity().getLayoutInflater();
     // Pass null as the parent view because its going in the dialog layout
     View view = inflater.inflate(R.layout.dialog_save_preset, null);
     final EditText editText = (EditText) view.findViewById(R.id.edit_text_save_preset);
-    editText.setText(presetToEdit.getName());
+    editText.setText(preset.getName());
 
     builder.setView(view)
         // Add action buttons
@@ -57,8 +66,8 @@ public class EditPresetDialogFragment extends DialogFragment {
           @Override
           public void onClick(DialogInterface dialog, int id) {
             // Add the preset to database
-            Preset renamedPreset = presetToEdit.copy().name(editText.getText().toString()).commit();
-            eventBus.post(new EditPresetEvent(renamedPreset));
+            Preset renamedPreset = preset.copy().name(editText.getText().toString()).commit();
+            mEventBus.post(new EditPresetEvent(renamedPreset));
           }
         })
         .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -71,7 +80,8 @@ public class EditPresetDialogFragment extends DialogFragment {
   }
 
   @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+  public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                           Bundle savedInstanceState) {
     this.getDialog().setCanceledOnTouchOutside(true);
     return null;
   }

@@ -31,7 +31,7 @@ public class TouchpadTouchListener implements View.OnTouchListener {
 
   public TouchpadTouchListener(MainActivity activity) {
     this.mActivity = activity;
-  //  vibrator = (Vibrator) this.context.getSystemService(Context.VIBRATOR_SERVICE);
+    //  vibrator = (Vibrator) this.context.getSystemService(Context.VIBRATOR_SERVICE);
   }
 
   @Override
@@ -62,31 +62,52 @@ public class TouchpadTouchListener implements View.OnTouchListener {
 
     switch (motionEvent.getAction()) {
       case MotionEvent.ACTION_DOWN:
-       // vibrator.vibrate(1);
+        // vibrator.vibrate(1);
         tapHandler.postDelayed(tapRunnable, Utils.DELAY_TIME_MILLIS);
+
       case MotionEvent.ACTION_MOVE:
         float eventX = motionEvent.getX();
         float eventY = motionEvent.getY();
-        int normX = (int) (eventX / view.getWidth() * Speed.UPPER_BOUND + Speed.LOWER_BOUND);
-        int normY = (int) (eventY / view.getHeight() * Speed.UPPER_BOUND + Speed.LOWER_BOUND);
-
-        normX = Math.max(normX, 99);
-        normY = Math.max(normY, 99);
+        final int normX = Math.max(
+            (int) (eventX / view.getWidth() * Speed.UPPER_BOUND + Speed.LOWER_BOUND),
+            Speed.UPPER_BOUND);
+        final int normY = Math.max(
+            (int) (eventY / view.getHeight() * Speed.UPPER_BOUND + Speed.LOWER_BOUND),
+            Speed.UPPER_BOUND);
 
         if (normX < Speed.LOWER_BOUND || normX > Speed.UPPER_BOUND
             || normY < Speed.LOWER_BOUND || normY > Speed.UPPER_BOUND) {
           return false;
         }
 
-        Camera camera = mActivity.getCurrentCamera();
-        if (camera.isInvertX()) {
-          normX = 100 - normX;
-        }
-        if (camera.isInvertY()) {
-          normY = 100 - normY;
-        }
+        // If only java would've had lambdas...
+        mActivity.prepareObservable(
+            mActivity.getCurrentCamera().map(new Func1<Camera, Speed>() {
+              @Override
+              public Speed call(Camera camera) {
+                int x = normX;
+                int y = normY;
+                if (camera.isInvertX()) {
+                  x = 100 - x;
+                }
+                if (camera.isInvertY()) {
+                  y = 100 - y;
+                }
+                return new Speed(x, y);
+              }
+            }).flatMap(new Func1<Speed, Observable<String>>() {
+              @Override
+              public Observable<String> call(final Speed speed) {
+                return mActivity.getFacade().flatMap(new Func1<CameraFacade, Observable<String>>() {
+                  @Override
+                  public Observable<String> call(CameraFacade cameraFacade) {
+                    return cameraFacade.moveStart(speed);
+                  }
+                });
+              }
+            })
+        ).subscribe(Utils.noop(), Utils.<Throwable>noop());
 
-        startCameraMoving(new Speed(normX, normY));
         return true;
 
       case MotionEvent.ACTION_UP:
@@ -98,17 +119,6 @@ public class TouchpadTouchListener implements View.OnTouchListener {
         return false;
     }
 
-  }
-
-  private void startCameraMoving(final Speed speed) {
-    mActivity.prepareObservable(
-        mActivity.getFacade().flatMap(new Func1<CameraFacade, Observable<String>>() {
-          @Override
-          public Observable<String> call(CameraFacade cameraFacade) {
-            return cameraFacade.moveStart(speed);
-          }
-        })
-    ).subscribe(Utils.noop(), Utils.<Throwable>noop());
   }
 
   private void stopCameraMoving() {
