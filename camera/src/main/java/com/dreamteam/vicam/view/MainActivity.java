@@ -233,6 +233,8 @@ public class MainActivity extends Activity {
         connectionSuccess();
       }
     };
+
+
   }
 
   @Override
@@ -342,14 +344,14 @@ public class MainActivity extends Activity {
     }
   }
 
+  // Disable exit app when back pressed.
   @Override
   public void onBackPressed() {
     new AlertDialog.Builder(this)
         .setIcon(android.R.drawable.ic_dialog_alert)
         .setTitle("Exit VICAM?")
         .setMessage("Are you sure you want to exit VICAM?")
-        .setPositiveButton("Yes", new DialogInterface.OnClickListener()
-        {
+        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
           @Override
           public void onClick(DialogInterface dialog, int which) {
             finish();
@@ -449,7 +451,7 @@ public class MainActivity extends Activity {
     try {
       ViewConfiguration config = ViewConfiguration.get(this);
       Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
-      if(menuKeyField != null) {
+      if (menuKeyField != null) {
         menuKeyField.setAccessible(true);
         menuKeyField.setBoolean(config, false);
       }
@@ -614,6 +616,7 @@ public class MainActivity extends Activity {
     }
     mPresetAdapter.notifyDataSetChanged();
   }
+
 
   public void insertCamera(Camera camera) {
     CameraDAO cameraDAO = getCameraDAO();

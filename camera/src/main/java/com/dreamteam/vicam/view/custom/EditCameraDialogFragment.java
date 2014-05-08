@@ -3,10 +3,14 @@ package com.dreamteam.vicam.view.custom;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.dreamteam.camera.R;
@@ -71,6 +75,21 @@ public class EditCameraDialogFragment extends DialogFragment {
             dialog.cancel();
           }
         });
+
+
+
+
+
+
+
+
+
+
+
     return builder.create();
   }
+
+
+
+
 }

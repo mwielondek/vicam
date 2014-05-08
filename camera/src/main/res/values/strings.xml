@@ -38,7 +38,7 @@
     <string name="delete_camera">Delete Camera</string>
     <string name="apply_changes">Apply Changes</string>
     <string name="delete_camera_confirmation">\'%s\' will be removed.</string>
-    <string name="dialog_about_text">Stockholm, 2014: This application was created by a student group called Dream Team, for the course Introduction to Software Engineering (DD1392) at KTH, on behalf of The VIC Studio.</string>
+    <string name="dialog_about_text">Stockholm, 2014: This application was created by the project group Dream Team on behalf of The VIC Studio at KTH, for the course Introduction to Software Engineering (DD1392).</string>
     <string name="dialog_about_text_members">Aroshine Munasinghe, Benny Tieu, Brian Ye, Dajana Vlajic, Daniel Millevik, Daniel Szerszen, Donia Alipoor, Fredrik Sommar, Michael Wang, Milosz Wielondek and Oktay Bahceci.</string>
     <string name="about_us_credits">~ Credits ~</string>
 

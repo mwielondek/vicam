@@ -1,6 +1,8 @@
 package com.dreamteam.vicam.view.custom;
 
+import android.content.Context;
 import android.os.Handler;
+import android.os.Vibrator;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -22,9 +24,13 @@ public class TouchpadTouchListener implements View.OnTouchListener {
   private volatile boolean blocked;
   private Handler blockedHandler = new Handler();
   private Handler tapHandler = new Handler();
+  private Vibrator vibrator;
+  private Context context;
+
 
   public TouchpadTouchListener(MainActivity activity) {
     this.mActivity = activity;
+  //  vibrator = (Vibrator) this.context.getSystemService(Context.VIBRATOR_SERVICE);
   }
 
   @Override
@@ -55,6 +61,7 @@ public class TouchpadTouchListener implements View.OnTouchListener {
 
     switch (motionEvent.getAction()) {
       case MotionEvent.ACTION_DOWN:
+       // vibrator.vibrate(1);
         tapHandler.postDelayed(tapRunnable, Utils.DELAY_TIME_MILLIS);
       case MotionEvent.ACTION_MOVE:
         float eventX = motionEvent.getX();

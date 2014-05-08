@@ -10,32 +10,30 @@
                 tools:context=".MainActivity"
                 android:id="@+id/sync_loader">
 
-<!-- Wrapper to center the all of the inner elements -->
-<RelativeLayout android:layout_width="wrap_content"
+    <!-- Wrapper to center the all of the inner elements -->
+    <RelativeLayout android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true">
+        <TextView
+                android:text="@string/sync_server_msg"
+                android:id="@+id/progressText"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_centerHorizontal="true">
-    <TextView
-            android:text="@string/sync_server_msg"
-            android:id="@+id/progressText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
 
 
+                />
+
+        <ProgressBar
+                android:id="@+id/progressBar1"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
 
 
-            />
+                android:layout_below="@+id/progressText"
 
-    <ProgressBar
-            android:id="@+id/progressBar1"
-            style="?android:attr/progressBarStyleLarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-
-            android:layout_below="@+id/progressText"
-
-            />
-</RelativeLayout>
+                />
+    </RelativeLayout>
 
 </RelativeLayout>
