@@ -3,6 +3,8 @@ package com.dreamteam.vicam.view;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DialogFragment;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -277,10 +279,10 @@ public class MainActivity extends Activity {
     switch (item.getItemId()) {
       case R.id.action_settings:
         //startActivity(new Intent(this, SettingsActivity.class));
-        showDialog(mEditCameraDialogFragment);
+        showDialog(mEditCameraDialogFragment, "edit_camera_dialog");
         return true;
       case R.id.action_add_camera:
-        showDialog(mAddCameraDialogFragment);
+        showDialog(mAddCameraDialogFragment, "add_camera_dialog");
         return true;
       case R.id.action_delete_camera:
         if (mCurrentCamera == null) {
@@ -300,10 +302,10 @@ public class MainActivity extends Activity {
             .show();
         return true;
       case R.id.action_about:
-        showDialog(mAboutPageDialogFragment);
+        showDialog(mAboutPageDialogFragment, "about_page_dialog");
         return true;
       case R.id.action_save_preset:
-        showDialog(mSavePresetDialogFragment);
+        showDialog(mSavePresetDialogFragment, "save_preset_dialog");
         return true;
       case R.id.action_sync_presets:
         mLoaderSpinner.setVisibility(View.VISIBLE);
@@ -425,9 +427,16 @@ public class MainActivity extends Activity {
     mDrawerLayout.closeDrawer(mDrawerList);
   }
 
-  private void showDialog(DialogFragment dialog) {
-    FragmentTransaction ft = getFragmentManager().beginTransaction();
-    dialog.show(ft, "Alert Dialog");
+  private void showDialog(DialogFragment dialog, String tag) {
+    FragmentManager manager = getFragmentManager();
+    FragmentTransaction ft = manager.beginTransaction();
+    Fragment prev = manager.findFragmentByTag(tag);
+    if (prev != null) {
+      ft.remove(prev);
+    }
+
+    // Create and show the dialog.
+    dialog.show(ft, tag);
   }
 
   private void updateWithCameraState(CameraState cameraState) {
