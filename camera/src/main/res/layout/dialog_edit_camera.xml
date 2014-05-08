@@ -17,6 +17,7 @@
             android:layout_marginRight="4dp"
             android:imeOptions="flagNoExtractUi"
             android:singleLine="true"
+            android:maxLength="25"
 
             />
     <LinearLayout android:orientation="horizontal" android:layout_width="wrap_content"

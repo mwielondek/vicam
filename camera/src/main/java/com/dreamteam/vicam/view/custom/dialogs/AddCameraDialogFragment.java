@@ -7,7 +7,9 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
@@ -70,5 +72,10 @@ public class AddCameraDialogFragment extends DialogFragment {
           }
         });
     return builder.create();
+  }
+  @Override
+  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    this.getDialog().setCanceledOnTouchOutside(true);
+    return null;
   }
 }

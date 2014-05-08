@@ -78,17 +78,13 @@ public class EditCameraDialogFragment extends DialogFragment {
 
 
 
-
-
-
-
-
-
-
-
     return builder.create();
   }
-
+  @Override
+  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    this.getDialog().setCanceledOnTouchOutside(true);
+    return null;
+  }
 
 
 
