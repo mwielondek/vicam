@@ -6,6 +6,7 @@ import com.dreamteam.vicam.view.custom.CameraSpinnerItemListener;
 import com.dreamteam.vicam.view.custom.DrawerItemClickListener;
 import com.dreamteam.vicam.view.custom.DrawerMultiChoiceListener;
 import com.dreamteam.vicam.view.custom.DrawerToggle;
+import com.dreamteam.vicam.view.custom.EditPresetDialogFragment;
 import com.dreamteam.vicam.view.custom.SavePresetDialogFragment;
 
 import de.greenrobot.event.EventBus;
@@ -24,6 +25,7 @@ import dagger.Provides;
         CameraSpinnerItemListener.class,
         DrawerItemClickListener.class,
         SavePresetDialogFragment.class,
+        EditPresetDialogFragment.class,
         DrawerToggle.class,
         DrawerMultiChoiceListener.class,
         AddCameraDialogFragment.class
