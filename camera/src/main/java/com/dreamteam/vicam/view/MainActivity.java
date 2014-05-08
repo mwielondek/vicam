@@ -435,11 +435,13 @@ public class MainActivity extends Activity {
   }
 
   public void updateFocusLevel(int focusLevel) {
-    SeekBarChangeListener.levelToProgress(mFocusSeekBar, focusLevel);
+    int progress = SeekBarChangeListener.levelToProgress(focusLevel, mFocusSeekBar.getMax());
+    mFocusSeekBar.setProgress(progress);
   }
 
-  public void updateZoomLevel(int focusLevel) {
-    SeekBarChangeListener.levelToProgress(mFocusSeekBar, focusLevel);
+  public void updateZoomLevel(int zoomLevel) {
+    int progress = SeekBarChangeListener.levelToProgress(zoomLevel, mZoomSeekBar.getMax());
+    mZoomSeekBar.setProgress(progress);
   }
 
   private void getOverflowMenu() {
