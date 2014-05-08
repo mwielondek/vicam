@@ -6,7 +6,7 @@
               android:layout_height="wrap_content">
 
 
-<EditText
+    <EditText
             android:id="@+id/edit_text_save_preset"
             android:hint="@string/dialog_save_preset_placeholder"
             android:layout_width="match_parent"
@@ -16,7 +16,7 @@
             android:layout_marginRight="4dp"
             android:layout_marginBottom="4dp"
             android:imeOptions="flagNoExtractUi"
-             />
+            />
 
 
 </LinearLayout>

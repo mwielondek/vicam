@@ -11,40 +11,57 @@
             android:hint="@string/dialog_add_camera_camera_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="5dp"
             android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
-            android:layout_marginBottom="4dp"
             android:imeOptions="flagNoExtractUi"
             android:singleLine="true"
+            android:maxLength="25"
             />
+    <LinearLayout android:orientation="horizontal" android:layout_width="wrap_content"
+                  android:layout_height="wrap_content">
+        <EditText
+                android:id="@+id/add_camera_ip"
+                android:hint="@string/dialog_add_camera_ip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minWidth="200dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:imeOptions="flagNoExtractUi"
+                android:singleLine="true"
 
-    <EditText
-            android:id="@+id/add_camera_ip"
-            android:hint="@string/dialog_add_camera_ip"
+                />
+
+        <EditText
+                android:id="@+id/add_camera_port"
+                android:hint="@string/dialog_add_camera_port"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginBottom="4dp"
+                android:imeOptions="flagNoExtractUi"
+                android:inputType="number"
+
+                android:singleLine="true"
+                android:minWidth="120dp"
+                />
+    </LinearLayout>
+
+    <Switch android:id="@+id/add_camera_invert_x_axis"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:layout_marginBottom="4dp"
-            android:imeOptions="flagNoExtractUi"
-            android:inputType="number"
+            android:layout_margin="10dp"
+            android:hint="@string/add_camera_invert_axis_x_hint"/>
 
-            />
-
-    <EditText
-            android:id="@+id/add_camera_port"
-            android:hint="@string/dialog_add_camera_port"
+    <Switch android:id="@+id/add_camera_invert_y_axis"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:layout_marginBottom="4dp"
-            android:imeOptions="flagNoExtractUi"
-            android:inputType="number"
-            android:singleLine="true"
-            />
+            android:layout_margin="10dp"
+            android:layout_marginTop="0dp"
+            android:hint="@string/add_camera_invert_axis_y_hint"/>
 
 </LinearLayout>

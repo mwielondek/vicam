@@ -13,12 +13,17 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -135,6 +140,7 @@ public class MainActivity extends Activity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
+
     Dagger.inject(this);
     ButterKnife.inject(this);
 
@@ -189,6 +195,9 @@ public class MainActivity extends Activity {
     mAboutPageDialogFragment = new AboutPageDialogFragment(this);
     mEditCameraDialogFragment = new EditCameraDialogFragment(this);
 
+
+
+
     // Init. value of loading spinner
     mLoaderSpinner.setVisibility(View.GONE);
 
@@ -219,7 +228,10 @@ public class MainActivity extends Activity {
         connectionSuccess();
       }
     };
+
+
   }
+
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
@@ -266,6 +278,7 @@ public class MainActivity extends Activity {
         showDialog(mEditCameraDialogFragment, "edit_camera_dialog");
         return true;
       case R.id.action_add_camera:
+
         showDialog(mAddCameraDialogFragment, "add_camera_dialog");
         return true;
       case R.id.action_delete_camera:
@@ -328,6 +341,7 @@ public class MainActivity extends Activity {
     mDAOFactory.close();
   }
 
+  // Disable exit app when back pressed.
   @Override
   public void onBackPressed() {
     new AlertDialog.Builder(this)
@@ -418,6 +432,7 @@ public class MainActivity extends Activity {
       ft.remove(prev);
     }
     // Create and show the dialog.
+
     dialog.show(ft, tag);
   }
 
@@ -614,6 +629,7 @@ public class MainActivity extends Activity {
     mPresetAdapter.notifyDataSetChanged();
   }
 
+
   public void insertCamera(Camera camera) {
     CameraDAO cameraDAO = getCameraDAO();
     cameraDAO.insertCamera(camera);
@@ -632,5 +648,6 @@ public class MainActivity extends Activity {
     }
     mCameraAdapter.notifyDataSetChanged();
   }
+
 
 }

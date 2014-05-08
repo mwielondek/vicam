@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.dreamteam.camera.R;
 /**
@@ -25,6 +26,7 @@ public class AboutPageDialogFragment extends DialogFragment {
   @Override
   public Dialog onCreateDialog(Bundle savedInstanceState) {
     AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+
     // Get the layout inflater
     LayoutInflater inflater = mActivity.getLayoutInflater();
     View view = inflater.inflate(R.layout.dialog_about_page, null);
@@ -40,4 +42,18 @@ public class AboutPageDialogFragment extends DialogFragment {
 
     return builder.create();
   }
+
+  @Override
+  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    this.getDialog().setCanceledOnTouchOutside(true);
+    return null;
+  }
+
+
+
+
+
+
+
+
 }
