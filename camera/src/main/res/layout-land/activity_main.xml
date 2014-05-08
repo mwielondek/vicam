@@ -7,27 +7,27 @@
         android:background="#eee">
 
     <!-- Main content view -->
-    <LinearLayout
+    <RelativeLayout
             android:id="@+id/content_frame"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:orientation="vertical"
             android:focusableInTouchMode="false">
 
         <!-- Toolbox -->
         <include
-                android:layout_marginTop="@dimen/toolbox_padding"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                layout="@layout/toolbox" android:id="@+id/include"/>
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_centerVertical="true"
+                layout="@layout/toolbox"/>
 
         <!-- Touchpad -->
         <com.dreamteam.vicam.view.custom.Touchpad
                 android:id="@+id/camera_touchpad"
                 android:src="@drawable/controller"
                 style="@style/touchpad"/>
-    </LinearLayout>
+    </RelativeLayout>
 
 
     <!-- Navigation drawer -->

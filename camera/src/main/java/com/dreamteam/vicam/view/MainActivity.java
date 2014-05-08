@@ -8,9 +8,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -52,17 +50,17 @@ import com.dreamteam.vicam.presenter.CameraServiceManager;
 import com.dreamteam.vicam.presenter.network.camera.CameraFacade;
 import com.dreamteam.vicam.presenter.utility.Dagger;
 import com.dreamteam.vicam.presenter.utility.Utils;
+import com.dreamteam.vicam.view.custom.CameraArrayAdapter;
+import com.dreamteam.vicam.view.custom.DrawerToggle;
+import com.dreamteam.vicam.view.custom.PresetArrayAdapter;
 import com.dreamteam.vicam.view.custom.dialogs.AboutPageDialogFragment;
 import com.dreamteam.vicam.view.custom.dialogs.AddCameraDialogFragment;
-import com.dreamteam.vicam.view.custom.CameraArrayAdapter;
+import com.dreamteam.vicam.view.custom.dialogs.EditCameraDialogFragment;
+import com.dreamteam.vicam.view.custom.dialogs.EditPresetDialogFragment;
+import com.dreamteam.vicam.view.custom.dialogs.SavePresetDialogFragment;
 import com.dreamteam.vicam.view.custom.listeners.CameraSpinnerItemListener;
 import com.dreamteam.vicam.view.custom.listeners.DrawerItemClickListener;
 import com.dreamteam.vicam.view.custom.listeners.DrawerMultiChoiceListener;
-import com.dreamteam.vicam.view.custom.DrawerToggle;
-import com.dreamteam.vicam.view.custom.dialogs.EditCameraDialogFragment;
-import com.dreamteam.vicam.view.custom.dialogs.EditPresetDialogFragment;
-import com.dreamteam.vicam.view.custom.PresetArrayAdapter;
-import com.dreamteam.vicam.view.custom.dialogs.SavePresetDialogFragment;
 import com.dreamteam.vicam.view.custom.listeners.SeekBarChangeListener;
 import com.dreamteam.vicam.view.custom.listeners.SwitchButtonCheckedListener;
 import com.dreamteam.vicam.view.custom.listeners.TouchpadTouchListener;
@@ -147,11 +145,6 @@ public class MainActivity extends Activity {
     mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
     mTitle = getString(R.string.app_name);
-
-    // Landscape mode both ways
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-      setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
-    }
 
     getActionBar().setDisplayHomeAsUpEnabled(true);
     getActionBar().setHomeButtonEnabled(true);
