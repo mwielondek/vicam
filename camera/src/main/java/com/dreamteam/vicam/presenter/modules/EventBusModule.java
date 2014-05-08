@@ -2,6 +2,7 @@ package com.dreamteam.vicam.presenter.modules;
 
 import com.dreamteam.vicam.view.MainActivity;
 import com.dreamteam.vicam.view.custom.dialogs.AddCameraDialogFragment;
+import com.dreamteam.vicam.view.custom.dialogs.EditCameraDialogFragment;
 import com.dreamteam.vicam.view.custom.listeners.CameraSpinnerItemListener;
 import com.dreamteam.vicam.view.custom.listeners.DrawerItemClickListener;
 import com.dreamteam.vicam.view.custom.listeners.DrawerMultiChoiceListener;
@@ -28,7 +29,8 @@ import dagger.Provides;
         EditPresetDialogFragment.class,
         DrawerToggle.class,
         DrawerMultiChoiceListener.class,
-        AddCameraDialogFragment.class
+        AddCameraDialogFragment.class,
+        EditCameraDialogFragment.class
     },
     complete = false,
     library = true

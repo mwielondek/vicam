@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Switch;
 
 import com.dreamteam.camera.R;
 import com.dreamteam.vicam.model.events.SaveCameraEvent;
@@ -47,6 +48,8 @@ public class AddCameraDialogFragment extends DialogFragment {
     final EditText nameEdit = (EditText) view.findViewById(R.id.add_camera_name);
     final EditText ipEdit = (EditText) view.findViewById(R.id.add_camera_ip);
     final EditText portEdit = (EditText) view.findViewById(R.id.add_camera_port);
+    final Switch invertXSwitch = (Switch) view.findViewById(R.id.add_camera_invert_x_axis);
+    final Switch invertYSwitch = (Switch) view.findViewById(R.id.add_camera_invert_y_axis);
 
     // Inflate and set the layout for the dialog
     // Pass null as the parent view because its going in the dialog layout
@@ -59,7 +62,9 @@ public class AddCameraDialogFragment extends DialogFragment {
                 dialog,
                 nameEdit.getText().toString(),
                 ipEdit.getText().toString(),
-                portEdit.getText().toString()));
+                portEdit.getText().toString(),
+                invertXSwitch.isChecked(),
+                invertYSwitch.isChecked()));
           }
         })
         .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {

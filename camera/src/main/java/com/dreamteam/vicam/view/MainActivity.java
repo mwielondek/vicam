@@ -34,6 +34,7 @@ import com.dreamteam.vicam.model.errors.CameraDoesNotExistException;
 import com.dreamteam.vicam.model.errors.CameraResponseException;
 import com.dreamteam.vicam.model.events.CameraChangedEvent;
 import com.dreamteam.vicam.model.events.DeletePresetsEvent;
+import com.dreamteam.vicam.model.events.EditCameraEvent;
 import com.dreamteam.vicam.model.events.EditPresetDialogEvent;
 import com.dreamteam.vicam.model.events.EditPresetEvent;
 import com.dreamteam.vicam.model.events.OnDrawerCloseEvent;
@@ -135,7 +136,8 @@ public class MainActivity extends Activity {
     ButterKnife.inject(this);
 
     // Sets default values defined in camera_preferences if empty
-    PreferenceManager.setDefaultValues(this, R.xml.camera_preferences, false);
+    // Only useful if settings activity is used
+    // PreferenceManager.setDefaultValues(this, R.xml.camera_preferences, false);
 
     // Get set camera_preferences
     mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -247,10 +249,12 @@ public class MainActivity extends Activity {
       return true;
     }
     // Handle menu items
+    // TODO: check for null mCurrentCamera
     switch (item.getItemId()) {
       case R.id.action_edit_camera:
         //startActivity(new Intent(this, SettingsActivity.class));
-        showDialog(EditCameraDialogFragment.newInstance(), "edit_camera_dialog");
+        showDialog(EditCameraDialogFragment.newInstance(mCurrentCamera.getId()),
+                   "edit_camera_dialog");
         return true;
       case R.id.action_add_camera:
 
@@ -475,23 +479,18 @@ public class MainActivity extends Activity {
 
   @SuppressWarnings("unused")
   public void onEventMainThread(SaveCameraEvent e) {
-    String portString = e.port.trim();
-    Short port = null;
-    if (!portString.isEmpty()) {
-      try {
-        port = Short.parseShort(portString);
-      } catch (NumberFormatException ignored) {
-        // Ignore formatting exceptions
-      }
-    }
-    insertCamera(new Camera(e.ip, e.name, port));
+    insertCamera(new Camera(e.ip, e.name, Camera.parsePort(e.port.trim()), e.invertX, e.invertY));
     // Selects the inserted camera as current
     mCameraSpinner.setSelection(mCameras.size() - 1);
   }
 
   @SuppressWarnings("unused")
+  public void onEventMainThread(EditCameraEvent e) {
+    updateCamera(e.camera);
+  }
+
+  @SuppressWarnings("unused")
   public void onEventMainThread(PresetChangedEvent e) {
-    showToast("Selected Preset: " + e.preset, Toast.LENGTH_SHORT);
     final CameraState cameraState = e.preset.getCameraState();
 
     prepareObservable(
@@ -535,7 +534,7 @@ public class MainActivity extends Activity {
         new Action1<Throwable>() {
           @Override
           public void call(Throwable throwable) {
-            showToast("Failed getting state from camera when saving preset", Toast.LENGTH_SHORT);
+            Utils.infoLog("Failed getting state from camera when saving preset");
             // TODO Remove when done with debugging
             insertPreset(new Preset(e.name, mCurrentCamera, new CameraState(
                 new Position(0x5000, 0x5000),
@@ -607,6 +606,18 @@ public class MainActivity extends Activity {
     CameraDAO cameraDAO = getCameraDAO();
     cameraDAO.insertCamera(camera);
     mCameras.add(camera);
+    mCameraAdapter.notifyDataSetChanged();
+  }
+
+  public void updateCamera(Camera camera) {
+    CameraDAO cameraDao = getCameraDAO();
+    cameraDao.updateCamera(camera);
+    for (int i = 0; i < mCameras.size(); i++) {
+      if (mCameras.get(i).getId() == camera.getId()) {
+        mCameras.set(i, camera);
+        break;
+      }
+    }
     mCameraAdapter.notifyDataSetChanged();
   }
 

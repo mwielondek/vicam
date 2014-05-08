@@ -3,6 +3,7 @@ package com.dreamteam.vicam.presenter.modules;
 import com.dreamteam.vicam.model.database.DAOFactory;
 import com.dreamteam.vicam.model.database.ormlite.DAOFactoryImpl;
 import com.dreamteam.vicam.view.MainActivity;
+import com.dreamteam.vicam.view.custom.dialogs.EditCameraDialogFragment;
 import com.dreamteam.vicam.view.custom.dialogs.EditPresetDialogFragment;
 
 import javax.inject.Singleton;
@@ -16,7 +17,8 @@ import dagger.Provides;
 @Module(
     injects = {
         MainActivity.class,
-        EditPresetDialogFragment.class
+        EditPresetDialogFragment.class,
+        EditCameraDialogFragment.class
     },
     complete = false,
     library = true

@@ -11,11 +11,16 @@ public class SaveCameraEvent {
   public final String name;
   public final String ip;
   public final String port;
+  public final boolean invertX;
+  public final boolean invertY;
 
-  public SaveCameraEvent(DialogInterface dialog, String name, String ip, String port) {
+  public SaveCameraEvent(DialogInterface dialog, String name, String ip, String port,
+                         boolean invertX, boolean invertY) {
     this.dialog = dialog;
     this.name = name;
     this.ip = ip;
     this.port = port;
+    this.invertX = invertX;
+    this.invertY = invertY;
   }
 }

@@ -27,8 +27,8 @@ public class Camera implements Identifiable {
     // ORMLite needs a no-arg constructor
   }
 
-  public Camera(int id, String ip, String name, Short port) {
-    this(ip, name, port);
+  public Camera(int id, String ip, String name, Short port, boolean invertX, boolean invertY) {
+    this(ip, name, port, invertX, invertY);
     this.id = id;
   }
 
@@ -79,10 +79,6 @@ public class Camera implements Identifiable {
     return String.format("http://%s:%d", ip, port);
   }
 
-  public Camera copyWithName(String newName) {
-    return new Camera(id, ip, newName, port);
-  }
-
   @Override
   public String toString() {
     return "Camera{" +
@@ -93,5 +89,13 @@ public class Camera implements Identifiable {
            ", invertX=" + invertX +
            ", invertY=" + invertY +
            '}';
+  }
+
+  public static Short parsePort(String port) {
+      try {
+        return Short.parseShort(port);
+      } catch (NumberFormatException ignored) {
+        return null;
+      }
   }
 }
