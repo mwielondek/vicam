@@ -1,4 +1,4 @@
-package com.dreamteam.vicam.view.custom;
+package com.dreamteam.vicam.view.custom.dialogs;
 
 import android.app.AlertDialog;
 import android.app.Dialog;

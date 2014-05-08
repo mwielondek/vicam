@@ -5,7 +5,7 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 
 import com.dreamteam.camera.R;
-import com.dreamteam.vicam.view.custom.AddCameraDialogFragment;
+import com.dreamteam.vicam.view.custom.dialogs.AddCameraDialogFragment;
 
 import java.util.List;
 

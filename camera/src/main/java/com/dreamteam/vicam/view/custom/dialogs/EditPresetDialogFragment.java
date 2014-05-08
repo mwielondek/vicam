@@ -1,4 +1,4 @@
-package com.dreamteam.vicam.view.custom;
+package com.dreamteam.vicam.view.custom.dialogs;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -12,7 +12,8 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.dreamteam.camera.R;
-import com.dreamteam.vicam.model.events.SavePresetEvent;
+import com.dreamteam.vicam.model.events.EditPresetEvent;
+import com.dreamteam.vicam.model.pojo.Preset;
 import com.dreamteam.vicam.presenter.utility.Dagger;
 
 import de.greenrobot.event.EventBus;
@@ -22,15 +23,20 @@ import javax.inject.Inject;
 /**
  * Manages a custom layout for the SavePreset dialog
  */
-public class SavePresetDialogFragment extends DialogFragment {
+public class EditPresetDialogFragment extends DialogFragment {
 
   Activity mContext;
   @Inject
   EventBus eventBus;
+  private Preset presetToEdit;
 
-  public SavePresetDialogFragment(Context context) {
+  public EditPresetDialogFragment(Context context) {
     Dagger.inject(this);
     mContext = (Activity) context;
+  }
+
+  public void setPresetToEdit(Preset p) {
+    this.presetToEdit = p;
   }
 
   @Override
@@ -42,6 +48,7 @@ public class SavePresetDialogFragment extends DialogFragment {
     // Pass null as the parent view because its going in the dialog layout
     View view = inflater.inflate(R.layout.dialog_save_preset, null);
     final EditText editText = (EditText) view.findViewById(R.id.edit_text_save_preset);
+    editText.setText(presetToEdit.getName());
 
     builder.setView(view)
         // Add action buttons
@@ -49,7 +56,8 @@ public class SavePresetDialogFragment extends DialogFragment {
           @Override
           public void onClick(DialogInterface dialog, int id) {
             // Add the preset to database
-            eventBus.post(new SavePresetEvent(dialog, editText.getText().toString()));
+            Preset renamedPreset = presetToEdit.copy().name(editText.getText().toString()).commit();
+            eventBus.post(new EditPresetEvent(renamedPreset));
           }
         })
         .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {

@@ -52,20 +52,20 @@ import com.dreamteam.vicam.presenter.CameraServiceManager;
 import com.dreamteam.vicam.presenter.network.camera.CameraFacade;
 import com.dreamteam.vicam.presenter.utility.Dagger;
 import com.dreamteam.vicam.presenter.utility.Utils;
-import com.dreamteam.vicam.view.custom.AboutPageDialogFragment;
-import com.dreamteam.vicam.view.custom.AddCameraDialogFragment;
+import com.dreamteam.vicam.view.custom.dialogs.AboutPageDialogFragment;
+import com.dreamteam.vicam.view.custom.dialogs.AddCameraDialogFragment;
 import com.dreamteam.vicam.view.custom.CameraArrayAdapter;
-import com.dreamteam.vicam.view.custom.CameraSpinnerItemListener;
-import com.dreamteam.vicam.view.custom.DrawerItemClickListener;
-import com.dreamteam.vicam.view.custom.DrawerMultiChoiceListener;
+import com.dreamteam.vicam.view.custom.listeners.CameraSpinnerItemListener;
+import com.dreamteam.vicam.view.custom.listeners.DrawerItemClickListener;
+import com.dreamteam.vicam.view.custom.listeners.DrawerMultiChoiceListener;
 import com.dreamteam.vicam.view.custom.DrawerToggle;
-import com.dreamteam.vicam.view.custom.EditCameraDialogFragment;
-import com.dreamteam.vicam.view.custom.EditPresetDialogFragment;
+import com.dreamteam.vicam.view.custom.dialogs.EditCameraDialogFragment;
+import com.dreamteam.vicam.view.custom.dialogs.EditPresetDialogFragment;
 import com.dreamteam.vicam.view.custom.PresetArrayAdapter;
-import com.dreamteam.vicam.view.custom.SavePresetDialogFragment;
-import com.dreamteam.vicam.view.custom.SeekBarChangeListener;
-import com.dreamteam.vicam.view.custom.SwitchButtonCheckedListener;
-import com.dreamteam.vicam.view.custom.TouchpadTouchListener;
+import com.dreamteam.vicam.view.custom.dialogs.SavePresetDialogFragment;
+import com.dreamteam.vicam.view.custom.listeners.SeekBarChangeListener;
+import com.dreamteam.vicam.view.custom.listeners.SwitchButtonCheckedListener;
+import com.dreamteam.vicam.view.custom.listeners.TouchpadTouchListener;
 
 import de.greenrobot.event.EventBus;
 
@@ -86,7 +86,7 @@ import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
-import static com.dreamteam.vicam.view.custom.SeekBarChangeListener.Type;
+import static com.dreamteam.vicam.view.custom.listeners.SeekBarChangeListener.Type;
 
 public class MainActivity extends Activity {
 
@@ -322,17 +322,17 @@ public class MainActivity extends Activity {
   protected void onPause() {
     super.onPause();
     mEventBus.unregister(this);
+    if (mCameraSpinner != null) {
+      mSharedPreferences.edit()
+          .putInt(SELECTED_CAMERA, mCameraSpinner.getSelectedItemPosition())
+          .commit();
+    }
   }
 
   @Override
   protected void onDestroy() {
     super.onDestroy();
     mDAOFactory.close();
-    if (mCameraSpinner != null) {
-      mSharedPreferences.edit()
-          .putInt(SELECTED_CAMERA, mCameraSpinner.getSelectedItemPosition())
-          .commit();
-    }
   }
 
   @Override

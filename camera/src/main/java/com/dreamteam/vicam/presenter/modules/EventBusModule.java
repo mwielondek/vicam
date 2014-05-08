@@ -1,13 +1,13 @@
 package com.dreamteam.vicam.presenter.modules;
 
 import com.dreamteam.vicam.view.MainActivity;
-import com.dreamteam.vicam.view.custom.AddCameraDialogFragment;
-import com.dreamteam.vicam.view.custom.CameraSpinnerItemListener;
-import com.dreamteam.vicam.view.custom.DrawerItemClickListener;
-import com.dreamteam.vicam.view.custom.DrawerMultiChoiceListener;
+import com.dreamteam.vicam.view.custom.dialogs.AddCameraDialogFragment;
+import com.dreamteam.vicam.view.custom.listeners.CameraSpinnerItemListener;
+import com.dreamteam.vicam.view.custom.listeners.DrawerItemClickListener;
+import com.dreamteam.vicam.view.custom.listeners.DrawerMultiChoiceListener;
 import com.dreamteam.vicam.view.custom.DrawerToggle;
-import com.dreamteam.vicam.view.custom.EditPresetDialogFragment;
-import com.dreamteam.vicam.view.custom.SavePresetDialogFragment;
+import com.dreamteam.vicam.view.custom.dialogs.EditPresetDialogFragment;
+import com.dreamteam.vicam.view.custom.dialogs.SavePresetDialogFragment;
 
 import de.greenrobot.event.EventBus;
 
