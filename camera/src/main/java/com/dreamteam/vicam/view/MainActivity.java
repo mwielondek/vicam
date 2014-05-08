@@ -253,6 +253,10 @@ public class MainActivity extends Activity {
     switch (item.getItemId()) {
       case R.id.action_edit_camera:
         //startActivity(new Intent(this, SettingsActivity.class));
+        if (mCurrentCamera == null) {
+          showToast("There's no camera to be edited!", Toast.LENGTH_SHORT);
+          return true;
+        }
         showDialog(EditCameraDialogFragment.newInstance(mCurrentCamera.getId()),
                    "edit_camera_dialog");
         return true;
@@ -436,7 +440,6 @@ public class MainActivity extends Activity {
   }
 
   private void getOverflowMenu() {
-
     try {
       ViewConfiguration config = ViewConfiguration.get(this);
       Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
@@ -630,6 +633,7 @@ public class MainActivity extends Activity {
         break;
       }
     }
+    mCurrentCamera = null;
     mCameraAdapter.notifyDataSetChanged();
   }
 

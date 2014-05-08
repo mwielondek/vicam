@@ -16,7 +16,6 @@ import com.dreamteam.vicam.model.database.DAOFactory;
 import com.dreamteam.vicam.model.events.EditCameraEvent;
 import com.dreamteam.vicam.model.pojo.Camera;
 import com.dreamteam.vicam.presenter.utility.Dagger;
-import com.dreamteam.vicam.presenter.utility.Utils;
 import com.dreamteam.vicam.view.MainActivity;
 
 import de.greenrobot.event.EventBus;
@@ -92,7 +91,6 @@ public class EditCameraDialogFragment extends DialogFragment {
         .setPositiveButton(R.string.apply_changes, new DialogInterface.OnClickListener() {
           @Override
           public void onClick(DialogInterface dialog, int id) {
-            Utils.infoLog(String.format("Camera is %s.", camera));
             if (camera != null) {
               mEventBus.post(new EditCameraEvent(new Camera(
                   cameraId,
