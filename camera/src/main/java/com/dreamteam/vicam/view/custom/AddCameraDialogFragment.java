@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.dreamteam.camera.R;
@@ -46,6 +47,7 @@ public class AddCameraDialogFragment extends DialogFragment {
     final EditText nameEdit = (EditText) view.findViewById(R.id.add_camera_name);
     final EditText ipEdit = (EditText) view.findViewById(R.id.add_camera_ip);
     final EditText portEdit = (EditText) view.findViewById(R.id.add_camera_port);
+
 
     // Inflate and set the layout for the dialog
     // Pass null as the parent view because its going in the dialog layout
