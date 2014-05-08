@@ -43,10 +43,12 @@ public class EditCameraDialogFragment extends DialogFragment {
     if (camera != null) {
       // Show current camera as hints
       nameEdit.setText(camera.getName());
+      nameEdit.setSelectAllOnFocus(true);
       ipEdit.setText(camera.getIp());
+      ipEdit.setSelectAllOnFocus(true);
       // Port can be null
       if (camera.getPort() != null) {
-        portEdit.setHint(camera.getPort().toString());
+        portEdit.setText(camera.getPort().toString());
       }
     }
 

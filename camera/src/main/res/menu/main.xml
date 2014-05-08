@@ -39,7 +39,7 @@
           android:showAsAction="collapseActionView"/>
 
     <item android:id="@+id/action_settings"
-          android:title="@string/action_settings"
+          android:title="@string/edit_camera"
           android:orderInCategory="5"
           android:showAsAction="collapseActionView"/>
 

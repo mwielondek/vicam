@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ListView;
@@ -63,6 +64,7 @@ import com.dreamteam.vicam.view.custom.TouchpadTouchListener;
 
 import de.greenrobot.event.EventBus;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -197,6 +199,9 @@ public class MainActivity extends Activity {
     // Init. value of loading spinner
     mLoaderSpinner.setVisibility(View.GONE);
 
+    // Always show settings drop down (works with i.e. Samsung S3)
+    getOverflowMenu();
+
     mErrorHandler = new Action1<Throwable>() {
       @Override
       public void call(Throwable throwable) {
@@ -288,7 +293,7 @@ public class MainActivity extends Activity {
             .show();
         return true;
       case R.id.action_about:
-        //showDialog(mAboutPageDialogFragment);
+        showDialog(mAboutPageDialogFragment);
         return true;
       case R.id.action_save_preset:
         showDialog(mSavePresetDialogFragment);
@@ -430,6 +435,20 @@ public class MainActivity extends Activity {
 
   public void updateZoomLevel(int focusLevel) {
     SeekBarChangeListener.levelToProgress(mFocusSeekBar, focusLevel);
+  }
+
+  private void getOverflowMenu() {
+
+    try {
+      ViewConfiguration config = ViewConfiguration.get(this);
+      Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
+      if(menuKeyField != null) {
+        menuKeyField.setAccessible(true);
+        menuKeyField.setBoolean(config, false);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   private void updateCameraState() {

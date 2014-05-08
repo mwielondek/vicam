@@ -28,14 +28,14 @@
     <string name="focus_value">Focus Value</string>
     <string name="dialog_save_preset_placeholder">Enter name for preset…</string>
     <string name="dialog_add_camera_camera_name">Camera name</string>
-    <string name="add_new_camera">Add camera</string>
-    <string name="edit_camera">Edit camera</string>
+    <string name="add_new_camera">Add Camera</string>
+    <string name="edit_camera">Edit Camera</string>
     <string name="dialog_add_camera_ip">IP-Address</string>
     <string name="dialog_add_camera_port">Port</string>
     <string name="delete_preset">Delete preset</string>
     <string name="edit_preset">Edit preset</string>
     <string name="delete_presets">Delete presets</string>
-    <string name="delete_camera">Delete camera</string>
+    <string name="delete_camera">Delete Camera</string>
     <string name="apply_changes">Apply Changes</string>
     <string name="delete_camera_confirmation">\'%s\' will be removed.</string>
     <string name="dialog_about_text">This application was created by a student group called Dream Team, for the course DD1392 Mjukvarukonstruktion at KTH.</string>
