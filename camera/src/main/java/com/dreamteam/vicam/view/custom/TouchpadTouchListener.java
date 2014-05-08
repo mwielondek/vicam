@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.dreamteam.vicam.model.pojo.Camera;
 import com.dreamteam.vicam.model.pojo.Speed;
 import com.dreamteam.vicam.presenter.network.camera.CameraFacade;
 import com.dreamteam.vicam.presenter.utility.Utils;
@@ -62,9 +63,20 @@ public class TouchpadTouchListener implements View.OnTouchListener {
         int normX = (int) (eventX / view.getWidth() * Speed.UPPER_BOUND + Speed.LOWER_BOUND);
         int normY = (int) (eventY / view.getHeight() * Speed.UPPER_BOUND + Speed.LOWER_BOUND);
 
+        normX = Math.max(normX, 99);
+        normY = Math.max(normY, 99);
+
         if (normX < Speed.LOWER_BOUND || normX > Speed.UPPER_BOUND
             || normY < Speed.LOWER_BOUND || normY > Speed.UPPER_BOUND) {
           return false;
+        }
+
+        Camera camera = mActivity.getCurrentCamera();
+        if (camera.isInvertX()) {
+          normX = 100 - normX;
+        }
+        if (camera.isInvertY()) {
+          normY = 100 - normY;
         }
 
         startCameraMoving(new Speed(normX, normY));
