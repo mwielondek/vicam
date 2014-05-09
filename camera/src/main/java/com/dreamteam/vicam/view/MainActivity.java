@@ -573,10 +573,12 @@ public class MainActivity extends Activity {
           public void call(Throwable throwable) {
             Utils.infoLog("Failed getting state from camera when saving preset");
             // TODO Remove when done with debugging
-            insertPreset(new Preset(e.name, mCurrentCamera, new CameraState(
-                new Position(0x5000, 0x5000),
-                new Zoom(0x666),
-                new Focus(0x777, true))));
+            if (mCurrentCamera != null) {
+              insertPreset(new Preset(e.name, mCurrentCamera, new CameraState(
+                  new Position(0x5000, 0x5000),
+                  new Zoom(0x666),
+                  new Focus(0x777, true))));
+            }
           }
         }
     );
