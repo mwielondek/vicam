@@ -79,11 +79,13 @@ public class TouchpadTouchListener implements View.OnTouchListener {
         }
 
         Camera camera = mActivity.getCurrentCamera();
-        if (camera.isInvertX()) {
-          normX = 100 - normX;
-        }
-        if (camera.isInvertY()) {
-          normY = 100 - normY;
+        if (camera != null) {
+          if (camera.isInvertX()) {
+            normX = 100 - normX;
+          }
+          if (camera.isInvertY()) {
+            normY = 100 - normY;
+          }
         }
 
         startCameraMoving(new Speed(normX, normY));
