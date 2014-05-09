@@ -13,6 +13,8 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import rx.Observable;
+
 import static com.dreamteam.vicam.presenter.utility.Utils.ORMLite;
 
 /**
@@ -31,22 +33,22 @@ public class CameraDAOImpl implements CameraDAO {
   }
 
   @Override
-  public int insertCamera(Camera camera) {
+  public Observable<Integer> insertCamera(Camera camera) {
     return ORMLite.insert(cameraDaoOrmLite, camera);
   }
 
   @Override
-  public Camera findCamera(int id) {
+  public Observable<Camera> findCamera(int id) {
     return ORMLite.find(cameraDaoOrmLite, id);
   }
 
   @Override
-  public boolean updateCamera(Camera camera) {
+  public Observable<Boolean> updateCamera(Camera camera) {
     return ORMLite.update(cameraDaoOrmLite, camera);
   }
 
   @Override
-  public boolean deleteCamera(final int id) {
+  public Observable<Boolean> deleteCamera(final int id) {
     try {
       TransactionManager.callInTransaction(
           ormLiteHelper.getConnectionSource(),
@@ -61,16 +63,15 @@ public class CameraDAOImpl implements CameraDAO {
             }
           }
       );
-      return true;
+      return Observable.just(true);
     } catch (SQLException e) {
       Utils.databaseLog(String.format("Error while deleting camera with id %d", id), e);
-      return false;
+      return Observable.error(e);
     }
-    //return ORMLite.delete(cameraDaoOrmLite, id);
   }
 
   @Override
-  public List<Camera> getCameras() {
+  public Observable<List<Camera>> getCameras() {
     return ORMLite.getAll(cameraDaoOrmLite);
   }
 }

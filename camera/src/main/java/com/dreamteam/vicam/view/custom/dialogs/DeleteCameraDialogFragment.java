@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.dreamteam.camera.R;
+import com.dreamteam.vicam.model.database.CameraDAO;
 import com.dreamteam.vicam.model.database.DAOFactory;
 import com.dreamteam.vicam.model.events.DeleteCameraEvent;
 import com.dreamteam.vicam.model.pojo.Camera;
@@ -18,6 +19,10 @@ import com.dreamteam.vicam.presenter.utility.Dagger;
 import de.greenrobot.event.EventBus;
 
 import javax.inject.Inject;
+
+import rx.Observable;
+import rx.functions.Action1;
+import rx.functions.Func1;
 
 /**
  * Created by fsommar on 2014-05-08.
@@ -49,9 +54,15 @@ public class DeleteCameraDialogFragment extends DialogFragment {
   public Dialog onCreateDialog(Bundle savedInstanceState) {
     final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-    int cameraId = getArguments().getInt(CAMERA_ID_KEY);
-    final Camera camera = mDAOFactory.getCameraDAO().findCamera(cameraId);
-    if (camera != null) {
+    final int cameraId = getArguments().getInt(CAMERA_ID_KEY);
+    mDAOFactory.getCameraDAO().flatMap(new Func1<CameraDAO, Observable<Camera>>() {
+      @Override
+      public Observable<Camera> call(CameraDAO cameraDAO) {
+        return cameraDAO.findCamera(cameraId);
+      }
+    }).subscribe(new Action1<Camera>() {
+      @Override
+      public void call(final Camera camera) {
         builder.setTitle(getString(R.string.delete_camera))
             .setMessage(getString(R.string.delete_camera_confirmation, camera.getName()))
             .setCancelable(false)
@@ -61,9 +72,13 @@ public class DeleteCameraDialogFragment extends DialogFragment {
               }
             })
             .setNegativeButton(android.R.string.cancel, null);
-    } else {
-      builder.setTitle("Something unintended happen.");
-    }
+      }
+    }, new Action1<Throwable>() {
+      @Override
+      public void call(Throwable throwable) {
+        builder.setTitle("Something unintended happen.");
+      }
+    });
 
     return builder.create();
   }

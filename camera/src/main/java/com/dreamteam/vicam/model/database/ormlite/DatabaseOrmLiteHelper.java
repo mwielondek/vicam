@@ -18,6 +18,8 @@ import com.j256.ormlite.table.TableUtils;
 
 import java.sql.SQLException;
 
+import rx.Observable;
+
 /**
  * Created by fsommar on 2014-04-03.
  */
@@ -68,30 +70,35 @@ public class DatabaseOrmLiteHelper extends OrmLiteSqliteOpenHelper {
     presetDao = null;
   }
 
-  public CameraDAO getCameraDAO() {
+  public Observable<CameraDAO> getCameraDAO() {
     if (cameraDao == null) {
       try {
         @SuppressWarnings("unchecked")
         CameraDAO temp = new CameraDAOImpl(this);
         cameraDao = temp;
+        return Observable.just(cameraDao);
       } catch (SQLException e) {
         Utils.databaseLog("Error while getting Camera DAO", e);
+        return Observable.error(e);
       }
+    } else {
+      return Observable.just(cameraDao);
     }
-    return cameraDao;
   }
 
-  public PresetDAO getPresetDAO() {
+  public Observable<PresetDAO> getPresetDAO() {
     if (presetDao == null) {
       try {
         @SuppressWarnings("unchecked")
         PresetDAO temp = new PresetDAOImpl(this);
         presetDao = temp;
+        return Observable.just(presetDao);
       } catch (SQLException e) {
         Utils.databaseLog("Error while getting Preset DAO", e);
+        return Observable.error(e);
       }
     }
-    return presetDao;
+    return Observable.just(presetDao);
   }
 
 }
