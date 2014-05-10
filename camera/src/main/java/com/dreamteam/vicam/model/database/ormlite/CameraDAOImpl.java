@@ -11,6 +11,7 @@ import com.j256.ormlite.stmt.DeleteBuilder;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.Callable;
 
 import rx.Observable;
@@ -65,7 +66,7 @@ public class CameraDAOImpl implements CameraDAO {
       );
       return Observable.just(true);
     } catch (SQLException e) {
-      Utils.databaseLog(String.format("Error while deleting camera with id %d", id), e);
+      Utils.databaseLog(String.format(Locale.US, "Error while deleting camera with id %d", id), e);
       return Observable.error(e);
     }
   }

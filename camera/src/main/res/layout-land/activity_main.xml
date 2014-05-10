@@ -3,8 +3,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#eee">
+        android:layout_height="match_parent">
 
     <!-- Main content view -->
     <RelativeLayout
@@ -25,7 +24,6 @@
         <!-- Touchpad -->
         <com.dreamteam.vicam.view.custom.Touchpad
                 android:id="@+id/camera_touchpad"
-                android:src="@drawable/controller"
                 style="@style/touchpad"/>
     </RelativeLayout>
 
