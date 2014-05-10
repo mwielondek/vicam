@@ -16,6 +16,7 @@
 
     <item android:id="@+id/action_save_preset"
           android:title="@string/action_save_preset"
+          android:icon="@android:drawable/ic_menu_save"
           android:orderInCategory="1"
           android:showAsAction="ifRoom"/>
 
