@@ -371,6 +371,7 @@ public class MainActivity extends Activity {
     });
   }
 
+  // TODO: Move this to its own operator (see https://github.com/Netflix/RxJava/wiki/Observable)?
   public <T> Observable<T> prepareObservable(Observable<T> observable) {
     return observable
         .observeOn(AndroidSchedulers.mainThread())
@@ -506,7 +507,13 @@ public class MainActivity extends Activity {
         mPresetAdapter.notifyDataSetChanged();
         updateCameraState();
       }
-    }, Utils.<Throwable>noop());
+    }, new Action1<Throwable>() {
+      @Override
+      public void call(Throwable throwable) {
+        mPresets.clear();
+        mPresetAdapter.notifyDataSetChanged();
+      }
+    });
   }
 
   @SuppressWarnings("unused")
@@ -734,6 +741,9 @@ public class MainActivity extends Activity {
         }
         mCurrentCamera = null;
         mCameraAdapter.notifyDataSetChanged();
+        if (mCameras.size() > 0) {
+          mCameraSpinner.setSelection(0);
+        }
       }
     }, Utils.<Throwable>noop());
   }
