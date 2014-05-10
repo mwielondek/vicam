@@ -8,6 +8,11 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_7
         targetCompatibility JavaVersion.VERSION_1_7
     }
+
+    signingConfigs {
+        release
+    }
+
     buildTypes {
         defaultConfig {
             minSdkVersion 15
@@ -16,27 +21,54 @@ android {
             versionName "1.0"
         }
         release {
-            runProguard false
+            signingConfig signingConfigs.release
+            runProguard true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
     packagingOptions {
         exclude 'META-INF/services/javax.annotation.processing.Processor'
     }
+
+    if (project.hasProperty("vicam.properties")) {
+        def fileProps = file(getPathFromProjectRoot(project.property("vicam.properties")))
+
+        Properties props = new Properties()
+        props.load(new FileInputStream(fileProps))
+
+        signingConfigs {
+            release {
+                storeFile file(getPathFromProjectRoot(props['keystore']))
+                storePassword props['keystore.password']
+                keyAlias props['key.alias']
+                keyPassword props['key.password']
+            }
+        }
+
+        buildTypes.release.signingConfig signingConfigs.release
+    } else {
+        buildTypes.release.signingConfig null
+    }
+
+    lintOptions {
+        disable 'InvalidPackage'
+    }
 }
 
 dependencies {
     compile 'de.greenrobot:eventbus:2.2.0'
-    compile 'com.jakewharton:butterknife:4.0.1'
-    compile 'com.squareup.dagger:dagger:1.2.0'
-    compile 'com.squareup.dagger:dagger-compiler:1.2.0'
-    compile 'com.squareup.retrofit:retrofit:1.5.0'
-    compile 'com.netflix.rxjava:rxjava-android:0.17.1'
-    compile 'com.github.frankiesardo:icepick:2.3.5'
-    compile 'com.github.frankiesardo:icepick-processor:2.3.5'
+    compile 'com.jakewharton:butterknife:5.0.1'
+    compile 'com.squareup.dagger:dagger:1.2.1'
+    compile 'com.squareup.dagger:dagger-compiler:1.2.1'
+    compile 'com.squareup.retrofit:retrofit:1.5.1'
+    compile 'com.netflix.rxjava:rxjava-android:0.18.1'
     compile 'com.j256.ormlite:ormlite-core:4.48'
     compile 'com.j256.ormlite:ormlite-android:4.48'
-    compile 'com.joanzapata.android:android-iconify:1.0.3'
     compile 'com.android.support:support-v4:+'
     compile fileTree(dir: 'libs', include: ['*.jar'])
 }
+
+def getPathFromProjectRoot(path) {
+    project.rootDir.path + "/" + path
+}
+
