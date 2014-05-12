@@ -16,6 +16,7 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.widget.Button;
@@ -46,6 +47,7 @@ import com.dreamteam.vicam.model.events.SavePresetEvent;
 import com.dreamteam.vicam.model.pojo.Camera;
 import com.dreamteam.vicam.model.pojo.CameraState;
 import com.dreamteam.vicam.model.pojo.Preset;
+import com.dreamteam.vicam.model.pojo.Zoom;
 import com.dreamteam.vicam.presenter.CameraServiceManager;
 import com.dreamteam.vicam.presenter.network.camera.CameraFacade;
 import com.dreamteam.vicam.presenter.utility.Dagger;
@@ -115,9 +117,9 @@ public class MainActivity extends Activity {
   @InjectView(R.id.autofocus_switch)
   Switch mAutofocusSwitch;
   @InjectView(R.id.zoom_in_button)
-  Button button1;
+  Button mZoomInButton;
   @InjectView(R.id.zoom_out_button)
-  Button button2;
+  Button mZoomOutButton;
 
   private Camera mCurrentCamera;
   private CharSequence mTitle;
@@ -132,6 +134,7 @@ public class MainActivity extends Activity {
   private MenuItem mConnectedIcon;
   private Action1<Throwable> mErrorHandler;
   private Action0 mSuccessHandler;
+  private volatile boolean isUpdatingZoom;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -141,8 +144,8 @@ public class MainActivity extends Activity {
     Dagger.inject(this);
     ButterKnife.inject(this);
 
-    Iconify.addIcons(button1);
-    Iconify.addIcons(button2);
+    Iconify.addIcons(mZoomInButton);
+    Iconify.addIcons(mZoomOutButton);
     // Sets default values defined in camera_preferences if empty
     // Only useful if settings activity is used
     // PreferenceManager.setDefaultValues(this, R.xml.camera_preferences, false);
@@ -182,6 +185,43 @@ public class MainActivity extends Activity {
         mAutofocusButton.setEnabled(!isAutofocus);
         mFocusSeekBar.setEnabled(!isAutofocus);
         switchListener.onCheckedChanged(switchButton, isAutofocus);
+      }
+    });
+
+    mZoomInButton.setOnTouchListener(new View.OnTouchListener() {
+      @Override
+      public boolean onTouch(View view, MotionEvent motionEvent) {
+        if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+          getFacade().flatMap(new Func1<CameraFacade, Observable<?>>() {
+            @Override
+            public Observable<?> call(CameraFacade cameraFacade) {
+              return cameraFacade.zoomStart(10);
+            }
+          }).subscribe(Utils.noop(), Utils.<Throwable>noop());
+          return true;
+        } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+          stopZoom();
+          return true;
+        }
+        return false;
+      }
+    });
+    mZoomOutButton.setOnTouchListener(new View.OnTouchListener() {
+      @Override
+      public boolean onTouch(View view, MotionEvent motionEvent) {
+        if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+          getFacade().flatMap(new Func1<CameraFacade, Observable<?>>() {
+            @Override
+            public Observable<?> call(CameraFacade cameraFacade) {
+              return cameraFacade.zoomStart(90);
+            }
+          }).subscribe(Utils.noop(), Utils.<Throwable>noop());
+          return true;
+        } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+          stopZoom();
+          return true;
+        }
+        return false;
       }
     });
 
@@ -229,6 +269,28 @@ public class MainActivity extends Activity {
         connectionSuccess();
       }
     };
+  }
+
+  private void stopZoom() {
+    getFacade().flatMap(new Func1<CameraFacade, Observable<Zoom>>() {
+      @Override
+      public Observable<Zoom> call(final CameraFacade cameraFacade) {
+        return cameraFacade.zoomStop().flatMap(new Func1<String, Observable<Zoom>>() {
+          @Override
+          public Observable<Zoom> call(String s) {
+            return cameraFacade.getZoom();
+          }
+        });
+      }
+    }).subscribe(
+        new Action1<Zoom>() {
+          @Override
+          public void call(Zoom zoom) {
+            updateZoomLevel(zoom.getLevel());
+          }
+        },
+        Utils.<Throwable>noop()
+    );
   }
 
 

@@ -32,10 +32,6 @@ public class SeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
 
   @Override
   public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-    int level = progressToLevel(seekBar.getProgress(), seekBar.getMax());
-    if (getTimeSinceRequest() >= Utils.DELAY_TIME_MILLIS) {
-      doAction(level);
-    }
   }
 
   @Override
@@ -45,23 +41,7 @@ public class SeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
   @Override
   public void onStopTrackingTouch(SeekBar seekBar) {
     final int level = progressToLevel(seekBar.getProgress(), seekBar.getMax());
-    long timeToNext = Math.max(0, Utils.DELAY_TIME_MILLIS - getTimeSinceRequest());
-    Utils.infoLog("Level: "+level+", time to next: "+timeToNext);
-
-    if (timeToNext > 0) {
-      mHandler.postDelayed(new Runnable() {
-          @Override
-          public void run() {
-            doAction(level);
-          }
-        }, timeToNext);
-    } else {
-      doAction(level);
-    }
-  }
-
-  private long getTimeSinceRequest() {
-    return System.currentTimeMillis() - lastRequestMillis;
+    doAction(level);
   }
 
   private void doAction(int level) {
