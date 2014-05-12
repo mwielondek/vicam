@@ -68,10 +68,10 @@ public class TouchpadTouchListener implements View.OnTouchListener {
       case MotionEvent.ACTION_MOVE:
         float eventX = motionEvent.getX();
         float eventY = motionEvent.getY();
-        final int normX = Math.max(
+        final int normX = Math.min(
             (int) (eventX / view.getWidth() * Speed.UPPER_BOUND + Speed.LOWER_BOUND),
             Speed.UPPER_BOUND);
-        final int normY = Math.max(
+        final int normY = Math.min(
             (int) (eventY / view.getHeight() * Speed.UPPER_BOUND + Speed.LOWER_BOUND),
             Speed.UPPER_BOUND);
 
@@ -87,6 +87,7 @@ public class TouchpadTouchListener implements View.OnTouchListener {
               public Speed call(Camera camera) {
                 int x = normX;
                 int y = normY;
+
                 if (camera.isInvertX()) {
                   x = 100 - x;
                 }
