@@ -40,10 +40,4 @@
             android:background="#FFF"
             tools:listitem="@layout/drawer_list_item"/>
 
-    <!-- Loading spinner -->
-    <include
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            layout="@layout/loader_spinner"/>
-
 </android.support.v4.widget.DrawerLayout>

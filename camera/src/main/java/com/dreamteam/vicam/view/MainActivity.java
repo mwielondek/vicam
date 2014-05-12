@@ -22,7 +22,6 @@ import android.view.ViewConfiguration;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.Switch;
@@ -100,8 +99,6 @@ public class MainActivity extends Activity {
   @Inject
   DAOFactory mDAOFactory;
 
-  @InjectView(R.id.sync_loader)
-  RelativeLayout mLoaderSpinner;
   @InjectView(R.id.drawer_layout)
   DrawerLayout mDrawerLayout;
   @InjectView(R.id.navigation_drawer)
@@ -134,7 +131,6 @@ public class MainActivity extends Activity {
   private MenuItem mConnectedIcon;
   private Action1<Throwable> mErrorHandler;
   private Action0 mSuccessHandler;
-  private volatile boolean isUpdatingZoom;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -146,9 +142,6 @@ public class MainActivity extends Activity {
 
     Iconify.addIcons(mZoomInButton);
     Iconify.addIcons(mZoomOutButton);
-    // Sets default values defined in camera_preferences if empty
-    // Only useful if settings activity is used
-    // PreferenceManager.setDefaultValues(this, R.xml.camera_preferences, false);
 
     // Get set camera_preferences
     mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -340,7 +333,6 @@ public class MainActivity extends Activity {
     // TODO: check for null mCurrentCamera
     switch (item.getItemId()) {
       case R.id.action_edit_camera:
-        //startActivity(new Intent(this, SettingsActivity.class));
         if (mCurrentCamera == null) {
           showToast("There's no camera to be edited!", Toast.LENGTH_SHORT);
         } else {
@@ -368,10 +360,6 @@ public class MainActivity extends Activity {
 
       case R.id.action_save_preset:
         showDialog(SavePresetDialogFragment.newInstance(), "save_preset_dialog");
-        return true;
-
-      case R.id.action_sync_presets:
-        mLoaderSpinner.setVisibility(View.VISIBLE);
         return true;
 
       default:

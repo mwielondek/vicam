@@ -1,6 +1,5 @@
 package com.dreamteam.vicam.view.custom.listeners;
 
-import android.os.Handler;
 import android.widget.SeekBar;
 
 import com.dreamteam.vicam.model.pojo.Zoom;
@@ -22,8 +21,6 @@ public class SeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
   public enum Type {FOCUS, ZOOM}
 
   private Type seekBarType;
-  private Handler mHandler = new Handler();
-  private long lastRequestMillis;
 
   public SeekBarChangeListener(MainActivity activity, Type seekBarType) {
     this.mActivity = activity;
@@ -50,7 +47,6 @@ public class SeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
     } else if (seekBarType == Type.FOCUS) {
       focus(level);
     }
-    lastRequestMillis = System.currentTimeMillis();
   }
 
   private void focus(final int level) {
