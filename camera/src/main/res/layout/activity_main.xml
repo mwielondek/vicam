@@ -16,8 +16,10 @@
 
         <!-- Toolbox -->
         <include
-                android:layout_marginTop="@dimen/toolbox_padding"
-                android:layout_width="wrap_content"
+                android:layout_marginTop="@dimen/toolbox_margin"
+                android:layout_marginLeft="@dimen/toolbox_margin_horizontal"
+                android:layout_marginRight="@dimen/toolbox_margin_horizontal"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 layout="@layout/toolbox" android:id="@+id/include"/>
 
