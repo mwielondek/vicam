@@ -65,6 +65,7 @@ import com.dreamteam.vicam.view.custom.listeners.DrawerMultiChoiceListener;
 import com.dreamteam.vicam.view.custom.listeners.SeekBarChangeListener;
 import com.dreamteam.vicam.view.custom.listeners.SwitchButtonCheckedListener;
 import com.dreamteam.vicam.view.custom.listeners.TouchpadTouchListener;
+import com.joanzapata.android.iconify.Iconify;
 
 import de.greenrobot.event.EventBus;
 
@@ -113,6 +114,10 @@ public class MainActivity extends Activity {
   Button mAutofocusButton;
   @InjectView(R.id.autofocus_switch)
   Switch mAutofocusSwitch;
+  @InjectView(R.id.zoom_in_button)
+  Button button1;
+  @InjectView(R.id.zoom_out_button)
+  Button button2;
 
   private Camera mCurrentCamera;
   private CharSequence mTitle;
@@ -136,6 +141,8 @@ public class MainActivity extends Activity {
     Dagger.inject(this);
     ButterKnife.inject(this);
 
+    Iconify.addIcons(button1);
+    Iconify.addIcons(button2);
     // Sets default values defined in camera_preferences if empty
     // Only useful if settings activity is used
     // PreferenceManager.setDefaultValues(this, R.xml.camera_preferences, false);
