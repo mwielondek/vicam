@@ -14,7 +14,6 @@ import rx.Observable;
 import rx.functions.Func1;
 import rx.functions.Func2;
 import rx.functions.Func3;
-import rx.functions.Func4;
 
 /**
  * Created by fsommar on 2014-04-01.
@@ -62,22 +61,28 @@ public class CameraFacade {
     return cameraCommands.focusAbsolute(level);
   }
 
-  public Observable<Boolean> setCameraState(CameraState cameraState) {
+  public Observable<String> setCameraState(CameraState cameraState) {
     Position pos = cameraState.getPosition();
-    int zoom = cameraState.getZoom().getLevel();
-    int focus = cameraState.getFocus().getLevel();
-    boolean autofocus = cameraState.isAF();
+    final int zoom = cameraState.getZoom().getLevel();
+    final int focus = cameraState.getFocus().getLevel();
+    final boolean autofocus = cameraState.isAF();
 
-    return Observable.zip(
-        moveAbsolute(pos), accountForDelay(zoomAbsolute(zoom)),
-        accountForDelay(focusAbsolute(focus)), accountForDelay(setAF(autofocus)),
-        new Func4<String, String, String, String, Boolean>() {
-          @Override
-          public Boolean call(String s, String s2, String s3, String s4) {
-            return true;
-          }
-        }
-    );
+    return moveAbsolute(pos).flatMap(new Func1<String, Observable<String>>() {
+      @Override
+      public Observable<String> call(String s) {
+        return accountForDelay(zoomAbsolute(zoom));
+      }
+    }).flatMap(new Func1<String, Observable<String>>() {
+      @Override
+      public Observable<String> call(String s) {
+        return accountForDelay(focusAbsolute(focus));
+      }
+    }).flatMap(new Func1<String, Observable<String>>() {
+      @Override
+      public Observable<String> call(String s) {
+        return accountForDelay(setAF(autofocus));
+      }
+    });
   }
 
   public Observable<CameraState> getCameraState() {
