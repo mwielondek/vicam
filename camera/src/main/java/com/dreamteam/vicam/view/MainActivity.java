@@ -298,6 +298,14 @@ public class MainActivity extends Activity {
       mCameraSpinner = (Spinner) view;
       mCameraSpinner.setAdapter(mCameraAdapter);
       mCameraSpinner.setOnItemSelectedListener(new CameraSpinnerItemListener());
+      restoreSelectedCamera();
+    }
+    mConnectedIcon = menu.findItem(R.id.connection_state);
+    return true;
+  }
+
+  private void restoreSelectedCamera() {
+    if (mCameraSpinner != null && mCameras != null && mSharedPreferences != null) {
       int selected = mSharedPreferences.getInt(SELECTED_CAMERA, 0);
       if (selected >= 0 && selected < mCameras.size()) {
         mCameraSpinner.setSelection(selected);
@@ -305,8 +313,6 @@ public class MainActivity extends Activity {
         mCameraSpinner.setSelection(0);
       }
     }
-    mConnectedIcon = menu.findItem(R.id.connection_state);
-    return true;
   }
 
   @Override
@@ -330,7 +336,6 @@ public class MainActivity extends Activity {
       return true;
     }
     // Handle menu items
-    // TODO: check for null mCurrentCamera
     switch (item.getItemId()) {
       case R.id.action_edit_camera:
         if (mCurrentCamera == null) {
@@ -380,7 +385,7 @@ public class MainActivity extends Activity {
   protected void onResume() {
     super.onResume();
     mEventBus.register(this);
-    // TODO: update selected camera
+    restoreSelectedCamera();
   }
 
   @Override
