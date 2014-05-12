@@ -45,10 +45,7 @@ import com.dreamteam.vicam.model.events.SaveCameraEvent;
 import com.dreamteam.vicam.model.events.SavePresetEvent;
 import com.dreamteam.vicam.model.pojo.Camera;
 import com.dreamteam.vicam.model.pojo.CameraState;
-import com.dreamteam.vicam.model.pojo.Focus;
-import com.dreamteam.vicam.model.pojo.Position;
 import com.dreamteam.vicam.model.pojo.Preset;
-import com.dreamteam.vicam.model.pojo.Zoom;
 import com.dreamteam.vicam.presenter.CameraServiceManager;
 import com.dreamteam.vicam.presenter.network.camera.CameraFacade;
 import com.dreamteam.vicam.presenter.utility.Dagger;
@@ -212,7 +209,6 @@ public class MainActivity extends Activity {
           CameraResponseException err = (CameraResponseException) throwable;
           Utils.errorLog("CameraResponseException: " + err.getMessage());
         } else if (throwable instanceof CameraDoesNotExistException) {
-          showToast("Add a camera first!", Toast.LENGTH_SHORT);
           // TODO: Show the add camera dialog directly?
         }
 //        Utils.errorLog(Utils.throwableToString(throwable));
@@ -243,6 +239,8 @@ public class MainActivity extends Activity {
       int selected = mSharedPreferences.getInt(SELECTED_CAMERA, 0);
       if (selected >= 0 && selected < mCameras.size()) {
         mCameraSpinner.setSelection(selected);
+      } else if (mCameras.size() > 0) {
+        mCameraSpinner.setSelection(0);
       }
     }
     mConnectedIcon = menu.findItem(R.id.connection_state);
@@ -325,6 +323,7 @@ public class MainActivity extends Activity {
   protected void onResume() {
     super.onResume();
     mEventBus.register(this);
+    // TODO: update selected camera
   }
 
   @Override
@@ -538,16 +537,16 @@ public class MainActivity extends Activity {
     final CameraState cameraState = e.preset.getCameraState();
 
     prepareObservable(
-        getFacade().flatMap(new Func1<CameraFacade, Observable<Boolean>>() {
+        getFacade().flatMap(new Func1<CameraFacade, Observable<String>>() {
           @Override
-          public Observable<Boolean> call(CameraFacade cameraFacade) {
+          public Observable<String> call(CameraFacade cameraFacade) {
             return cameraFacade.setCameraState(cameraState);
           }
         })
     ).subscribe(
-        new Action1<Boolean>() {
+        new Action1<String>() {
           @Override
-          public void call(Boolean b) {
+          public void call(String s) {
             updateWithCameraState(cameraState);
           }
         }, Utils.<Throwable>noop()
@@ -579,13 +578,12 @@ public class MainActivity extends Activity {
           @Override
           public void call(Throwable throwable) {
             Utils.infoLog("Failed getting state from camera when saving preset");
-            // TODO Remove when done with debugging
-            if (mCurrentCamera != null) {
-              insertPreset(new Preset(e.name, mCurrentCamera, new CameraState(
-                  new Position(0x5000, 0x5000),
-                  new Zoom(0x666),
-                  new Focus(0x777, true))));
-            }
+//            if (mCurrentCamera != null) {
+//              insertPreset(new Preset(e.name, mCurrentCamera, new CameraState(
+//                  new Position(0x5000, 0x5000),
+//                  new Zoom(0x666),
+//                  new Focus(0x777, true))));
+//            }
           }
         }
     );
