@@ -16,7 +16,6 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.widget.Button;
@@ -66,6 +65,7 @@ import com.dreamteam.vicam.view.custom.listeners.DrawerMultiChoiceListener;
 import com.dreamteam.vicam.view.custom.listeners.SeekBarChangeListener;
 import com.dreamteam.vicam.view.custom.listeners.SwitchButtonCheckedListener;
 import com.dreamteam.vicam.view.custom.listeners.TouchpadTouchListener;
+import com.dreamteam.vicam.view.custom.listeners.ZoomButtonTouchListener;
 import com.joanzapata.android.iconify.Iconify;
 
 import de.greenrobot.event.EventBus;
@@ -143,7 +143,7 @@ public class MainActivity extends Activity {
     Iconify.addIcons(mZoomInButton);
     Iconify.addIcons(mZoomOutButton);
 
-    // Get set camera_preferences
+    // Get saved preferences
     mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
     mTitle = getString(R.string.app_name);
@@ -181,42 +181,10 @@ public class MainActivity extends Activity {
       }
     });
 
-    mZoomInButton.setOnTouchListener(new View.OnTouchListener() {
-      @Override
-      public boolean onTouch(View view, MotionEvent motionEvent) {
-        if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-          getFacade().flatMap(new Func1<CameraFacade, Observable<?>>() {
-            @Override
-            public Observable<?> call(CameraFacade cameraFacade) {
-              return cameraFacade.zoomStart(10);
-            }
-          }).subscribe(Utils.noop(), Utils.<Throwable>noop());
-          return true;
-        } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
-          stopZoom();
-          return true;
-        }
-        return false;
-      }
-    });
-    mZoomOutButton.setOnTouchListener(new View.OnTouchListener() {
-      @Override
-      public boolean onTouch(View view, MotionEvent motionEvent) {
-        if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-          getFacade().flatMap(new Func1<CameraFacade, Observable<?>>() {
-            @Override
-            public Observable<?> call(CameraFacade cameraFacade) {
-              return cameraFacade.zoomStart(90);
-            }
-          }).subscribe(Utils.noop(), Utils.<Throwable>noop());
-          return true;
-        } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
-          stopZoom();
-          return true;
-        }
-        return false;
-      }
-    });
+    mZoomInButton.setOnTouchListener(
+        new ZoomButtonTouchListener(this, ZoomButtonTouchListener.Type.ZOOM_IN));
+    mZoomOutButton.setOnTouchListener(
+        new ZoomButtonTouchListener(this, ZoomButtonTouchListener.Type.ZOOM_OUT));
 
     getCameraDAO().flatMap(new Func1<CameraDAO, Observable<List<Camera>>>() {
       @Override
@@ -249,9 +217,9 @@ public class MainActivity extends Activity {
           CameraResponseException err = (CameraResponseException) throwable;
           Utils.errorLog("CameraResponseException: " + err.getMessage());
         } else if (throwable instanceof CameraDoesNotExistException) {
-          // TODO: Show the add camera dialog directly?
+          // Do nothing
         }
-//        Utils.errorLog(Utils.throwableToString(throwable));
+        // Utils.errorLog(Utils.throwableToString(throwable));
         connectionError();
       }
     };
@@ -263,29 +231,6 @@ public class MainActivity extends Activity {
       }
     };
   }
-
-  private void stopZoom() {
-    getFacade().flatMap(new Func1<CameraFacade, Observable<Zoom>>() {
-      @Override
-      public Observable<Zoom> call(final CameraFacade cameraFacade) {
-        return cameraFacade.zoomStop().flatMap(new Func1<String, Observable<Zoom>>() {
-          @Override
-          public Observable<Zoom> call(String s) {
-            return cameraFacade.getZoom();
-          }
-        });
-      }
-    }).subscribe(
-        new Action1<Zoom>() {
-          @Override
-          public void call(Zoom zoom) {
-            updateZoomLevel(zoom.getLevel());
-          }
-        },
-        Utils.<Throwable>noop()
-    );
-  }
-
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
@@ -412,14 +357,13 @@ public class MainActivity extends Activity {
         .setIcon(android.R.drawable.ic_dialog_alert)
         .setTitle("Exit VICAM?")
         .setMessage("Are you sure you want to exit VICAM?")
-        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
           @Override
           public void onClick(DialogInterface dialog, int which) {
             finish();
           }
-
         })
-        .setNegativeButton("No", null)
+        .setNegativeButton(android.R.string.no, null)
         .show();
   }
 
@@ -532,6 +476,30 @@ public class MainActivity extends Activity {
     } catch (Exception e) {
       Utils.errorLog(Utils.throwableToString(e));
     }
+  }
+
+  public void stopZoom() {
+    prepareObservable(
+        getFacade().flatMap(new Func1<CameraFacade, Observable<Zoom>>() {
+          @Override
+          public Observable<Zoom> call(final CameraFacade cameraFacade) {
+            return cameraFacade.zoomStop().flatMap(new Func1<String, Observable<Zoom>>() {
+              @Override
+              public Observable<Zoom> call(String s) {
+                return cameraFacade.getZoom();
+              }
+            });
+          }
+        })
+    ).subscribe(
+        new Action1<Zoom>() {
+          @Override
+          public void call(Zoom zoom) {
+            updateZoomLevel(zoom.getLevel());
+          }
+        },
+        Utils.<Throwable>noop()
+    );
   }
 
   private void updateCameraState() {
