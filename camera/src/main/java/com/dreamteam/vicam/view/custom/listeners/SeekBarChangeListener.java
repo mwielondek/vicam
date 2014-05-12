@@ -32,8 +32,10 @@ public class SeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
 
   @Override
   public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-    int level = progressToLevel(progress, seekBar.getMax());
-    doActionWithDelay(level);
+    int level = progressToLevel(seekBar.getProgress(), seekBar.getMax());
+    if (getTimeSinceRequest() >= Utils.DELAY_TIME_MILLIS) {
+      doAction(level);
+    }
   }
 
   @Override
@@ -42,26 +44,25 @@ public class SeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
 
   @Override
   public void onStopTrackingTouch(SeekBar seekBar) {
-    final int normProgress = progressToLevel(seekBar.getProgress(), seekBar.getMax());
+    final int level = progressToLevel(seekBar.getProgress(), seekBar.getMax());
+    long timeToNext = Math.max(0, Utils.DELAY_TIME_MILLIS - getTimeSinceRequest());
+    Utils.infoLog("Level: "+level+", time to next: "+timeToNext);
 
-    doActionWithDelay(normProgress);
-  }
-
-  private void doActionWithDelay(final int level) {
-    long timeSinceRequest = System.currentTimeMillis() - lastRequestMillis;
-
-    if (timeSinceRequest < Utils.DELAY_TIME_MILLIS) {
+    if (timeToNext > 0) {
       mHandler.postDelayed(new Runnable() {
-        @Override
-        public void run() {
-          doAction(level);
-        }
-      }, timeSinceRequest);
+          @Override
+          public void run() {
+            doAction(level);
+          }
+        }, timeToNext);
     } else {
       doAction(level);
     }
   }
 
+  private long getTimeSinceRequest() {
+    return System.currentTimeMillis() - lastRequestMillis;
+  }
 
   private void doAction(int level) {
     if (seekBarType == Type.ZOOM) {
@@ -69,6 +70,7 @@ public class SeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
     } else if (seekBarType == Type.FOCUS) {
       focus(level);
     }
+    lastRequestMillis = System.currentTimeMillis();
   }
 
   private void focus(final int level) {
@@ -83,7 +85,6 @@ public class SeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
         new Action1<String>() {
           @Override
           public void call(String s) {
-            lastRequestMillis = System.currentTimeMillis();
             Utils.infoLog("FOCUS");
           }
         }, Utils.<Throwable>noop()
@@ -102,7 +103,6 @@ public class SeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
         new Action1<String>() {
           @Override
           public void call(String s) {
-            lastRequestMillis = System.currentTimeMillis();
             Utils.infoLog("ZOOM");
           }
         }, Utils.<Throwable>noop()
