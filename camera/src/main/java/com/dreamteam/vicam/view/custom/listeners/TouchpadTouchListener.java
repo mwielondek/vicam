@@ -114,7 +114,15 @@ public class TouchpadTouchListener implements View.OnTouchListener {
       case MotionEvent.ACTION_UP:
         // interrupt tap handler
         tapHandler.removeCallbacks(tapRunnable);
-        stopCameraMoving();
+        new Thread(new Runnable() {
+          @Override
+          public void run() {
+            while (blocked) {
+              // block
+            }
+            stopCameraMoving();
+          }
+        }).start();
         return true;
       default:
         return false;
