@@ -719,6 +719,7 @@ public class MainActivity extends Activity {
             break;
           }
         }
+        mCurrentCamera = camera;
         mCameraAdapter.notifyDataSetChanged();
       }
     }, Utils.<Throwable>noop());
