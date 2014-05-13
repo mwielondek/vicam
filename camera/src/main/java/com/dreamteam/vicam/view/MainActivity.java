@@ -9,6 +9,7 @@ import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -215,6 +216,7 @@ public class MainActivity extends Activity {
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     // Inflate the menu; this adds items to the action bar if it is present.
+
     getMenuInflater().inflate(R.menu.main, menu);
 
     MenuItem cameraSpinner = menu.findItem(R.id.action_change_camera);
@@ -227,8 +229,26 @@ public class MainActivity extends Activity {
       mCameraSpinner.setSelection(selected);
     }
     mConnectedIcon = menu.findItem(R.id.connection_state);
+
     return true;
   }
+/*
+  @Override
+  public boolean onPrepareOptionsMenu (Menu menu) {
+
+    // Disables menu items when not in use
+    if(mCurrentCamera == null) {
+      menu.findItem(R.id.action_edit_camera).setEnabled(false);
+      menu.findItem(R.id.action_delete_camera).setEnabled(false);
+      menu.findItem(R.id.action_save_preset).setEnabled(false);
+    } else {
+      menu.findItem(R.id.action_edit_camera).setEnabled(true);
+      menu.findItem(R.id.action_delete_camera).setEnabled(true);
+      menu.findItem(R.id.action_save_preset).setEnabled(true);
+    }
+    return true;
+  }
+  */
 
   @Override
   protected void onPostCreate(Bundle savedInstanceState) {
@@ -241,10 +261,13 @@ public class MainActivity extends Activity {
   public void onConfigurationChanged(Configuration newConfig) {
     super.onConfigurationChanged(newConfig);
     mDrawerToggle.onConfigurationChanged(newConfig);
+
+
   }
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
+
     // Pass the event to ActionBarDrawerToggle, if it returns
     // true, then it has handled the app icon touch event
     if (mDrawerToggle.onOptionsItemSelected(item)) {
@@ -265,14 +288,17 @@ public class MainActivity extends Activity {
 
       case R.id.action_add_camera:
         showDialog(AddCameraDialogFragment.newInstance(), "add_camera_dialog");
+        mCameraSpinner.setVisibility(View.VISIBLE);
         return true;
 
       case R.id.action_delete_camera:
         if (mCurrentCamera == null) {
+
           showToast("There's no camera to be deleted!", Toast.LENGTH_SHORT);
         } else {
           showDialog(DeleteCameraDialogFragment.newInstance(mCurrentCamera.getId()), "delete_camera_dialog");
         }
+
         return true;
 
       case R.id.action_about:
