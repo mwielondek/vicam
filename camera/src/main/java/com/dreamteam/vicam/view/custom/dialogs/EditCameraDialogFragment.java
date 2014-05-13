@@ -3,51 +3,73 @@ package com.dreamteam.vicam.view.custom.dialogs;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.Switch;
 
 import com.dreamteam.camera.R;
+import com.dreamteam.vicam.model.database.DAOFactory;
+import com.dreamteam.vicam.model.events.EditCameraEvent;
 import com.dreamteam.vicam.model.pojo.Camera;
+import com.dreamteam.vicam.presenter.utility.Dagger;
 import com.dreamteam.vicam.view.MainActivity;
+
+import de.greenrobot.event.EventBus;
+
+import javax.inject.Inject;
 
 /**
  * Manages a custom layout for the Edit Camera Dialog
  */
 public class EditCameraDialogFragment extends DialogFragment {
 
-  MainActivity mActivity;
+  private static final String CAMERA_ID_KEY = "camera_id_key";
 
-  public EditCameraDialogFragment(MainActivity activity) {
-    mActivity = activity;
+  @Inject
+  EventBus mEventBus;
+  @Inject
+  DAOFactory mDAOFactory;
+
+  public EditCameraDialogFragment() {
+    Dagger.inject(this);
+  }
+
+  public static DialogFragment newInstance(int cameraId) {
+    DialogFragment frag = new EditCameraDialogFragment();
+
+    Bundle args = new Bundle();
+    args.putInt(CAMERA_ID_KEY, cameraId);
+
+    frag.setArguments(args);
+    return frag;
   }
 
   @Override
   public Dialog onCreateDialog(Bundle savedInstanceState) {
-    AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+    MainActivity activity = (MainActivity) getActivity();
+    AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+
+    final int cameraId = getArguments().getInt(CAMERA_ID_KEY);
+    final Camera camera = mDAOFactory.getCameraDAO().findCamera(cameraId);
 
     // Get the layout inflater
-    LayoutInflater inflater = mActivity.getLayoutInflater();
+    LayoutInflater inflater = activity.getLayoutInflater();
     View view = inflater.inflate(R.layout.dialog_edit_camera, null);
 
     builder.setTitle(R.string.edit_camera);
 
-    EditText nameEdit = (EditText) view.findViewById(R.id.edit_camera_name);
-    EditText ipEdit = (EditText) view.findViewById(R.id.edit_camera_ip);
-    EditText portEdit = (EditText) view.findViewById(R.id.edit_camera_port);
-
-    Camera camera = mActivity.getCurrentCamera();
-
-
+    final EditText nameEdit = (EditText) view.findViewById(R.id.edit_camera_name);
+    final EditText ipEdit = (EditText) view.findViewById(R.id.edit_camera_ip);
+    final EditText portEdit = (EditText) view.findViewById(R.id.edit_camera_port);
+    final Switch invertXSwitch = (Switch) view.findViewById(R.id.edit_camera_invert_x_axis);
+    final Switch invertYSwitch = (Switch) view.findViewById(R.id.edit_camera_invert_y_axis);
 
     if (camera != null) {
-     // nameEdit.clearFocus();
+      // nameEdit.clearFocus();
       // Show current camera as hints
       nameEdit.setText(camera.getName());
       nameEdit.setSelectAllOnFocus(true);
@@ -58,6 +80,9 @@ public class EditCameraDialogFragment extends DialogFragment {
         portEdit.setText(camera.getPort().toString());
         portEdit.setSelectAllOnFocus(true);
       }
+      // Inversion of axes
+      invertXSwitch.setChecked(camera.isInvertX());
+      invertYSwitch.setChecked(camera.isInvertY());
     }
 
     // Inflate and set the layout for the dialog
@@ -66,7 +91,16 @@ public class EditCameraDialogFragment extends DialogFragment {
         .setPositiveButton(R.string.apply_changes, new DialogInterface.OnClickListener() {
           @Override
           public void onClick(DialogInterface dialog, int id) {
-
+            if (camera != null) {
+              mEventBus.post(new EditCameraEvent(new Camera(
+                  cameraId,
+                  ipEdit.getText().toString(),
+                  nameEdit.getText().toString(),
+                  Camera.parsePort(portEdit.getText().toString()),
+                  invertXSwitch.isChecked(),
+                  invertYSwitch.isChecked()
+              )));
+            }
           }
         })
         .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -76,16 +110,14 @@ public class EditCameraDialogFragment extends DialogFragment {
           }
         });
 
-
-
     return builder.create();
   }
+
+
   @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+  public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                           Bundle savedInstanceState) {
     this.getDialog().setCanceledOnTouchOutside(true);
     return null;
   }
-
-
-
 }

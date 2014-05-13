@@ -1,13 +1,15 @@
 package com.dreamteam.vicam.presenter.modules;
 
 import com.dreamteam.vicam.view.MainActivity;
+import com.dreamteam.vicam.view.custom.DrawerToggle;
 import com.dreamteam.vicam.view.custom.dialogs.AddCameraDialogFragment;
+import com.dreamteam.vicam.view.custom.dialogs.DeleteCameraDialogFragment;
+import com.dreamteam.vicam.view.custom.dialogs.EditCameraDialogFragment;
+import com.dreamteam.vicam.view.custom.dialogs.EditPresetDialogFragment;
+import com.dreamteam.vicam.view.custom.dialogs.SavePresetDialogFragment;
 import com.dreamteam.vicam.view.custom.listeners.CameraSpinnerItemListener;
 import com.dreamteam.vicam.view.custom.listeners.DrawerItemClickListener;
 import com.dreamteam.vicam.view.custom.listeners.DrawerMultiChoiceListener;
-import com.dreamteam.vicam.view.custom.DrawerToggle;
-import com.dreamteam.vicam.view.custom.dialogs.EditPresetDialogFragment;
-import com.dreamteam.vicam.view.custom.dialogs.SavePresetDialogFragment;
 
 import de.greenrobot.event.EventBus;
 
@@ -28,7 +30,9 @@ import dagger.Provides;
         EditPresetDialogFragment.class,
         DrawerToggle.class,
         DrawerMultiChoiceListener.class,
-        AddCameraDialogFragment.class
+        AddCameraDialogFragment.class,
+        EditCameraDialogFragment.class,
+        DeleteCameraDialogFragment.class
     },
     complete = false,
     library = true

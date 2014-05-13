@@ -1,10 +1,8 @@
 package com.dreamteam.vicam.view.custom.dialogs;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -25,21 +23,23 @@ import javax.inject.Inject;
  */
 public class SavePresetDialogFragment extends DialogFragment {
 
-  Activity mContext;
   @Inject
-  EventBus eventBus;
+  EventBus mEventBus;
 
-  public SavePresetDialogFragment(Context context) {
+  public static DialogFragment newInstance() {
+    return new SavePresetDialogFragment();
+  }
+
+  public SavePresetDialogFragment() {
     Dagger.inject(this);
-    mContext = (Activity) context;
   }
 
   @Override
   public Dialog onCreateDialog(Bundle savedInstanceState) {
-    AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
     // Inflate the layout for the dialog
-    LayoutInflater inflater = mContext.getLayoutInflater();
+    LayoutInflater inflater = getActivity().getLayoutInflater();
     // Pass null as the parent view because its going in the dialog layout
     View view = inflater.inflate(R.layout.dialog_save_preset, null);
     final EditText editText = (EditText) view.findViewById(R.id.edit_text_save_preset);
@@ -50,7 +50,7 @@ public class SavePresetDialogFragment extends DialogFragment {
           @Override
           public void onClick(DialogInterface dialog, int id) {
             // Add the preset to database
-            eventBus.post(new SavePresetEvent(dialog, editText.getText().toString()));
+            mEventBus.post(new SavePresetEvent(dialog, editText.getText().toString()));
           }
         })
         .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {

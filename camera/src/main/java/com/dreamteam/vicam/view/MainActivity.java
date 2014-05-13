@@ -13,17 +13,12 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
-import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -38,7 +33,9 @@ import com.dreamteam.vicam.model.database.PresetDAO;
 import com.dreamteam.vicam.model.errors.CameraDoesNotExistException;
 import com.dreamteam.vicam.model.errors.CameraResponseException;
 import com.dreamteam.vicam.model.events.CameraChangedEvent;
+import com.dreamteam.vicam.model.events.DeleteCameraEvent;
 import com.dreamteam.vicam.model.events.DeletePresetsEvent;
+import com.dreamteam.vicam.model.events.EditCameraEvent;
 import com.dreamteam.vicam.model.events.EditPresetDialogEvent;
 import com.dreamteam.vicam.model.events.EditPresetEvent;
 import com.dreamteam.vicam.model.events.OnDrawerCloseEvent;
@@ -60,6 +57,7 @@ import com.dreamteam.vicam.view.custom.DrawerToggle;
 import com.dreamteam.vicam.view.custom.PresetArrayAdapter;
 import com.dreamteam.vicam.view.custom.dialogs.AboutPageDialogFragment;
 import com.dreamteam.vicam.view.custom.dialogs.AddCameraDialogFragment;
+import com.dreamteam.vicam.view.custom.dialogs.DeleteCameraDialogFragment;
 import com.dreamteam.vicam.view.custom.dialogs.EditCameraDialogFragment;
 import com.dreamteam.vicam.view.custom.dialogs.EditPresetDialogFragment;
 import com.dreamteam.vicam.view.custom.dialogs.SavePresetDialogFragment;
@@ -130,11 +128,6 @@ public class MainActivity extends Activity {
   private MenuItem mConnectedIcon;
   private Action1<Throwable> mErrorHandler;
   private Action0 mSuccessHandler;
-  private SavePresetDialogFragment mSavePresetDialogFragment;
-  private AddCameraDialogFragment mAddCameraDialogFragment;
-  private AboutPageDialogFragment mAboutPageDialogFragment;
-  private EditCameraDialogFragment mEditCameraDialogFragment;
-  private EditPresetDialogFragment mEditPresetDialogFragment;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -145,7 +138,8 @@ public class MainActivity extends Activity {
     ButterKnife.inject(this);
 
     // Sets default values defined in camera_preferences if empty
-    PreferenceManager.setDefaultValues(this, R.xml.camera_preferences, false);
+    // Only useful if settings activity is used
+    // PreferenceManager.setDefaultValues(this, R.xml.camera_preferences, false);
 
     // Get set camera_preferences
     mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -188,19 +182,6 @@ public class MainActivity extends Activity {
     }
     mCameraAdapter = new CameraArrayAdapter(this, mCameras);
 
-    // Initialize dialog fragments
-    mSavePresetDialogFragment = new SavePresetDialogFragment(this);
-    mEditPresetDialogFragment = new EditPresetDialogFragment(this);
-    mAddCameraDialogFragment = new AddCameraDialogFragment(this);
-    mAboutPageDialogFragment = new AboutPageDialogFragment(this);
-    mEditCameraDialogFragment = new EditCameraDialogFragment(this);
-
-
-
-
-    // Init. value of loading spinner
-    mLoaderSpinner.setVisibility(View.GONE);
-
     // Always show settings drop down (works with e.g. Samsung S3)
     getOverflowMenu();
 
@@ -209,13 +190,13 @@ public class MainActivity extends Activity {
       public void call(Throwable throwable) {
         if (throwable instanceof RetrofitError) {
           RetrofitError err = (RetrofitError) throwable;
-          Utils.errorLog("RetroFitError: " + err.getUrl());
+          Utils.errorLog("RetroFitError URL: " + err.getUrl());
         } else if (throwable instanceof CameraResponseException) {
           CameraResponseException err = (CameraResponseException) throwable;
           Utils.errorLog("CameraResponseException: " + err.getMessage());
         } else if (throwable instanceof CameraDoesNotExistException) {
-          // TODO: Show dialog telling the user to add a camera
-          // or show the add camera dialog directly?
+          showToast("Add a camera first!", Toast.LENGTH_SHORT);
+          // TODO: Show the add camera dialog directly?
         }
         Utils.errorLog(Utils.throwableToString(throwable));
         connectionError();
@@ -228,8 +209,6 @@ public class MainActivity extends Activity {
         connectionSuccess();
       }
     };
-
-
   }
 
 
@@ -272,41 +251,42 @@ public class MainActivity extends Activity {
       return true;
     }
     // Handle menu items
+    // TODO: check for null mCurrentCamera
     switch (item.getItemId()) {
       case R.id.action_edit_camera:
         //startActivity(new Intent(this, SettingsActivity.class));
-        showDialog(mEditCameraDialogFragment, "edit_camera_dialog");
+        if (mCurrentCamera == null) {
+          showToast("There's no camera to be edited!", Toast.LENGTH_SHORT);
+        } else {
+          showDialog(EditCameraDialogFragment.newInstance(mCurrentCamera.getId()),
+                     "edit_camera_dialog");
+        }
         return true;
-      case R.id.action_add_camera:
 
-        showDialog(mAddCameraDialogFragment, "add_camera_dialog");
+      case R.id.action_add_camera:
+        showDialog(AddCameraDialogFragment.newInstance(), "add_camera_dialog");
         return true;
+
       case R.id.action_delete_camera:
         if (mCurrentCamera == null) {
           showToast("There's no camera to be deleted!", Toast.LENGTH_SHORT);
-          return true;
+        } else {
+          showDialog(DeleteCameraDialogFragment.newInstance(mCurrentCamera.getId()), "delete_camera_dialog");
         }
-        new AlertDialog.Builder(this)
-            .setTitle(getString(R.string.delete_camera))
-            .setMessage(getString(R.string.delete_camera_confirmation, mCurrentCamera.getName()))
-            .setCancelable(false)
-            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-              public void onClick(DialogInterface dialog, int id) {
-                deleteCamera(mCurrentCamera);
-              }
-            })
-            .setNegativeButton(android.R.string.cancel, null)
-            .show();
         return true;
+
       case R.id.action_about:
-        showDialog(mAboutPageDialogFragment, "about_page_dialog");
+        showDialog(AboutPageDialogFragment.newInstance(), "about_page_dialog");
         return true;
+
       case R.id.action_save_preset:
-        showDialog(mSavePresetDialogFragment, "save_preset_dialog");
+        showDialog(SavePresetDialogFragment.newInstance(), "save_preset_dialog");
         return true;
+
       case R.id.action_sync_presets:
         mLoaderSpinner.setVisibility(View.VISIBLE);
         return true;
+
       default:
         return super.onOptionsItemSelected(item);
     }
@@ -360,12 +340,12 @@ public class MainActivity extends Activity {
   }
 
   public Observable<CameraFacade> getFacade() {
-    if (mCurrentCamera == null) {
-      return Observable.error(
-          new CameraDoesNotExistException("No camera is currently selected."));
-    } else {
-      return Observable.just(CameraServiceManager.getFacadeFor(mCurrentCamera));
-    }
+    return getCurrentCamera().map(new Func1<Camera, CameraFacade>() {
+      @Override
+      public CameraFacade call(Camera camera) {
+        return CameraServiceManager.getFacadeFor(camera);
+      }
+    });
   }
 
   public <T> Observable<T> prepareObservable(Observable<T> observable) {
@@ -388,8 +368,12 @@ public class MainActivity extends Activity {
     mConnectedIcon.setIcon(android.R.drawable.presence_busy);
   }
 
-  public Camera getCurrentCamera() {
-    return mCurrentCamera;
+  public Observable<Camera> getCurrentCamera() {
+    if (mCurrentCamera == null) {
+      return Observable.error(
+          new CameraDoesNotExistException("No camera is currently selected."));
+    }
+    return Observable.just(mCurrentCamera);
   }
 
   @OnClick(R.id.one_touch_autofocus)
@@ -431,8 +415,8 @@ public class MainActivity extends Activity {
     if (prev != null) {
       ft.remove(prev);
     }
-    // Create and show the dialog.
 
+    // Create and show the dialog.
     dialog.show(ft, tag);
   }
 
@@ -453,7 +437,6 @@ public class MainActivity extends Activity {
   }
 
   private void getOverflowMenu() {
-
     try {
       ViewConfiguration config = ViewConfiguration.get(this);
       Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
@@ -462,7 +445,7 @@ public class MainActivity extends Activity {
         menuKeyField.setBoolean(config, false);
       }
     } catch (Exception e) {
-      e.printStackTrace();
+      Utils.errorLog(Utils.throwableToString(e));
     }
   }
 
@@ -480,12 +463,7 @@ public class MainActivity extends Activity {
           public void call(CameraState cameraState) {
             updateWithCameraState(cameraState);
           }
-        }, new Action1<Throwable>() {
-          @Override
-          public void call(Throwable throwable) {
-            showToast("Failed getting latest state from camera", Toast.LENGTH_LONG);
-          }
-        }
+        }, Utils.<Throwable>noop()
     );
   }
 
@@ -501,23 +479,22 @@ public class MainActivity extends Activity {
 
   @SuppressWarnings("unused")
   public void onEventMainThread(SaveCameraEvent e) {
-    String portString = e.port.trim();
-    Short port = null;
-    if (!portString.isEmpty()) {
-      try {
-        port = Short.parseShort(portString);
-      } catch (NumberFormatException ignored) {
-        // Ignore formatting exceptions
-      }
-    }
-    insertCamera(new Camera(e.ip, e.name, port));
+    insertCamera(new Camera(e.ip, e.name, Camera.parsePort(e.port.trim()), e.invertX, e.invertY));
     // Selects the inserted camera as current
     mCameraSpinner.setSelection(mCameras.size() - 1);
   }
 
   @SuppressWarnings("unused")
+  public void onEventMainThread(EditCameraEvent e) {
+    updateCamera(e.camera);
+  }
+  @SuppressWarnings("unused")
+  public void onEventMainThread(DeleteCameraEvent e) {
+    deleteCamera(e.camera);
+  }
+
+  @SuppressWarnings("unused")
   public void onEventMainThread(PresetChangedEvent e) {
-    showToast("Selected Preset: " + e.preset, Toast.LENGTH_SHORT);
     final CameraState cameraState = e.preset.getCameraState();
 
     prepareObservable(
@@ -561,7 +538,7 @@ public class MainActivity extends Activity {
         new Action1<Throwable>() {
           @Override
           public void call(Throwable throwable) {
-            showToast("Failed getting state from camera when saving preset", Toast.LENGTH_SHORT);
+            Utils.infoLog("Failed getting state from camera when saving preset");
             // TODO Remove when done with debugging
             insertPreset(new Preset(e.name, mCurrentCamera, new CameraState(
                 new Position(0x5000, 0x5000),
@@ -584,8 +561,7 @@ public class MainActivity extends Activity {
 
   @SuppressWarnings("unused")
   public void onEventMainThread(EditPresetDialogEvent e) {
-    mEditPresetDialogFragment.setPresetToEdit(e.preset);
-    showDialog(mEditPresetDialogFragment, "edit_preset_dialog");
+    showDialog(EditPresetDialogFragment.newInstance(e.preset.getId()), "edit_preset_dialog");
   }
 
   private CameraDAO getCameraDAO() {
@@ -629,11 +605,22 @@ public class MainActivity extends Activity {
     mPresetAdapter.notifyDataSetChanged();
   }
 
-
   public void insertCamera(Camera camera) {
     CameraDAO cameraDAO = getCameraDAO();
     cameraDAO.insertCamera(camera);
     mCameras.add(camera);
+    mCameraAdapter.notifyDataSetChanged();
+  }
+
+  public void updateCamera(Camera camera) {
+    CameraDAO cameraDao = getCameraDAO();
+    cameraDao.updateCamera(camera);
+    for (int i = 0; i < mCameras.size(); i++) {
+      if (mCameras.get(i).getId() == camera.getId()) {
+        mCameras.set(i, camera);
+        break;
+      }
+    }
     mCameraAdapter.notifyDataSetChanged();
   }
 
@@ -646,8 +633,8 @@ public class MainActivity extends Activity {
         break;
       }
     }
+    mCurrentCamera = null;
     mCameraAdapter.notifyDataSetChanged();
   }
-
 
 }
