@@ -1,5 +1,6 @@
 package com.dreamteam.vicam.view;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DialogFragment;
@@ -21,7 +22,6 @@ import android.view.ViewConfiguration;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.Switch;
@@ -45,8 +45,6 @@ import com.dreamteam.vicam.model.events.SaveCameraEvent;
 import com.dreamteam.vicam.model.events.SavePresetEvent;
 import com.dreamteam.vicam.model.pojo.Camera;
 import com.dreamteam.vicam.model.pojo.CameraState;
-import com.dreamteam.vicam.model.pojo.Focus;
-import com.dreamteam.vicam.model.pojo.Position;
 import com.dreamteam.vicam.model.pojo.Preset;
 import com.dreamteam.vicam.model.pojo.Zoom;
 import com.dreamteam.vicam.presenter.CameraServiceManager;
@@ -68,6 +66,8 @@ import com.dreamteam.vicam.view.custom.listeners.DrawerMultiChoiceListener;
 import com.dreamteam.vicam.view.custom.listeners.SeekBarChangeListener;
 import com.dreamteam.vicam.view.custom.listeners.SwitchButtonCheckedListener;
 import com.dreamteam.vicam.view.custom.listeners.TouchpadTouchListener;
+import com.dreamteam.vicam.view.custom.listeners.ZoomButtonTouchListener;
+import com.joanzapata.android.iconify.Iconify;
 
 import de.greenrobot.event.EventBus;
 
@@ -82,6 +82,7 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import retrofit.RetrofitError;
 import rx.Observable;
+import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
 import rx.functions.Action1;
@@ -99,8 +100,6 @@ public class MainActivity extends Activity {
   @Inject
   DAOFactory mDAOFactory;
 
-  @InjectView(R.id.sync_loader)
-  RelativeLayout mLoaderSpinner;
   @InjectView(R.id.drawer_layout)
   DrawerLayout mDrawerLayout;
   @InjectView(R.id.navigation_drawer)
@@ -115,6 +114,10 @@ public class MainActivity extends Activity {
   Button mAutofocusButton;
   @InjectView(R.id.autofocus_switch)
   Switch mAutofocusSwitch;
+  @InjectView(R.id.zoom_in_button)
+  Button mZoomInButton;
+  @InjectView(R.id.zoom_out_button)
+  Button mZoomOutButton;
 
   private Camera mCurrentCamera;
   private CharSequence mTitle;
@@ -138,18 +141,20 @@ public class MainActivity extends Activity {
     Dagger.inject(this);
     ButterKnife.inject(this);
 
-    // Sets default values defined in camera_preferences if empty
-    // Only useful if settings activity is used
-    // PreferenceManager.setDefaultValues(this, R.xml.camera_preferences, false);
+    Iconify.addIcons(mZoomInButton);
+    Iconify.addIcons(mZoomOutButton);
 
-    // Get set camera_preferences
+    // Get saved preferences
     mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
     mTitle = getString(R.string.app_name);
 
-    getActionBar().setDisplayHomeAsUpEnabled(true);
-    getActionBar().setHomeButtonEnabled(true);
-    getActionBar().setDisplayShowTitleEnabled(true);
+    ActionBar actionBar = getActionBar();
+    if (actionBar != null) {
+      actionBar.setDisplayHomeAsUpEnabled(true);
+      actionBar.setHomeButtonEnabled(true);
+      actionBar.setDisplayShowTitleEnabled(true);
+    }
 
     mPresets = new ArrayList<>();
     mPresetAdapter = new PresetArrayAdapter(this, mPresets);
@@ -177,10 +182,27 @@ public class MainActivity extends Activity {
       }
     });
 
-    mCameras = getCameraDAO().getCameras();
-    if (mCameras == null) {
-      mCameras = new ArrayList<>();
-    }
+    mZoomInButton.setOnTouchListener(
+        new ZoomButtonTouchListener(this, ZoomButtonTouchListener.Type.ZOOM_IN));
+    mZoomOutButton.setOnTouchListener(
+        new ZoomButtonTouchListener(this, ZoomButtonTouchListener.Type.ZOOM_OUT));
+
+    getCameraDAO().flatMap(new Func1<CameraDAO, Observable<List<Camera>>>() {
+      @Override
+      public Observable<List<Camera>> call(CameraDAO cameraDAO) {
+        return cameraDAO.getCameras();
+      }
+    }).subscribe(new Action1<List<Camera>>() {
+      @Override
+      public void call(List<Camera> cameras) {
+        mCameras = cameras;
+      }
+    }, new Action1<Throwable>() {
+      @Override
+      public void call(Throwable throwable) {
+        mCameras = new ArrayList<>();
+      }
+    });
     mCameraAdapter = new CameraArrayAdapter(this, mCameras);
 
     // Always show settings drop down (works with e.g. Samsung S3)
@@ -196,10 +218,9 @@ public class MainActivity extends Activity {
           CameraResponseException err = (CameraResponseException) throwable;
           Utils.errorLog("CameraResponseException: " + err.getMessage());
         } else if (throwable instanceof CameraDoesNotExistException) {
-          showToast("Add a camera first!", Toast.LENGTH_SHORT);
-          // TODO: Show the add camera dialog directly?
+          // Do nothing
         }
-        Utils.errorLog(Utils.throwableToString(throwable));
+        // Utils.errorLog(Utils.throwableToString(throwable));
         connectionError();
       }
     };
@@ -211,7 +232,6 @@ public class MainActivity extends Activity {
       }
     };
   }
-
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
@@ -225,8 +245,7 @@ public class MainActivity extends Activity {
       mCameraSpinner = (Spinner) view;
       mCameraSpinner.setAdapter(mCameraAdapter);
       mCameraSpinner.setOnItemSelectedListener(new CameraSpinnerItemListener());
-      int selected = mSharedPreferences.getInt(SELECTED_CAMERA, 0);
-      mCameraSpinner.setSelection(selected);
+      restoreSelectedCamera();
     }
     mConnectedIcon = menu.findItem(R.id.connection_state);
 
@@ -249,6 +268,17 @@ public class MainActivity extends Activity {
     return true;
   }
   */
+
+  private void restoreSelectedCamera() {
+    if (mCameraSpinner != null && mCameras != null && mSharedPreferences != null) {
+      int selected = mSharedPreferences.getInt(SELECTED_CAMERA, 0);
+      if (selected >= 0 && selected < mCameras.size()) {
+        mCameraSpinner.setSelection(selected);
+      } else if (mCameras.size() > 0) {
+        mCameraSpinner.setSelection(0);
+      }
+    }
+  }
 
   @Override
   protected void onPostCreate(Bundle savedInstanceState) {
@@ -274,10 +304,8 @@ public class MainActivity extends Activity {
       return true;
     }
     // Handle menu items
-    // TODO: check for null mCurrentCamera
     switch (item.getItemId()) {
       case R.id.action_edit_camera:
-        //startActivity(new Intent(this, SettingsActivity.class));
         if (mCurrentCamera == null) {
           showToast("There's no camera to be edited!", Toast.LENGTH_SHORT);
         } else {
@@ -296,7 +324,8 @@ public class MainActivity extends Activity {
 
           showToast("There's no camera to be deleted!", Toast.LENGTH_SHORT);
         } else {
-          showDialog(DeleteCameraDialogFragment.newInstance(mCurrentCamera.getId()), "delete_camera_dialog");
+          showDialog(DeleteCameraDialogFragment.newInstance(mCurrentCamera.getId()),
+                     "delete_camera_dialog");
         }
 
         return true;
@@ -309,10 +338,6 @@ public class MainActivity extends Activity {
         showDialog(SavePresetDialogFragment.newInstance(), "save_preset_dialog");
         return true;
 
-      case R.id.action_sync_presets:
-        mLoaderSpinner.setVisibility(View.VISIBLE);
-        return true;
-
       default:
         return super.onOptionsItemSelected(item);
     }
@@ -321,13 +346,17 @@ public class MainActivity extends Activity {
   @Override
   public void setTitle(CharSequence title) {
     mTitle = title;
-    getActionBar().setTitle(mTitle);
+    ActionBar actionBar = getActionBar();
+    if (actionBar != null) {
+      actionBar.setTitle(mTitle);
+    }
   }
 
   @Override
   protected void onResume() {
     super.onResume();
     mEventBus.register(this);
+    restoreSelectedCamera();
   }
 
   @Override
@@ -354,14 +383,13 @@ public class MainActivity extends Activity {
         .setIcon(android.R.drawable.ic_dialog_alert)
         .setTitle("Exit VICAM?")
         .setMessage("Are you sure you want to exit VICAM?")
-        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
           @Override
           public void onClick(DialogInterface dialog, int which) {
             finish();
           }
-
         })
-        .setNegativeButton("No", null)
+        .setNegativeButton(android.R.string.no, null)
         .show();
   }
 
@@ -374,6 +402,7 @@ public class MainActivity extends Activity {
     });
   }
 
+  // TODO: Move this to its own operator (see https://github.com/Netflix/RxJava/wiki/Observable)?
   public <T> Observable<T> prepareObservable(Observable<T> observable) {
     return observable
         .observeOn(AndroidSchedulers.mainThread())
@@ -475,6 +504,30 @@ public class MainActivity extends Activity {
     }
   }
 
+  public void stopZoom() {
+    prepareObservable(
+        getFacade().flatMap(new Func1<CameraFacade, Observable<Zoom>>() {
+          @Override
+          public Observable<Zoom> call(final CameraFacade cameraFacade) {
+            return cameraFacade.zoomStop().flatMap(new Func1<String, Observable<Zoom>>() {
+              @Override
+              public Observable<Zoom> call(String s) {
+                return cameraFacade.getZoom();
+              }
+            });
+          }
+        })
+    ).subscribe(
+        new Action1<Zoom>() {
+          @Override
+          public void call(Zoom zoom) {
+            updateZoomLevel(zoom.getLevel());
+          }
+        },
+        Utils.<Throwable>noop()
+    );
+  }
+
   private void updateCameraState() {
     prepareObservable(
         getFacade().flatMap(new Func1<CameraFacade, Observable<CameraState>>() {
@@ -496,11 +549,26 @@ public class MainActivity extends Activity {
   @SuppressWarnings("unused")
   public void onEventMainThread(CameraChangedEvent e) {
     mCurrentCamera = e.camera;
-    List<Preset> presets = getPresetDAO().getPresetsForCamera(mCurrentCamera);
-    mPresets.clear();
-    mPresets.addAll(presets);
-    mPresetAdapter.notifyDataSetChanged();
-    updateCameraState();
+    getPresetDAO().flatMap(new Func1<PresetDAO, Observable<List<Preset>>>() {
+      @Override
+      public Observable<List<Preset>> call(PresetDAO presetDAO) {
+        return presetDAO.getPresetsForCamera(mCurrentCamera);
+      }
+    }).subscribe(new Action1<List<Preset>>() {
+      @Override
+      public void call(List<Preset> presets) {
+        mPresets.clear();
+        mPresets.addAll(presets);
+        mPresetAdapter.notifyDataSetChanged();
+        updateCameraState();
+      }
+    }, new Action1<Throwable>() {
+      @Override
+      public void call(Throwable throwable) {
+        mPresets.clear();
+        mPresetAdapter.notifyDataSetChanged();
+      }
+    });
   }
 
   @SuppressWarnings("unused")
@@ -514,6 +582,7 @@ public class MainActivity extends Activity {
   public void onEventMainThread(EditCameraEvent e) {
     updateCamera(e.camera);
   }
+
   @SuppressWarnings("unused")
   public void onEventMainThread(DeleteCameraEvent e) {
     deleteCamera(e.camera);
@@ -524,16 +593,16 @@ public class MainActivity extends Activity {
     final CameraState cameraState = e.preset.getCameraState();
 
     prepareObservable(
-        getFacade().flatMap(new Func1<CameraFacade, Observable<Boolean>>() {
+        getFacade().flatMap(new Func1<CameraFacade, Observable<String>>() {
           @Override
-          public Observable<Boolean> call(CameraFacade cameraFacade) {
+          public Observable<String> call(CameraFacade cameraFacade) {
             return cameraFacade.setCameraState(cameraState);
           }
         })
     ).subscribe(
-        new Action1<Boolean>() {
+        new Action1<String>() {
           @Override
-          public void call(Boolean b) {
+          public void call(String s) {
             updateWithCameraState(cameraState);
           }
         }, Utils.<Throwable>noop()
@@ -565,11 +634,12 @@ public class MainActivity extends Activity {
           @Override
           public void call(Throwable throwable) {
             Utils.infoLog("Failed getting state from camera when saving preset");
-            // TODO Remove when done with debugging
-            insertPreset(new Preset(e.name, mCurrentCamera, new CameraState(
-                new Position(0x5000, 0x5000),
-                new Zoom(0x666),
-                new Focus(0x777, true))));
+//            if (mCurrentCamera != null) {
+//              insertPreset(new Preset(e.name, mCurrentCamera, new CameraState(
+//                  new Position(0x5000, 0x5000),
+//                  new Zoom(0x666),
+//                  new Focus(0x777, true))));
+//            }
           }
         }
     );
@@ -590,77 +660,147 @@ public class MainActivity extends Activity {
     showDialog(EditPresetDialogFragment.newInstance(e.preset.getId()), "edit_preset_dialog");
   }
 
-  private CameraDAO getCameraDAO() {
+  private Observable<CameraDAO> getCameraDAO() {
     return mDAOFactory.getCameraDAO();
   }
 
-  private PresetDAO getPresetDAO() {
+  private Observable<PresetDAO> getPresetDAO() {
     return mDAOFactory.getPresetDAO();
   }
 
-  public void insertPreset(Preset preset) {
-    PresetDAO presetDao = getPresetDAO();
-    presetDao.insertPreset(preset);
-    mPresets.add(preset);
-    mPresetAdapter.notifyDataSetChanged();
-  }
-
-  public void updatePreset(Preset preset) {
-    PresetDAO presetDao = getPresetDAO();
-    presetDao.updatePreset(preset);
-    for (int i = 0; i < mPresets.size(); i++) {
-      if (mPresets.get(i).getId() == preset.getId()) {
-        mPresets.set(i, preset);
-        break;
+  public void insertPreset(final Preset preset) {
+    getPresetDAO().flatMap(new Func1<PresetDAO, Observable<Integer>>() {
+      @Override
+      public Observable<Integer> call(PresetDAO presetDAO) {
+        return presetDAO.insertPreset(preset);
       }
-    }
-    mPresetAdapter.notifyDataSetChanged();
+    }).subscribe(new Action1<Integer>() {
+      @Override
+      public void call(Integer presetId) {
+        mPresets.add(preset);
+        mPresetAdapter.notifyDataSetChanged();
+      }
+    }, Utils.<Throwable>noop());
   }
 
-  public void deletePresets(List<Preset> presets) {
-    PresetDAO presetDao = getPresetDAO();
-    for (Preset p : presets) {
-      presetDao.deletePreset(p.getId());
-      for (int i = 0; i < mPresets.size(); i++) {
-        if (mPresets.get(i).getId() == p.getId()) {
-          mPresets.remove(i);
-          break;
+  public void updatePreset(final Preset preset) {
+    getPresetDAO().flatMap(new Func1<PresetDAO, Observable<Boolean>>() {
+      @Override
+      public Observable<Boolean> call(PresetDAO presetDAO) {
+        return presetDAO.updatePreset(preset);
+      }
+    }).subscribe(new Action1<Boolean>() {
+      @Override
+      public void call(Boolean b) {
+        for (int i = 0; i < mPresets.size(); i++) {
+          if (mPresets.get(i).getId() == preset.getId()) {
+            mPresets.set(i, preset);
+            break;
+          }
+        }
+        mPresetAdapter.notifyDataSetChanged();
+      }
+    }, Utils.<Throwable>noop());
+  }
+
+  public void deletePresets(final List<Preset> presets) {
+    getPresetDAO().flatMap(new Func1<PresetDAO, Observable<List<Preset>>>() {
+      @Override
+      public Observable<List<Preset>> call(final PresetDAO presetDAO) {
+        return Observable.create(new Observable.OnSubscribe<List<Preset>>() {
+          @Override
+          public void call(Subscriber<? super List<Preset>> subscriber) {
+            final List<Preset> successful = new ArrayList<>();
+            for (final Preset p : presets) {
+              presetDAO.deletePreset(p.getId()).subscribe(new Action1<Boolean>() {
+                @Override
+                public void call(Boolean aBoolean) {
+                  successful.add(p);
+                }
+              });
+            }
+            if (successful.size() == 0) {
+              subscriber.onError(new Exception("No presets could be deleted."));
+            } else {
+              subscriber.onNext(successful);
+            }
+          }
+        });
+      }
+    }).subscribe(new Action1<List<Preset>>() {
+      @Override
+      public void call(List<Preset> presets) {
+        for (Preset p : presets) {
+          for (int i = 0; i < mPresets.size(); i++) {
+            if (mPresets.get(i).getId() == p.getId()) {
+              mPresets.remove(i);
+              break;
+            }
+          }
+        }
+        mPresetAdapter.notifyDataSetChanged();
+      }
+    }, Utils.<Throwable>noop());
+  }
+
+  public void insertCamera(final Camera camera) {
+    getCameraDAO().flatMap(new Func1<CameraDAO, Observable<Integer>>() {
+      @Override
+      public Observable<Integer> call(CameraDAO cameraDAO) {
+        return cameraDAO.insertCamera(camera);
+      }
+    }).subscribe(new Action1<Integer>() {
+      @Override
+      public void call(Integer cameraId) {
+        mCameras.add(camera);
+        mCameraAdapter.notifyDataSetChanged();
+      }
+    }, Utils.<Throwable>noop());
+  }
+
+  public void updateCamera(final Camera camera) {
+    getCameraDAO().flatMap(new Func1<CameraDAO, Observable<Boolean>>() {
+      @Override
+      public Observable<Boolean> call(CameraDAO cameraDAO) {
+        return cameraDAO.updateCamera(camera);
+      }
+    }).subscribe(new Action1<Boolean>() {
+      @Override
+      public void call(Boolean b) {
+        for (int i = 0; i < mCameras.size(); i++) {
+          if (mCameras.get(i).getId() == camera.getId()) {
+            mCameras.set(i, camera);
+            break;
+          }
+        }
+        mCurrentCamera = camera;
+        mCameraAdapter.notifyDataSetChanged();
+      }
+    }, Utils.<Throwable>noop());
+  }
+
+  public void deleteCamera(final Camera camera) {
+    getCameraDAO().flatMap(new Func1<CameraDAO, Observable<Boolean>>() {
+      @Override
+      public Observable<Boolean> call(CameraDAO cameraDAO) {
+        return cameraDAO.deleteCamera(camera.getId());
+      }
+    }).subscribe(new Action1<Boolean>() {
+      @Override
+      public void call(Boolean b) {
+        for (int i = 0; i < mCameras.size(); i++) {
+          if (mCameras.get(i).getId() == camera.getId()) {
+            mCameras.remove(i);
+            break;
+          }
+        }
+        mCurrentCamera = null;
+        mCameraAdapter.notifyDataSetChanged();
+        if (mCameras.size() > 0) {
+          mCameraSpinner.setSelection(0);
         }
       }
-    }
-    mPresetAdapter.notifyDataSetChanged();
-  }
-
-  public void insertCamera(Camera camera) {
-    CameraDAO cameraDAO = getCameraDAO();
-    cameraDAO.insertCamera(camera);
-    mCameras.add(camera);
-    mCameraAdapter.notifyDataSetChanged();
-  }
-
-  public void updateCamera(Camera camera) {
-    CameraDAO cameraDao = getCameraDAO();
-    cameraDao.updateCamera(camera);
-    for (int i = 0; i < mCameras.size(); i++) {
-      if (mCameras.get(i).getId() == camera.getId()) {
-        mCameras.set(i, camera);
-        break;
-      }
-    }
-    mCameraAdapter.notifyDataSetChanged();
-  }
-
-  public void deleteCamera(Camera camera) {
-    CameraDAO cameraDAO = getCameraDAO();
-    cameraDAO.deleteCamera(camera.getId());
-    for (int i = 0; i < mCameras.size(); i++) {
-      if (mCameras.get(i).getId() == camera.getId()) {
-        mCameras.remove(i);
-        break;
-      }
-    }
-    mCurrentCamera = null;
-    mCameraAdapter.notifyDataSetChanged();
+    }, Utils.<Throwable>noop());
   }
 
 }

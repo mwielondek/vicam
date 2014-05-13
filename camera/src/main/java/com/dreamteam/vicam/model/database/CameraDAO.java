@@ -4,18 +4,20 @@ import com.dreamteam.vicam.model.pojo.Camera;
 
 import java.util.List;
 
+import rx.Observable;
+
 /**
  * Created by fsommar on 2014-04-01.
  */
 public interface CameraDAO {
 
-  public int insertCamera(Camera camera);
+  public Observable<Integer> insertCamera(Camera camera);
 
-  public Camera findCamera(int id);
+  public Observable<Camera> findCamera(int id);
 
-  public boolean updateCamera(Camera camera);
+  public Observable<Boolean> updateCamera(Camera camera);
 
-  public boolean deleteCamera(int id);
+  public Observable<Boolean> deleteCamera(int id);
 
-  public List<Camera> getCameras();
+  public Observable<List<Camera>> getCameras();
 }

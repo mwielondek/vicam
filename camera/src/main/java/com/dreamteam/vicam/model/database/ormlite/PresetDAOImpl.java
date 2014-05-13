@@ -15,6 +15,8 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import rx.Observable;
+
 import static com.dreamteam.vicam.presenter.utility.Utils.ORMLite;
 
 /**
@@ -37,34 +39,34 @@ public class PresetDAOImpl implements PresetDAO {
   }
 
   @Override
-  public int insertPreset(final Preset preset) {
+  public Observable<Integer> insertPreset(final Preset preset) {
     try {
       return TransactionManager.callInTransaction(
           ormLiteHelper.getConnectionSource(),
-          new Callable<Integer>() {
+          new Callable<rx.Observable<Integer>>() {
             @Override
-            public Integer call() throws Exception {
+            public rx.Observable<Integer> call() throws Exception {
               positionDao.create(preset.getCameraState().getPosition());
               focusDao.create(preset.getCameraState().getFocus());
               cameraStateDao.create(preset.getCameraState());
               presetDao.create(preset);
-              return preset.getId();
+              return Observable.just(preset.getId());
             }
           }
       );
     } catch (SQLException e) {
       Utils.databaseLog(String.format("Error while inserting preset (%s)", preset), e);
-      return -1;
+      return Observable.error(e);
     }
   }
 
   @Override
-  public Preset findPreset(int id) {
+  public Observable<Preset> findPreset(int id) {
     return ORMLite.find(presetDao, id);
   }
 
   @Override
-  public boolean updatePreset(final Preset preset) {
+  public Observable<Boolean> updatePreset(final Preset preset) {
     try {
       TransactionManager.callInTransaction(
           ormLiteHelper.getConnectionSource(),
@@ -79,30 +81,30 @@ public class PresetDAOImpl implements PresetDAO {
             }
           }
       );
-      return true;
+      return Observable.just(true);
     } catch (SQLException e) {
       Utils.databaseLog(String.format("Error while updating preset (%s)", preset), e);
-      return false;
+      return Observable.error(e);
     }
   }
 
   @Override
-  public boolean deletePreset(int id) {
+  public Observable<Boolean> deletePreset(int id) {
     return ORMLite.delete(presetDao, id);
   }
 
   @Override
-  public List<Preset> getPresets() {
+  public Observable<List<Preset>> getPresets() {
     return ORMLite.getAll(presetDao);
   }
 
   @Override
-  public List<Preset> getPresetsForCamera(Camera c) {
+  public Observable<List<Preset>> getPresetsForCamera(Camera c) {
     try {
-      return presetDao.queryForEq("camera_id", c.getId());
+      return Observable.just(presetDao.queryForEq("camera_id", c.getId()));
     } catch (SQLException e) {
       Utils.databaseLog(String.format("Error while getting presets for camera %s", c), e);
-      return null;
+      return Observable.error(e);
     }
   }
 }

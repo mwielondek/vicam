@@ -32,6 +32,14 @@ public class Touchpad extends View {
     mAccentPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     mAccentPaint.setStyle(Paint.Style.STROKE);
     mAccentPaint.setColor(getResources().getColor(android.R.color.background_light));
+
+    mBackgroundBounds = new RectF(0.0f, 0.0f, 0, 0);
+    mHorizontalLine = new RectF(0.0f, 0.0f, 0, 0);
+    mVerticalLine = new RectF(0.0f, 0.0f, 0, 0);
+    mInnerBorder = new RectF(0.0f, 0.0f, 0, 0);
+    mOuterSquare = new RectF(0.0f, 0.0f, 0, 0);
+    mMiddleSquare = new RectF(0.0f, 0.0f, 0, 0);
+    mInnerSquare = new RectF(0.0f, 0.0f, 0, 0);
   }
 
 

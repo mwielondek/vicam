@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
 
+import rx.Observable;
 import rx.functions.Action1;
 
 /**
@@ -64,51 +65,51 @@ public class Utils {
 
   public static class ORMLite {
 
-    public static <T extends Identifiable> int insert(Dao<T, ?> dao, T obj) {
+    public static <T extends Identifiable> Observable<Integer> insert(Dao<T, ?> dao, T obj) {
       try {
         dao.create(obj);
-        return obj.getId();
+        return Observable.just(obj.getId());
       } catch (SQLException e) {
         databaseLog(String.format("Failed inserting obj(%s) into database", obj), e);
-        return -1;
+        return Observable.error(e);
       }
     }
 
-    public static <T, ID> T find(Dao<T, ID> dao, ID id) {
+    public static <T, ID> Observable<T> find(Dao<T, ID> dao, ID id) {
       try {
-        return dao.queryForId(id);
+        return Observable.just(dao.queryForId(id));
       } catch (SQLException e) {
         databaseLog(String.format("Failed finding an object with id=%s in database", id), e);
-        return null;
+        return Observable.error(e);
       }
     }
 
-    public static <T extends Identifiable> boolean update(Dao<T, ?> dao, T obj) {
+    public static <T extends Identifiable> Observable<Boolean> update(Dao<T, ?> dao, T obj) {
       try {
         dao.update(obj);
-        return true;
+        return Observable.just(true);
       } catch (SQLException e) {
         databaseLog(String.format("Failed updating obj(%s) in database", obj), e);
-        return false;
+        return Observable.error(e);
       }
     }
 
-    public static <T, ID> boolean delete(Dao<T, ID> dao, ID id) {
+    public static <T, ID> Observable<Boolean> delete(Dao<T, ID> dao, ID id) {
       try {
         dao.deleteById(id);
-        return true;
+        return Observable.just(true);
       } catch (SQLException e) {
         databaseLog(String.format("Failed deleting an obj with id=%s in database", id), e);
-        return false;
+        return Observable.error(e);
       }
     }
 
-    public static <T> List<T> getAll(Dao<T, ?> dao) {
+    public static <T> Observable<List<T>> getAll(Dao<T, ?> dao) {
       try {
-        return dao.queryForAll();
+        return Observable.just(dao.queryForAll());
       } catch (SQLException e) {
         databaseLog("Failed querying all objects from database", e);
-        return null;
+        return Observable.error(e);
       }
     }
 

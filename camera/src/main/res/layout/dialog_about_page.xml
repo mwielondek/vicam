@@ -8,20 +8,22 @@
     <LinearLayout android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:layout_gravity="center">
+
         <ImageView android:layout_width="wrap_content"
                    android:layout_height="wrap_content"
                    android:layout_gravity="center_vertical|center"
                    android:src="@drawable/vic_logo"
+                   android:contentDescription="@string/vic_studio_logo"
                    android:layout_marginTop="5dp"
                    android:layout_marginBottom="5dp"
-                   android:layout_marginRight="15dp"
-                />
+                   android:layout_marginRight="15dp"/>
+
         <ImageView android:layout_width="wrap_content"
                    android:layout_height="wrap_content"
                    android:src="@drawable/dt_wo_bg"
+                   android:contentDescription="@string/dream_team_logo"
                    android:layout_marginTop="5dp"
-                   android:layout_marginBottom="5dp"
-                />
+                   android:layout_marginBottom="5dp"/>
 
     </LinearLayout>
 
@@ -32,16 +34,14 @@
               android:layout_height="wrap_content"
               android:text="@string/dialog_about_text"
               android:paddingLeft="10dp"
-              android:paddingRight="10dp"
-            />
+              android:paddingRight="10dp"/>
 
     <TextView android:id="@+id/about_text_credits"
               android:textSize="12sp"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:text="@string/about_us_credits"
-              android:layout_gravity="center"
-            />
+              android:layout_gravity="center"/>
 
     <TextView android:id="@+id/about_text_members"
               android:textSize="12sp"
@@ -51,7 +51,6 @@
               android:layout_height="wrap_content"
               android:layout_gravity="center_vertical|right"
               android:text="@string/dialog_about_text_members"
-              android:paddingBottom="10dp"
-            />
+              android:paddingBottom="10dp"/>
 
 </LinearLayout>

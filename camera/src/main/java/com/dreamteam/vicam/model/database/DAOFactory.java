@@ -1,13 +1,15 @@
 package com.dreamteam.vicam.model.database;
 
+import rx.Observable;
+
 /**
  * Created by fsommar on 2014-04-01.
  */
 public interface DAOFactory {
 
-  public CameraDAO getCameraDAO();
+  public Observable<CameraDAO> getCameraDAO();
 
-  public PresetDAO getPresetDAO();
+  public Observable<PresetDAO> getPresetDAO();
 
   void close();
 }

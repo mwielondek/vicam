@@ -4,6 +4,8 @@ import com.dreamteam.vicam.model.interfaces.Identifiable;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.util.Locale;
+
 /**
  * Created by fsommar on 2014-04-01.
  */
@@ -74,9 +76,9 @@ public class Camera implements Identifiable {
 
   public String getAddress() {
     if (port == null) {
-      return String.format("http://%s", ip);
+      return String.format(Locale.US, "http://%s", ip);
     }
-    return String.format("http://%s:%d", ip, port);
+    return String.format(Locale.US, "http://%s:%d", ip, port);
   }
 
   @Override

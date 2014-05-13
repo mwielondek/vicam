@@ -1,52 +1,43 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-     >
- <!--           android:icon="@android:drawable/presence_offline" for no connection -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- android:icon="@android:drawable/presence_offline" for no connection -->
     <item android:id="@+id/connection_state"
-          android:title="Connection State"
+          android:title="@string/connectìon_state"
           android:orderInCategory="1"
           android:showAsAction="always"
           android:icon="@android:drawable/presence_busy"
-          android:enabled="false"
-            />
+          android:enabled="false"/>
 
     <item android:id="@+id/action_change_camera"
           android:title="@string/change_camera"
           android:orderInCategory="1"
           android:showAsAction="always"
-          android:actionViewClass="android.widget.Spinner"
-            />
+          android:actionViewClass="android.widget.Spinner"/>
 
     <item android:id="@+id/action_save_preset"
           android:title="@string/action_save_preset"
-          android:orderInCategory="1"
-          android:showAsAction="always"
-
-            />
-
-    <item android:id="@+id/action_sync_presets"
-          android:title="@string/action_sync_presets"
+          android:icon="@android:drawable/ic_menu_save"
           android:orderInCategory="1"
           android:showAsAction="ifRoom"/>
 
     <item android:id="@+id/action_add_camera"
           android:title="@string/add_new_camera"
           android:orderInCategory="3"
-          android:showAsAction="collapseActionView"/>
+          android:showAsAction="never"/>
 
     <item android:id="@+id/action_delete_camera"
           android:title="@string/delete_camera"
           android:orderInCategory="4"
-          android:showAsAction="collapseActionView"/>
+          android:showAsAction="never"/>
 
     <item android:id="@+id/action_edit_camera"
           android:title="@string/edit_camera"
           android:orderInCategory="5"
-          android:showAsAction="collapseActionView"/>
+          android:showAsAction="never"/>
 
     <item android:id="@+id/action_about"
           android:title="@string/action_about"
           android:orderInCategory="6"
-          android:showAsAction="collapseActionView"/>
-
+          android:showAsAction="never"/>
 
 </menu>

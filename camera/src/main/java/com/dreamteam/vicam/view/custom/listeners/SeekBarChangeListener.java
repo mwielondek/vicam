@@ -1,6 +1,5 @@
 package com.dreamteam.vicam.view.custom.listeners;
 
-import android.os.Handler;
 import android.widget.SeekBar;
 
 import com.dreamteam.vicam.model.pojo.Zoom;
@@ -22,8 +21,6 @@ public class SeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
   public enum Type {FOCUS, ZOOM}
 
   private Type seekBarType;
-  private Handler mHandler = new Handler();
-  private long lastRequestMillis;
 
   public SeekBarChangeListener(MainActivity activity, Type seekBarType) {
     this.mActivity = activity;
@@ -32,8 +29,6 @@ public class SeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
 
   @Override
   public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-    int level = progressToLevel(progress, seekBar.getMax());
-    doActionWithDelay(level);
   }
 
   @Override
@@ -42,26 +37,9 @@ public class SeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
 
   @Override
   public void onStopTrackingTouch(SeekBar seekBar) {
-    final int normProgress = progressToLevel(seekBar.getProgress(), seekBar.getMax());
-
-    doActionWithDelay(normProgress);
+    final int level = progressToLevel(seekBar.getProgress(), seekBar.getMax());
+    doAction(level);
   }
-
-  private void doActionWithDelay(final int level) {
-    long timeSinceRequest = System.currentTimeMillis() - lastRequestMillis;
-
-    if (timeSinceRequest < Utils.DELAY_TIME_MILLIS) {
-      mHandler.postDelayed(new Runnable() {
-        @Override
-        public void run() {
-          doAction(level);
-        }
-      }, timeSinceRequest);
-    } else {
-      doAction(level);
-    }
-  }
-
 
   private void doAction(int level) {
     if (seekBarType == Type.ZOOM) {
@@ -83,7 +61,6 @@ public class SeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
         new Action1<String>() {
           @Override
           public void call(String s) {
-            lastRequestMillis = System.currentTimeMillis();
             Utils.infoLog("FOCUS");
           }
         }, Utils.<Throwable>noop()
@@ -102,7 +79,6 @@ public class SeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
         new Action1<String>() {
           @Override
           public void call(String s) {
-            lastRequestMillis = System.currentTimeMillis();
             Utils.infoLog("ZOOM");
           }
         }, Utils.<Throwable>noop()

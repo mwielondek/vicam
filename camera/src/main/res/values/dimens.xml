@@ -5,8 +5,8 @@
 
     <dimen name="touchpad_max_size">320dp</dimen>
 
-    <dimen name="seek_bar_horizontal_len">140dp</dimen>
-    <dimen name="toolbox_margin">10dp</dimen>
+    <dimen name="toolbox_margin">20dp</dimen>
+    <dimen name="toolbox_margin_horizontal">50dp</dimen>
     <dimen name="toolbox_padding">5dp</dimen>
     <dimen name="toolbox_min_width">240dp</dimen>
 

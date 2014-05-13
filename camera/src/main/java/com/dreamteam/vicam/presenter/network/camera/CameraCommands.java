@@ -2,6 +2,7 @@ package com.dreamteam.vicam.presenter.network.camera;
 
 import com.dreamteam.vicam.model.errors.CameraResponseException;
 import com.dreamteam.vicam.model.pojo.Position;
+import com.dreamteam.vicam.presenter.utility.Utils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,11 +41,11 @@ public class CameraCommands {
   }
 
   public Observable<String> zoom(int zoomSpeed) {
-    return sendCommand("Z", padThreeHex(zoomSpeed));
+    return sendCommand("Z", padZeroes(zoomSpeed, 2));
   }
 
   public Observable<String> focus(int focusSpeed) {
-    return sendCommand("F", padThreeHex(focusSpeed));
+    return sendCommand("F", padZeroes(focusSpeed, 2));
   }
 
   public Observable<String> focusManual() {
