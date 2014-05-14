@@ -153,8 +153,9 @@ public class MainActivity extends Activity {
     ActionBar actionBar = getActionBar();
     if (actionBar != null) {
       actionBar.setIcon(null);
-      actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE
-                                  | ActionBar.DISPLAY_SHOW_HOME
+      actionBar.setLogo(R.drawable.vic);
+      actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME
+                                  | ActionBar.DISPLAY_USE_LOGO
                                   | ActionBar.DISPLAY_HOME_AS_UP);
     }
 
