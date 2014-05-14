@@ -152,9 +152,10 @@ public class MainActivity extends Activity {
 
     ActionBar actionBar = getActionBar();
     if (actionBar != null) {
-      actionBar.setDisplayHomeAsUpEnabled(true);
-      actionBar.setHomeButtonEnabled(true);
-      actionBar.setDisplayShowTitleEnabled(true);
+      actionBar.setIcon(null);
+      actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE
+                                  | ActionBar.DISPLAY_SHOW_HOME
+                                  | ActionBar.DISPLAY_HOME_AS_UP);
     }
 
     mPresets = new ArrayList<>();
