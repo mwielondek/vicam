@@ -93,7 +93,7 @@ public class EditCameraDialogFragment extends DialogFragment {
           portEdit.setSelectAllOnFocus(true);
         }
         // Inversion of axes
-        invertXSwitch.setChecked(camera.isInvertX());
+        invertXSwitch.setChecked(!camera.isInvertX());
         invertYSwitch.setChecked(camera.isInvertY());
       }
     }, Utils.<Throwable>noop());
@@ -109,7 +109,7 @@ public class EditCameraDialogFragment extends DialogFragment {
                 ipEdit.getText().toString(),
                 nameEdit.getText().toString(),
                 Camera.parsePort(portEdit.getText().toString()),
-                invertXSwitch.isChecked(),
+                !invertXSwitch.isChecked(),
                 invertYSwitch.isChecked()
             )));
           }

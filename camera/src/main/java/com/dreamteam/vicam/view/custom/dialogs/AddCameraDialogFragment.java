@@ -63,7 +63,7 @@ public class AddCameraDialogFragment extends DialogFragment {
                 nameEdit.getText().toString(),
                 ipEdit.getText().toString(),
                 portEdit.getText().toString(),
-                !invertXSwitch.isChecked(), // N.B. By default it is inverted
+                !invertXSwitch.isChecked(),
                 invertYSwitch.isChecked()));
           }
         })
