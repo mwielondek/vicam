@@ -3,6 +3,7 @@ package com.dreamteam.vicam.view.custom.dialogs;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -58,6 +59,9 @@ public class EditCameraDialogFragment extends DialogFragment {
   public Dialog onCreateDialog(Bundle savedInstanceState) {
     MainActivity activity = (MainActivity) getActivity();
     AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+
+    Context ctx = getActivity();
+    ctx.setTheme(android.R.style.Theme_Holo_Light);
 
     final int cameraId = getArguments().getInt(CAMERA_ID_KEY);
 

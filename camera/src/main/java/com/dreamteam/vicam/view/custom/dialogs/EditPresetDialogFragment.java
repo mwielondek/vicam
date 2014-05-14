@@ -3,6 +3,7 @@ package com.dreamteam.vicam.view.custom.dialogs;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -57,6 +58,9 @@ public class EditPresetDialogFragment extends DialogFragment {
     final int presetId = getArguments().getInt(PRESET_ID_KEY);
 
     final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+    Context ctx = getActivity();
+    ctx.setTheme(android.R.style.Theme_Holo_Light);
 
     // Inflate the layout for the dialog
     LayoutInflater inflater = getActivity().getLayoutInflater();

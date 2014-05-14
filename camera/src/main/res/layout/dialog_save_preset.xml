@@ -17,6 +17,7 @@
             android:layout_marginBottom="4dp"
             android:imeOptions="flagNoExtractUi"
             android:singleLine="true"
+            android:maxLength="25"
             />
 
 

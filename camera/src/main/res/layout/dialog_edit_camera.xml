@@ -32,6 +32,7 @@
             android:layout_marginRight="4dp"
             android:imeOptions="flagNoExtractUi"
             android:singleLine="true"
+            android:inputType="phone"
             android:minWidth="200dp"
             />
 

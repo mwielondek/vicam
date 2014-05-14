@@ -32,6 +32,7 @@
                 android:imeOptions="flagNoExtractUi"
                 android:singleLine="true"
                 android:inputType="phone"
+                android:maxWidth="200dp"
                 />
 
         <EditText
@@ -44,8 +45,8 @@
                 android:layout_marginRight="4dp"
                 android:layout_marginBottom="4dp"
                 android:imeOptions="flagNoExtractUi"
-                android:inputType="number"
-
+                android:inputType="phone"
+                android:maxLength="5"
                 android:singleLine="true"
                 android:minWidth="120dp"
                 />

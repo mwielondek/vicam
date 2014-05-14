@@ -3,6 +3,7 @@ package com.dreamteam.vicam.view.custom.dialogs;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -26,6 +27,9 @@ public class AboutPageDialogFragment extends DialogFragment {
   @Override
   public Dialog onCreateDialog(Bundle savedInstanceState) {
     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+    Context ctx = getActivity();
+    ctx.setTheme(android.R.style.Theme_Holo_Light);
 
     // Get the layout inflater
     LayoutInflater inflater = getActivity().getLayoutInflater();
