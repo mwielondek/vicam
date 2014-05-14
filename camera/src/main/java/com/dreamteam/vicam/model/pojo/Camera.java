@@ -19,7 +19,7 @@ public class Camera implements Identifiable {
   @DatabaseField(columnName = "name", unique = true, canBeNull = false)
   private String name;
   @DatabaseField(columnName = "port")
-  private Short port;
+  private Integer port;
   @DatabaseField(columnName = "invert_x", canBeNull = false)
   private boolean invertX;
   @DatabaseField(columnName = "invert_y", canBeNull = false)
@@ -29,16 +29,16 @@ public class Camera implements Identifiable {
     // ORMLite needs a no-arg constructor
   }
 
-  public Camera(int id, String ip, String name, Short port, boolean invertX, boolean invertY) {
+  public Camera(int id, String ip, String name, Integer port, boolean invertX, boolean invertY) {
     this(ip, name, port, invertX, invertY);
     this.id = id;
   }
 
-  public Camera(String ip, String name, Short port) {
+  public Camera(String ip, String name, Integer port) {
     this(ip, name, port, false, false);
   }
 
-  public Camera(String ip, String name, Short port, boolean invertX, boolean invertY) {
+  public Camera(String ip, String name, Integer port, boolean invertX, boolean invertY) {
     if (ip == null || name == null) {
       throw new IllegalArgumentException(String.format(
           "Name(%s) or IP address(%s) can't be null.", name, ip));
@@ -58,7 +58,7 @@ public class Camera implements Identifiable {
     return name;
   }
 
-  public Short getPort() {
+  public Integer getPort() {
     return port;
   }
 
@@ -93,9 +93,9 @@ public class Camera implements Identifiable {
            '}';
   }
 
-  public static Short parsePort(String port) {
+  public static Integer parsePort(String port) {
       try {
-        return Short.parseShort(port);
+        return Integer.parseInt(port);
       } catch (NumberFormatException ignored) {
         return null;
       }
