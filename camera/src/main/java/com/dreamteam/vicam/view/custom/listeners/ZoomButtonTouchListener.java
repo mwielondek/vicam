@@ -46,7 +46,8 @@ public class ZoomButtonTouchListener implements View.OnTouchListener {
           })
       ).subscribe(Utils.noop(), Utils.<Throwable>noop());
       return true;
-    } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+    } else if (motionEvent.getAction() == MotionEvent.ACTION_UP
+               || motionEvent.getAction() == MotionEvent.ACTION_CANCEL) {
       mActivity.stopZoom();
       return true;
     }
