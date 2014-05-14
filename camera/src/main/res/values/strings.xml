@@ -33,5 +33,7 @@
     <string name="connectìon_state">Connection State</string>
     <string name="vic_studio_logo">VIC Studio logo</string>
     <string name="dream_team_logo">Dream Team logo</string>
+    <string name="export_db">Export database</string>
+    <string name="import_db">Import database</string>
 
 </resources>

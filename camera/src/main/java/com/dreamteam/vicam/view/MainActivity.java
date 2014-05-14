@@ -10,7 +10,6 @@ import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -241,7 +240,6 @@ public class MainActivity extends Activity {
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     // Inflate the menu; this adds items to the action bar if it is present.
-
     getMenuInflater().inflate(R.menu.main, menu);
 
       MenuItem cameraSpinner = menu.findItem(R.id.action_change_camera);
@@ -315,13 +313,10 @@ public class MainActivity extends Activity {
   public void onConfigurationChanged(Configuration newConfig) {
     super.onConfigurationChanged(newConfig);
     mDrawerToggle.onConfigurationChanged(newConfig);
-
-
   }
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
-
     // Pass the event to ActionBarDrawerToggle, if it returns
     // true, then it has handled the app icon touch event
     if (mDrawerToggle.onOptionsItemSelected(item)) {
@@ -329,6 +324,14 @@ public class MainActivity extends Activity {
     }
     // Handle menu items
     switch (item.getItemId()) {
+      case R.id.action_save_preset:
+        showDialog(SavePresetDialogFragment.newInstance(), "save_preset_dialog");
+        return true;
+
+      case R.id.action_add_camera:
+        showDialog(AddCameraDialogFragment.newInstance(), "add_camera_dialog");
+      return true;
+
       case R.id.action_edit_camera:
         if (mCurrentCamera == null) {
           showToast("There's no camera to be edited!", Toast.LENGTH_SHORT);
@@ -338,11 +341,6 @@ public class MainActivity extends Activity {
         }
         return true;
 
-      case R.id.action_add_camera:
-        showDialog(AddCameraDialogFragment.newInstance(), "add_camera_dialog");
-
-      return true;
-
       case R.id.action_delete_camera:
         if (mCurrentCamera == null) {
 
@@ -351,22 +349,28 @@ public class MainActivity extends Activity {
           showDialog(DeleteCameraDialogFragment.newInstance(mCurrentCamera.getId()),
                      "delete_camera_dialog");
         }
+        return true;
 
+      case R.id.action_export_db:
+        // TODO: create dialog fragment
+        if (Utils.Database.exportDb("export.db")) {
+         showToast("Successfully exported database!", Toast.LENGTH_SHORT);
+        }
+        return true;
 
+      case R.id.action_import_db:
+        // TODO: create dialog fragment
+        if (Utils.Database.importDb("export.db")) {
+          showToast("Successfully imported database!", Toast.LENGTH_SHORT);
+        }
         return true;
 
       case R.id.action_about:
         showDialog(AboutPageDialogFragment.newInstance(), "about_page_dialog");
         return true;
 
-      case R.id.action_save_preset:
-        showDialog(SavePresetDialogFragment.newInstance(), "save_preset_dialog");
-        return true;
-
       default:
         return super.onOptionsItemSelected(item);
-
-
     }
 
   }
