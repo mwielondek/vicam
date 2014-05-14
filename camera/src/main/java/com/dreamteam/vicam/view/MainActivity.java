@@ -128,10 +128,12 @@ public class MainActivity extends Activity {
   private PresetArrayAdapter mPresetAdapter;
   private DrawerMultiChoiceListener mContextualActionBar;
   private Spinner mCameraSpinner;
+  private Menu mCameraSpinnerMenu;
   private SharedPreferences mSharedPreferences;
   private MenuItem mConnectedIcon;
   private Action1<Throwable> mErrorHandler;
   private Action0 mSuccessHandler;
+
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -158,7 +160,7 @@ public class MainActivity extends Activity {
 
     mPresets = new ArrayList<>();
     mPresetAdapter = new PresetArrayAdapter(this, mPresets);
-
+   // mCameraSpinnerMenu = new Menu
     mDrawerList.setAdapter(mPresetAdapter);
     mDrawerList.setOnItemClickListener(new DrawerItemClickListener(this));
     mDrawerList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
@@ -171,6 +173,8 @@ public class MainActivity extends Activity {
     mZoomSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(this, Type.ZOOM));
 
     mTouchpad.setOnTouchListener(new TouchpadTouchListener(this));
+
+
 
     final SwitchButtonCheckedListener switchListener = new SwitchButtonCheckedListener(this);
     mAutofocusSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -239,35 +243,54 @@ public class MainActivity extends Activity {
 
     getMenuInflater().inflate(R.menu.main, menu);
 
-    MenuItem cameraSpinner = menu.findItem(R.id.action_change_camera);
-    View view = cameraSpinner.getActionView();
-    if (view instanceof Spinner) {
-      mCameraSpinner = (Spinner) view;
-      mCameraSpinner.setAdapter(mCameraAdapter);
-      mCameraSpinner.setOnItemSelectedListener(new CameraSpinnerItemListener());
-      restoreSelectedCamera();
+      MenuItem cameraSpinner = menu.findItem(R.id.action_change_camera);
+      View view = cameraSpinner.getActionView();
+      if (view instanceof Spinner) {
+        mCameraSpinner = (Spinner) view;
+        mCameraSpinner.setAdapter(mCameraAdapter);
+        mCameraSpinner.setOnItemSelectedListener(new CameraSpinnerItemListener());
+        restoreSelectedCamera();
+      }
+      mConnectedIcon = menu.findItem(R.id.connection_state);
+
+/*
+    if(mCurrentCamera == null) {
+
+      cameraSpinner.setVisible(false);
+    } else {
+      cameraSpinner.setVisible(true);
     }
-    mConnectedIcon = menu.findItem(R.id.connection_state);
+    */
+
+
+
+
 
     return true;
   }
-/*
+
+  /*
   @Override
   public boolean onPrepareOptionsMenu (Menu menu) {
 
     // Disables menu items when not in use
     if(mCurrentCamera == null) {
+
       menu.findItem(R.id.action_edit_camera).setEnabled(false);
       menu.findItem(R.id.action_delete_camera).setEnabled(false);
       menu.findItem(R.id.action_save_preset).setEnabled(false);
+
     } else {
+
       menu.findItem(R.id.action_edit_camera).setEnabled(true);
       menu.findItem(R.id.action_delete_camera).setEnabled(true);
       menu.findItem(R.id.action_save_preset).setEnabled(true);
+
     }
     return true;
   }
-  */
+*/
+
 
   private void restoreSelectedCamera() {
     if (mCameraSpinner != null && mCameras != null && mSharedPreferences != null) {
@@ -316,8 +339,8 @@ public class MainActivity extends Activity {
 
       case R.id.action_add_camera:
         showDialog(AddCameraDialogFragment.newInstance(), "add_camera_dialog");
-        mCameraSpinner.setVisibility(View.VISIBLE);
-        return true;
+
+      return true;
 
       case R.id.action_delete_camera:
         if (mCurrentCamera == null) {
@@ -327,6 +350,7 @@ public class MainActivity extends Activity {
           showDialog(DeleteCameraDialogFragment.newInstance(mCurrentCamera.getId()),
                      "delete_camera_dialog");
         }
+
 
         return true;
 
@@ -340,7 +364,10 @@ public class MainActivity extends Activity {
 
       default:
         return super.onOptionsItemSelected(item);
+
+
     }
+
   }
 
   @Override
@@ -549,6 +576,7 @@ public class MainActivity extends Activity {
   @SuppressWarnings("unused")
   public void onEventMainThread(CameraChangedEvent e) {
     mCurrentCamera = e.camera;
+
     getPresetDAO().flatMap(new Func1<PresetDAO, Observable<List<Preset>>>() {
       @Override
       public Observable<List<Preset>> call(PresetDAO presetDAO) {
@@ -586,6 +614,7 @@ public class MainActivity extends Activity {
   @SuppressWarnings("unused")
   public void onEventMainThread(DeleteCameraEvent e) {
     deleteCamera(e.camera);
+
   }
 
   @SuppressWarnings("unused")
