@@ -190,23 +190,7 @@ public class MainActivity extends Activity {
     mZoomOutButton.setOnTouchListener(
         new ZoomButtonTouchListener(this, ZoomButtonTouchListener.Type.ZOOM_OUT));
 
-    getCameraDAO().flatMap(new Func1<CameraDAO, Observable<List<Camera>>>() {
-      @Override
-      public Observable<List<Camera>> call(CameraDAO cameraDAO) {
-        return cameraDAO.getCameras();
-      }
-    }).subscribe(new Action1<List<Camera>>() {
-      @Override
-      public void call(List<Camera> cameras) {
-        mCameras = cameras;
-      }
-    }, new Action1<Throwable>() {
-      @Override
-      public void call(Throwable throwable) {
-        mCameras = new ArrayList<>();
-      }
-    });
-    mCameraAdapter = new CameraArrayAdapter(this, mCameras);
+    populateCameraList();
 
     // Always show settings drop down (works with e.g. Samsung S3)
     getOverflowMenu();
@@ -237,6 +221,26 @@ public class MainActivity extends Activity {
     };
   }
 
+  private void populateCameraList() {
+    getCameraDAO().flatMap(new Func1<CameraDAO, Observable<List<Camera>>>() {
+      @Override
+      public Observable<List<Camera>> call(CameraDAO cameraDAO) {
+        return cameraDAO.getCameras();
+      }
+    }).subscribe(new Action1<List<Camera>>() {
+      @Override
+      public void call(List<Camera> cameras) {
+        mCameras = cameras;
+      }
+    }, new Action1<Throwable>() {
+      @Override
+      public void call(Throwable throwable) {
+        mCameras = new ArrayList<>();
+      }
+    });
+    mCameraAdapter = new CameraArrayAdapter(this, mCameras);
+  }
+
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     // Inflate the menu; this adds items to the action bar if it is present.
@@ -251,45 +255,8 @@ public class MainActivity extends Activity {
         restoreSelectedCamera();
       }
       mConnectedIcon = menu.findItem(R.id.connection_state);
-
-/*
-    if(mCurrentCamera == null) {
-
-      cameraSpinner.setVisible(false);
-    } else {
-      cameraSpinner.setVisible(true);
-    }
-    */
-
-
-
-
-
     return true;
   }
-
-  /*
-  @Override
-  public boolean onPrepareOptionsMenu (Menu menu) {
-
-    // Disables menu items when not in use
-    if(mCurrentCamera == null) {
-
-      menu.findItem(R.id.action_edit_camera).setEnabled(false);
-      menu.findItem(R.id.action_delete_camera).setEnabled(false);
-      menu.findItem(R.id.action_save_preset).setEnabled(false);
-
-    } else {
-
-      menu.findItem(R.id.action_edit_camera).setEnabled(true);
-      menu.findItem(R.id.action_delete_camera).setEnabled(true);
-      menu.findItem(R.id.action_save_preset).setEnabled(true);
-
-    }
-    return true;
-  }
-*/
-
 
   private void restoreSelectedCamera() {
     if (mCameraSpinner != null && mCameras != null && mSharedPreferences != null) {
@@ -334,7 +301,7 @@ public class MainActivity extends Activity {
 
       case R.id.action_edit_camera:
         if (mCurrentCamera == null) {
-          showToast("There's no camera to be edited!", Toast.LENGTH_SHORT);
+          showToast(getString(R.string.no_camera_to_edit), Toast.LENGTH_SHORT);
         } else {
           showDialog(EditCameraDialogFragment.newInstance(mCurrentCamera.getId()),
                      "edit_camera_dialog");
@@ -343,8 +310,7 @@ public class MainActivity extends Activity {
 
       case R.id.action_delete_camera:
         if (mCurrentCamera == null) {
-
-          showToast("There's no camera to be deleted!", Toast.LENGTH_SHORT);
+          showToast(getString(R.string.no_camera_to_delete), Toast.LENGTH_SHORT);
         } else {
           showDialog(DeleteCameraDialogFragment.newInstance(mCurrentCamera.getId()),
                      "delete_camera_dialog");
@@ -352,16 +318,22 @@ public class MainActivity extends Activity {
         return true;
 
       case R.id.action_export_db:
-        // TODO: create dialog fragment
         if (Utils.Database.exportDb("export.db")) {
-         showToast("Successfully exported database!", Toast.LENGTH_SHORT);
+         showToast(getString(R.string.export_database_success), Toast.LENGTH_SHORT);
+        } else {
+          showToast(getString(R.string.export_database_failure), Toast.LENGTH_SHORT);
         }
         return true;
 
       case R.id.action_import_db:
-        // TODO: create dialog fragment
         if (Utils.Database.importDb("export.db")) {
-          showToast("Successfully imported database!", Toast.LENGTH_SHORT);
+          populateCameraList();
+          if (mCameraSpinner != null) {
+           mCameraSpinner.setAdapter(mCameraAdapter);
+          }
+          showToast(getString(R.string.import_database_success), Toast.LENGTH_SHORT);
+        } else {
+          showToast(getString(R.string.import_database_failure), Toast.LENGTH_SHORT);
         }
         return true;
 
@@ -673,7 +645,7 @@ public class MainActivity extends Activity {
           @Override
           public void call(Throwable throwable) {
             Utils.infoLog("Failed getting state from camera when saving preset");
-            showToast("Unable to save preset due to camera connection failure", Toast.LENGTH_SHORT);
+            showToast(getString(R.string.save_preset_failure), Toast.LENGTH_SHORT);
           }
         }
     );

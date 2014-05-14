@@ -140,7 +140,7 @@ public class Utils {
           }
         }
       } catch (Exception e) {
-        Utils.errorLog("Error occurred while importing '" + importName + "'");
+        Utils.errorLog("Error occurred while importing '" + importName + "'; " + e.toString());
       }
       return false;
     }
@@ -153,16 +153,18 @@ public class Utils {
         if (sd.canWrite()) {
           File backupFolder = new File(sd, BACKUP_FOLDER_PATH);
 
-          if (!backupFolder.exists() || backupFolder.createNewFile()) {
+          if (backupFolder.exists() || backupFolder.mkdir()) {
             File internalDb = new File(data, INTERNAL_DB_PATH);
             File exportDb = new File(sd, BACKUP_FOLDER_PATH + exportName);
 
-            Files.copy(internalDb, exportDb); // export internal db to export db location
-            return true;
+            if (exportDb.exists() || exportDb.createNewFile()) {
+              Files.copy(internalDb, exportDb); // export internal db to export db location
+              return true;
+            }
           }
         }
       } catch (Exception e) {
-        Utils.errorLog("Error occurred while exporting '" + exportName + "'");
+        Utils.errorLog("Error occurred while exporting '" + exportName + "'; " + e.toString());
       }
       return false;
     }

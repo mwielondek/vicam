@@ -8,21 +8,21 @@
     <string name="force_autofocus">One touch AF</string>
     <string name="action_about">About</string>
     <string name="text_zoom">Zoom</string>
-    <string name="action_save_preset">Save Preset</string>
+    <string name="action_save_preset">Save preset</string>
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
-    <string name="change_camera">Change Camera</string>
+    <string name="change_camera">Change camera</string>
 
     <string name="dialog_save_preset_placeholder">Enter name for preset…</string>
     <string name="dialog_add_camera_camera_name">Camera name</string>
-    <string name="add_new_camera">Add Camera</string>
-    <string name="edit_camera">Edit Camera</string>
-    <string name="dialog_add_camera_ip">IP-Address</string>
+    <string name="add_new_camera">Add camera</string>
+    <string name="edit_camera">Edit camera</string>
+    <string name="dialog_add_camera_ip">IP address</string>
     <string name="dialog_add_camera_port">Port</string>
     <string name="delete_preset">Delete preset</string>
     <string name="edit_preset">Edit preset</string>
     <string name="delete_presets">Delete presets</string>
-    <string name="delete_camera">Delete Camera</string>
+    <string name="delete_camera">Delete camera</string>
     <string name="apply_changes">Apply Changes</string>
     <string name="delete_camera_confirmation">\'%s\' will be removed.</string>
     <string name="dialog_about_text">Stockholm, 2014: This application was created by the project group Dream Team on behalf of The VIC Studio at KTH, for the course Software Engineering (DD1392).</string>
@@ -34,6 +34,14 @@
     <string name="vic_studio_logo">VIC Studio logo</string>
     <string name="dream_team_logo">Dream Team logo</string>
     <string name="export_db">Export database</string>
-    <string name="import_db">Import database</string>
+    <string name="import_db">Import database]</string>
+    <string name="no_camera_to_edit">There\'s no camera to be edited</string>
+    <string name="no_camera_to_delete">There\'s no camera to be deleted</string>
+    <string name="export_database_success">Successfully exported database</string>
+    <string name="export_database_failure">Failed exporting database</string>
+    <string name="import_database_success">Successfully imported database</string>
+    <string name="import_database_failure">Failed importing database</string>
+    <string name="save_preset_failure">Unable to save preset due to camera connection failure
+    </string>
 
 </resources>
