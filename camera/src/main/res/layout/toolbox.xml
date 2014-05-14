@@ -61,6 +61,7 @@
                   style="?android:attr/buttonBarStyle">
         <Button
                 android:text="{fa-search-minus}"
+                android:textColor="@color/zoombuttoncolor"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/zoom_in_button"
@@ -68,6 +69,7 @@
                 style="?android:attr/buttonBarButtonStyle"/>
         <Button
                 android:text="{fa-search-plus}"
+                android:textColor="@color/zoombuttoncolor"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/zoom_out_button"

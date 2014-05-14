@@ -223,6 +223,7 @@ public class MainActivity extends Activity {
           Utils.errorLog("CameraResponseException: " + err.getMessage());
         } else if (throwable instanceof CameraDoesNotExistException) {
           // Do nothing
+          Utils.infoLog("No camera!");
         }
         // Utils.errorLog(Utils.throwableToString(throwable));
         connectionError();
@@ -383,7 +384,7 @@ public class MainActivity extends Activity {
   protected void onResume() {
     super.onResume();
     mEventBus.register(this);
-    restoreSelectedCamera();
+    invalidateOptionsMenu();
   }
 
   @Override
@@ -574,6 +575,11 @@ public class MainActivity extends Activity {
   }
 
   @SuppressWarnings("unused")
+  public void onEventMainThread(Object o) {
+    Utils.infoLog("Event: " + o.getClass().getSimpleName());
+  }
+
+  @SuppressWarnings("unused")
   public void onEventMainThread(CameraChangedEvent e) {
     mCurrentCamera = e.camera;
 
@@ -663,12 +669,7 @@ public class MainActivity extends Activity {
           @Override
           public void call(Throwable throwable) {
             Utils.infoLog("Failed getting state from camera when saving preset");
-//            if (mCurrentCamera != null) {
-//              insertPreset(new Preset(e.name, mCurrentCamera, new CameraState(
-//                  new Position(0x5000, 0x5000),
-//                  new Zoom(0x666),
-//                  new Focus(0x777, true))));
-//            }
+            showToast("Unable to save preset due to camera connection failure", Toast.LENGTH_SHORT);
           }
         }
     );
