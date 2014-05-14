@@ -111,6 +111,7 @@ public class TouchpadTouchListener implements View.OnTouchListener {
 
         return true;
 
+      case MotionEvent.ACTION_CANCEL:
       case MotionEvent.ACTION_UP:
         // interrupt tap handler
         tapHandler.removeCallbacks(tapRunnable);
