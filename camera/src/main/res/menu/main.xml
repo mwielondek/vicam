@@ -35,9 +35,19 @@
           android:orderInCategory="5"
           android:showAsAction="never"/>
 
+    <item android:id="@+id/action_export_db"
+          android:title="@string/export_db"
+          android:orderInCategory="6"
+          android:showAsAction="never"/>
+
+    <item android:id="@+id/action_import_db"
+          android:title="@string/import_db"
+          android:orderInCategory="7"
+          android:showAsAction="never"/>
+
     <item android:id="@+id/action_about"
           android:title="@string/action_about"
-          android:orderInCategory="6"
+          android:orderInCategory="8"
           android:showAsAction="never"/>
 
 </menu>
