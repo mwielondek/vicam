@@ -11,6 +11,7 @@ import com.dreamteam.vicam.model.pojo.CameraState;
 import com.dreamteam.vicam.model.pojo.Focus;
 import com.dreamteam.vicam.model.pojo.Position;
 import com.dreamteam.vicam.model.pojo.Preset;
+import com.dreamteam.vicam.presenter.utility.Constants;
 import com.dreamteam.vicam.presenter.utility.Utils;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.support.ConnectionSource;
@@ -25,14 +26,13 @@ import rx.Observable;
  */
 public class DatabaseOrmLiteHelper extends OrmLiteSqliteOpenHelper {
 
-  private static final String DATABASE_NAME = "vicamera.db";
   private static final int DATABASE_VERSION = 2;
 
   private CameraDAO cameraDao;
   private PresetDAO presetDao;
 
   public DatabaseOrmLiteHelper(Context context) {
-    super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    super(context, Constants.DATABASE_NAME, null, DATABASE_VERSION);
   }
 
   @Override
@@ -55,8 +55,10 @@ public class DatabaseOrmLiteHelper extends OrmLiteSqliteOpenHelper {
                         int newVersion) {
     if (oldVersion == 1) {
       // Add columns for x and y inversion
-      db.execSQL("ALTER TABLE camera ADD invert_x INTEGER NOT NULL CHECK(invert_x IN (0,1)) DEFAULT 0;");
-      db.execSQL("ALTER TABLE camera ADD invert_y INTEGER NOT NULL CHECK(invert_y IN (0,1)) DEFAULT 0;");
+      db.execSQL(
+          "ALTER TABLE camera ADD invert_x INTEGER NOT NULL CHECK(invert_x IN (0,1)) DEFAULT 0;");
+      db.execSQL(
+          "ALTER TABLE camera ADD invert_y INTEGER NOT NULL CHECK(invert_y IN (0,1)) DEFAULT 0;");
     }
   }
 

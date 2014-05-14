@@ -6,6 +6,8 @@ package com.dreamteam.vicam.presenter.utility;
 public class Constants {
 
   public static final String DATABASE_TAG = "VICAM_DB";
+  public static final String PACKAGE_NAME = "com.dreamteam.camera";
+  public static final String DATABASE_NAME = "vicamera.db";
   public static final boolean DEBUG = true;
 
 

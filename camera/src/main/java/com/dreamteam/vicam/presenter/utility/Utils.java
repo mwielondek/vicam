@@ -1,10 +1,14 @@
 package com.dreamteam.vicam.presenter.utility;
 
+import com.google.common.io.Files;
+
+import android.os.Environment;
 import android.util.Log;
 
 import com.dreamteam.vicam.model.interfaces.Identifiable;
 import com.j256.ormlite.dao.Dao;
 
+import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.SQLException;
@@ -112,6 +116,58 @@ public class Utils {
         return Observable.error(e);
       }
     }
-
   }
+
+  public static class Database {
+
+    public static final String BACKUP_FOLDER_PATH = "/Vicam/";
+    public static final String INTERNAL_DB_PATH = "/data/" + Constants.PACKAGE_NAME
+                                                  + "/databases/" + Constants.DATABASE_NAME;
+
+    public static boolean importDb(String importName) {
+      try {
+        File sd = Environment.getExternalStorageDirectory();
+        File data = Environment.getDataDirectory();
+        File backupFolder = new File(sd, BACKUP_FOLDER_PATH);
+
+        if (sd.canWrite() && backupFolder.exists()) {
+          File internalDb = new File(data, INTERNAL_DB_PATH);
+          File importDb = new File(sd, BACKUP_FOLDER_PATH + importName);
+
+          if (importDb.exists()) {
+            Files.copy(importDb, internalDb); // overwrite internal db with imported db
+            return true;
+          }
+        }
+      } catch (Exception e) {
+        Utils.errorLog("Error occurred while importing '" + importName + "'; " + e.toString());
+      }
+      return false;
+    }
+
+    public static boolean exportDb(String exportName) {
+      try {
+        File sd = Environment.getExternalStorageDirectory();
+        File data = Environment.getDataDirectory();
+
+        if (sd.canWrite()) {
+          File backupFolder = new File(sd, BACKUP_FOLDER_PATH);
+
+          if (backupFolder.exists() || backupFolder.mkdir()) {
+            File internalDb = new File(data, INTERNAL_DB_PATH);
+            File exportDb = new File(sd, BACKUP_FOLDER_PATH + exportName);
+
+            if (exportDb.exists() || exportDb.createNewFile()) {
+              Files.copy(internalDb, exportDb); // export internal db to export db location
+              return true;
+            }
+          }
+        }
+      } catch (Exception e) {
+        Utils.errorLog("Error occurred while exporting '" + exportName + "'; " + e.toString());
+      }
+      return false;
+    }
+  }
+
 }
