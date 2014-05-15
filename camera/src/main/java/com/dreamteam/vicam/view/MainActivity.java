@@ -92,7 +92,8 @@ import static com.dreamteam.vicam.view.custom.listeners.SeekBarChangeListener.Ty
 
 public class MainActivity extends Activity {
 
-  private final String SELECTED_CAMERA = "SELECTED_CAMERA";
+  private static final String SELECTED_CAMERA = "SELECTED_CAMERA";
+  private static final String CONNECTION_SUCCESS = "CONNECTION_SUCCESS";
 
   @Inject
   EventBus mEventBus;
@@ -132,6 +133,8 @@ public class MainActivity extends Activity {
 
   private Action1<Throwable> mErrorHandler;
   private Action0 mSuccessHandler;
+  private boolean mConnectionSuccess;
+  private boolean mIsFirstCameraEvent;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -157,6 +160,10 @@ public class MainActivity extends Activity {
                                   | ActionBar.DISPLAY_USE_LOGO
                                   | ActionBar.DISPLAY_HOME_AS_UP);
     }
+
+    // Keeps track of the first camera event after oncreate
+    // if it is the first it shouldn't update connection icon since the options menu will handle it
+    mIsFirstCameraEvent = true;
 
     mPresets = new ArrayList<>();
     mPresetAdapter = new PresetArrayAdapter(this, mPresets);
@@ -222,6 +229,17 @@ public class MainActivity extends Activity {
   }
 
   @Override
+  public boolean onPrepareOptionsMenu(Menu menu) {
+    mConnectedIcon = menu.findItem(R.id.connection_state);
+    if (mConnectionSuccess) {
+      connectionSuccess();
+    } else {
+      connectionError();
+    }
+    return super.onPrepareOptionsMenu(menu);
+  }
+
+  @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     // Inflate the menu; this adds items to the action bar if it is present.
     getMenuInflater().inflate(R.menu.main, menu);
@@ -238,21 +256,13 @@ public class MainActivity extends Activity {
       restoreSelectedCamera();
     }
     mConnectedIcon = menu.findItem(R.id.connection_state);
+
     boolean visible = !mCameras.isEmpty();
     editCamera.setVisible(visible);
     deleteCamera.setVisible(visible);
     savePreset.setVisible(visible);
     cameraSpinner.setVisible(visible);
     mConnectedIcon.setVisible(visible);
-    cameraSpinner = menu.findItem(R.id.action_change_camera);
-    view = cameraSpinner.getActionView();
-    if (view instanceof Spinner) {
-      mCameraSpinner = (Spinner) view;
-      mCameraSpinner.setAdapter(mCameraAdapter);
-      mCameraSpinner.setOnItemSelectedListener(new CameraSpinnerItemListener());
-      restoreSelectedCamera();
-    }
-    mConnectedIcon = menu.findItem(R.id.connection_state);
 
     return true;
   }
@@ -369,6 +379,20 @@ public class MainActivity extends Activity {
   }
 
   @Override
+  protected void onSaveInstanceState(Bundle outState) {
+    outState.putBoolean(CONNECTION_SUCCESS, mConnectionSuccess);
+    super.onSaveInstanceState(outState);
+  }
+
+  @Override
+  protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    if (savedInstanceState != null) {
+      mConnectionSuccess = savedInstanceState.getBoolean(CONNECTION_SUCCESS, mConnectionSuccess);
+    }
+    super.onRestoreInstanceState(savedInstanceState);
+  }
+
+  @Override
   protected void onDestroy() {
     super.onDestroy();
     mDAOFactory.close();
@@ -414,11 +438,17 @@ public class MainActivity extends Activity {
   }
 
   public void connectionSuccess() {
-    mConnectedIcon.setIcon(android.R.drawable.presence_online);
+    mConnectionSuccess = true;
+    if (mConnectedIcon != null) {
+      mConnectedIcon.setIcon(android.R.drawable.presence_online);
+    }
   }
 
   public void connectionError() {
-    mConnectedIcon.setIcon(android.R.drawable.presence_busy);
+    mConnectionSuccess = false;
+    if (mConnectedIcon != null) {
+      mConnectedIcon.setIcon(android.R.drawable.presence_busy);
+    }
   }
 
   public Observable<Camera> getCurrentCamera() {
@@ -583,7 +613,11 @@ public class MainActivity extends Activity {
   @SuppressWarnings("unused")
   public void onEventMainThread(CameraChangedEvent e) {
     mCurrentCamera = e.camera;
-
+    if (mIsFirstCameraEvent) {
+      mIsFirstCameraEvent = false;
+    } else {
+      connectionError(); // Assume connection error before the connection has been established
+    }
     getPresetDAO().flatMap(new Func1<PresetDAO, Observable<List<Preset>>>() {
       @Override
       public Observable<List<Preset>> call(PresetDAO presetDAO) {
