@@ -1,5 +1,7 @@
 package com.dreamteam.vicam.view.custom.listeners;
 
+import android.content.Context;
+import android.os.Vibrator;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -45,6 +47,7 @@ public class ZoomButtonTouchListener implements View.OnTouchListener {
             }
           })
       ).subscribe(Utils.noop(), Utils.<Throwable>noop());
+
     } else if (motionEvent.getAction() == MotionEvent.ACTION_UP
                || motionEvent.getAction() == MotionEvent.ACTION_CANCEL) {
       mActivity.stopZoom();

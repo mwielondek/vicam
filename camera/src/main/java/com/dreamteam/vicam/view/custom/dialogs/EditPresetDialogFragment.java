@@ -106,7 +106,7 @@ public class EditPresetDialogFragment extends DialogFragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
-    this.getDialog().setCanceledOnTouchOutside(true);
+    this.getDialog().setCanceledOnTouchOutside(false);
     return null;
   }
 }
