@@ -154,14 +154,16 @@ public class MainActivity extends Activity {
     ActionBar actionBar = getActionBar();
     if (actionBar != null) {
       actionBar.setIcon(null);
-      actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE
-                                  | ActionBar.DISPLAY_SHOW_HOME
+      actionBar.setLogo(R.drawable.vic);
+      actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME
+                                  | ActionBar.DISPLAY_USE_LOGO
                                   | ActionBar.DISPLAY_HOME_AS_UP);
     }
 
     mPresets = new ArrayList<>();
     mPresetAdapter = new PresetArrayAdapter(this, mPresets);
 
+    // mCameraSpinnerMenu = new Menu
     mDrawerList.setAdapter(mPresetAdapter);
     mDrawerList.setOnItemClickListener(new DrawerItemClickListener(this));
     mDrawerList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
@@ -224,33 +226,31 @@ public class MainActivity extends Activity {
     };
   }
 
-  private void populateCameraList() {
-    getCameraDAO().flatMap(new Func1<CameraDAO, Observable<List<Camera>>>() {
-      @Override
-      public Observable<List<Camera>> call(CameraDAO cameraDAO) {
-        return cameraDAO.getCameras();
-      }
-    }).subscribe(new Action1<List<Camera>>() {
-      @Override
-      public void call(List<Camera> cameras) {
-        mCameras = cameras;
-      }
-    }, new Action1<Throwable>() {
-      @Override
-      public void call(Throwable throwable) {
-        mCameras = new ArrayList<>();
-      }
-    });
-    mCameraAdapter = new CameraArrayAdapter(this, mCameras);
-  }
-
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     // Inflate the menu; this adds items to the action bar if it is present.
     getMenuInflater().inflate(R.menu.main, menu);
 
-      MenuItem cameraSpinner = menu.findItem(R.id.action_change_camera);
-      View view = cameraSpinner.getActionView();
+    MenuItem editCamera = menu.findItem(R.id.action_edit_camera);
+    MenuItem deleteCamera = menu.findItem(R.id.action_delete_camera);
+    MenuItem savePreset = menu.findItem(R.id.action_save_preset);
+    MenuItem cameraSpinner = menu.findItem(R.id.action_change_camera);
+    View view = cameraSpinner.getActionView();
+    if (view instanceof Spinner) {
+      mCameraSpinner = (Spinner) view;
+      mCameraSpinner.setAdapter(mCameraAdapter);
+      mCameraSpinner.setOnItemSelectedListener(new CameraSpinnerItemListener());
+      restoreSelectedCamera();
+    }
+    mConnectedIcon = menu.findItem(R.id.connection_state);
+    boolean visible = !mCameras.isEmpty();
+    editCamera.setVisible(visible);
+    deleteCamera.setVisible(visible);
+    savePreset.setVisible(visible);
+    cameraSpinner.setVisible(visible);
+    mConnectedIcon.setVisible(visible);
+      cameraSpinner = menu.findItem(R.id.action_change_camera);
+      view = cameraSpinner.getActionView();
       if (view instanceof Spinner) {
         mCameraSpinner = (Spinner) view;
         mCameraSpinner.setAdapter(mCameraAdapter);
@@ -263,17 +263,6 @@ public class MainActivity extends Activity {
 
 
     return true;
-  }
-
-  private void restoreSelectedCamera() {
-    if (mCameraSpinner != null && mCameras != null && mSharedPreferences != null) {
-      int selected = mSharedPreferences.getInt(SELECTED_CAMERA, 0);
-      if (selected >= 0 && selected < mCameras.size()) {
-        mCameraSpinner.setSelection(selected);
-      } else if (mCameras.size() > 0) {
-        mCameraSpinner.setSelection(0);
-      }
-    }
   }
 
   @Override
@@ -308,7 +297,7 @@ public class MainActivity extends Activity {
 
       case R.id.action_add_camera:
         showDialog(AddCameraDialogFragment.newInstance(), "add_camera_dialog");
-      return true;
+        return true;
 
       case R.id.action_edit_camera:
         if (mCurrentCamera == null) {
@@ -330,7 +319,7 @@ public class MainActivity extends Activity {
 
       case R.id.action_export_db:
         if (Utils.Database.exportDb("export.db")) {
-         showToast(getString(R.string.export_database_success), Toast.LENGTH_SHORT);
+          showToast(getString(R.string.export_database_success), Toast.LENGTH_SHORT);
         } else {
           showToast(getString(R.string.export_database_failure), Toast.LENGTH_SHORT);
         }
@@ -340,8 +329,9 @@ public class MainActivity extends Activity {
         if (Utils.Database.importDb("export.db")) {
           populateCameraList();
           if (mCameraSpinner != null) {
-           mCameraSpinner.setAdapter(mCameraAdapter);
+            mCameraSpinner.setAdapter(mCameraAdapter);
           }
+          invalidateOptionsMenu();
           showToast(getString(R.string.import_database_success), Toast.LENGTH_SHORT);
         } else {
           showToast(getString(R.string.import_database_failure), Toast.LENGTH_SHORT);
@@ -490,6 +480,37 @@ public class MainActivity extends Activity {
     dialog.show(ft, tag);
   }
 
+  private void restoreSelectedCamera() {
+    if (mCameraSpinner != null && mCameras != null && mSharedPreferences != null) {
+      int selected = mSharedPreferences.getInt(SELECTED_CAMERA, 0);
+      if (selected >= 0 && selected < mCameras.size()) {
+        mCameraSpinner.setSelection(selected);
+      } else if (mCameras.size() > 0) {
+        mCameraSpinner.setSelection(0);
+      }
+    }
+  }
+
+  private void populateCameraList() {
+    getCameraDAO().flatMap(new Func1<CameraDAO, Observable<List<Camera>>>() {
+      @Override
+      public Observable<List<Camera>> call(CameraDAO cameraDAO) {
+        return cameraDAO.getCameras();
+      }
+    }).subscribe(new Action1<List<Camera>>() {
+      @Override
+      public void call(List<Camera> cameras) {
+        mCameras = cameras;
+      }
+    }, new Action1<Throwable>() {
+      @Override
+      public void call(Throwable throwable) {
+        mCameras = new ArrayList<>();
+      }
+    });
+    mCameraAdapter = new CameraArrayAdapter(this, mCameras);
+  }
+
   private void updateWithCameraState(CameraState cameraState) {
     updateFocusLevel(cameraState.getFocus().getLevel());
     updateZoomLevel(cameraState.getZoom().getLevel());
@@ -570,7 +591,6 @@ public class MainActivity extends Activity {
   public void onEventMainThread(CameraChangedEvent e) {
     mCurrentCamera = e.camera;
 
-
     getPresetDAO().flatMap(new Func1<PresetDAO, Observable<List<Preset>>>() {
       @Override
       public Observable<List<Preset>> call(PresetDAO presetDAO) {
@@ -598,6 +618,7 @@ public class MainActivity extends Activity {
     insertCamera(new Camera(e.ip, e.name, Camera.parsePort(e.port.trim()), e.invertX, e.invertY));
     // Selects the inserted camera as current
     mCameraSpinner.setSelection(mCameras.size() - 1);
+    invalidateOptionsMenu();
   }
 
   @SuppressWarnings("unused")
@@ -608,7 +629,9 @@ public class MainActivity extends Activity {
   @SuppressWarnings("unused")
   public void onEventMainThread(DeleteCameraEvent e) {
     deleteCamera(e.camera);
-
+    if (mCameras.isEmpty()) {
+      invalidateOptionsMenu();
+    }
   }
 
   @SuppressWarnings("unused")
