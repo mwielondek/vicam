@@ -13,6 +13,7 @@ import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Switch;
 
@@ -194,6 +195,8 @@ public class AddCameraDialogFragment extends DialogFragment {
           public void onFocusChange(View v, boolean hasFocus) {
 
             if (!hasFocus) {
+
+
               validName = true;
               if (TextUtils.isEmpty(nameEdit.getText().toString())) {
                 nameEdit.setError("Invalid name");
@@ -272,7 +275,10 @@ public class AddCameraDialogFragment extends DialogFragment {
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
 
-    this.getDialog().setCanceledOnTouchOutside(true);
+
+    //this.getDialog().setCanceledOnTouchOutside(true);
+
+
     return null;
   }
 }

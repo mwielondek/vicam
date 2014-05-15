@@ -127,11 +127,12 @@ public class MainActivity extends Activity {
   private PresetArrayAdapter mPresetAdapter;
   private DrawerMultiChoiceListener mContextualActionBar;
   private Spinner mCameraSpinner;
-  private Menu mCameraSpinnerMenu;
   private SharedPreferences mSharedPreferences;
   private MenuItem mConnectedIcon;
+
   private Action1<Throwable> mErrorHandler;
   private Action0 mSuccessHandler;
+  private Menu mMenu;
 
 
   @Override
@@ -160,7 +161,7 @@ public class MainActivity extends Activity {
 
     mPresets = new ArrayList<>();
     mPresetAdapter = new PresetArrayAdapter(this, mPresets);
-   // mCameraSpinnerMenu = new Menu
+
     mDrawerList.setAdapter(mPresetAdapter);
     mDrawerList.setOnItemClickListener(new DrawerItemClickListener(this));
     mDrawerList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
@@ -171,6 +172,7 @@ public class MainActivity extends Activity {
 
     mFocusSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(this, Type.FOCUS));
     mZoomSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(this, Type.ZOOM));
+
 
     mTouchpad.setOnTouchListener(new TouchpadTouchListener(this));
 
@@ -256,6 +258,10 @@ public class MainActivity extends Activity {
         restoreSelectedCamera();
       }
       mConnectedIcon = menu.findItem(R.id.connection_state);
+
+
+
+
     return true;
   }
 
@@ -293,7 +299,11 @@ public class MainActivity extends Activity {
     // Handle menu items
     switch (item.getItemId()) {
       case R.id.action_save_preset:
-        showDialog(SavePresetDialogFragment.newInstance(), "save_preset_dialog");
+        if(mCurrentCamera == null) {
+          showToast(getString(R.string.no_camera_save_preset), Toast.LENGTH_SHORT);
+        } else {
+          showDialog(SavePresetDialogFragment.newInstance(), "save_preset_dialog");
+        }
         return true;
 
       case R.id.action_add_camera:
@@ -560,6 +570,7 @@ public class MainActivity extends Activity {
   public void onEventMainThread(CameraChangedEvent e) {
     mCurrentCamera = e.camera;
 
+
     getPresetDAO().flatMap(new Func1<PresetDAO, Observable<List<Preset>>>() {
       @Override
       public Observable<List<Preset>> call(PresetDAO presetDAO) {
@@ -760,6 +771,7 @@ public class MainActivity extends Activity {
       @Override
       public void call(Integer cameraId) {
         mCameras.add(camera);
+
         mCameraAdapter.notifyDataSetChanged();
       }
     }, Utils.<Throwable>noop());

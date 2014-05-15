@@ -43,5 +43,6 @@
     <string name="import_database_failure">Failed importing database</string>
     <string name="save_preset_failure">Unable to save preset due to camera connection failure
     </string>
+    <string name="no_camera_save_preset">Add a camera first!</string>
 
 </resources>

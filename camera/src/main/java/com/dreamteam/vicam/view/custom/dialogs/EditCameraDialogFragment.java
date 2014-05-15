@@ -13,6 +13,7 @@ import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Switch;
 
@@ -46,6 +47,7 @@ public class EditCameraDialogFragment extends DialogFragment {
   private boolean validName;
   private boolean validIP;
   private boolean validPort;
+  private Context ctx;
 
   @Inject
   EventBus mEventBus;
@@ -87,6 +89,8 @@ public class EditCameraDialogFragment extends DialogFragment {
     final EditText portEdit = (EditText) view.findViewById(R.id.edit_camera_port);
     final Switch invertXSwitch = (Switch) view.findViewById(R.id.edit_camera_invert_x_axis);
     final Switch invertYSwitch = (Switch) view.findViewById(R.id.edit_camera_invert_y_axis);
+
+
 
     // Inflate and set the layout for the dialog
     // Pass null as the parent view because its going in the dialog layout
@@ -317,7 +321,9 @@ public class EditCameraDialogFragment extends DialogFragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
-    this.getDialog().setCanceledOnTouchOutside(true);
+    //this.getDialog().setCanceledOnTouchOutside(true);
     return null;
   }
+
+
 }
