@@ -4,10 +4,10 @@
     <item android:id="@+id/context_edit_preset"
           android:title="@string/edit_preset"
           android:icon="@android:drawable/ic_menu_edit"
-          android:showAsAction="ifRoom" />
+          android:showAsAction="ifRoom|withText" />
 
     <item android:id="@+id/context_delete_preset"
           android:title="@string/delete_preset"
           android:icon="@android:drawable/ic_menu_delete"
-          android:showAsAction="ifRoom" />
+          android:showAsAction="ifRoom|withText" />
 </menu>
