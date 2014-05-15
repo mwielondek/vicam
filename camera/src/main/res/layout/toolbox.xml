@@ -13,7 +13,7 @@
     <Switch
             android:id="@+id/autofocus_switch"
             android:text="@string/autofocus"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/toolbox_margin"
             android:paddingLeft="8dp"
