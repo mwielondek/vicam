@@ -214,35 +214,11 @@ public class MainActivity extends Activity {
     mZoomInButton.setOnTouchListener(
         new ZoomButtonTouchListener(this, ZoomButtonTouchListener.Type.ZOOM_IN));
 
-    mZoomInButton.setOnTouchListener(new View.OnTouchListener() {
-
-      @Override
-      public boolean onTouch(View v, MotionEvent event) {
-        // TODO Auto-generated method stub
-        if(event.getAction() == MotionEvent.ACTION_DOWN) {
-          Vibrator vb = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-          vb.vibrate(15);
-        }
-        return false;
-      }
-    });
 
 
     mZoomOutButton.setOnTouchListener(
         new ZoomButtonTouchListener(this, ZoomButtonTouchListener.Type.ZOOM_OUT));
 
-    mZoomOutButton.setOnTouchListener(new View.OnTouchListener() {
-
-      @Override
-      public boolean onTouch(View v, MotionEvent event) {
-        // TODO Auto-generated method stub
-        if(event.getAction() == MotionEvent.ACTION_DOWN) {
-          Vibrator vb = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-          vb.vibrate(15);
-        }
-        return false;
-      }
-    });
 
     populateCameraList();
 

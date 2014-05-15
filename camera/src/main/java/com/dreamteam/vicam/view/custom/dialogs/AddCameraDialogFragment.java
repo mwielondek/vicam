@@ -276,7 +276,7 @@ public class AddCameraDialogFragment extends DialogFragment {
                            Bundle savedInstanceState) {
 
 
-    //this.getDialog().setCanceledOnTouchOutside(true);
+    this.getDialog().setCanceledOnTouchOutside(false);
 
 
     return null;
