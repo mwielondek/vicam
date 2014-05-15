@@ -2,7 +2,7 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/context_edit_preset"
-          android:title="@string/edit_preset"
+          android:title="@string/rename_preset"
           android:icon="@android:drawable/ic_menu_edit"
           android:showAsAction="ifRoom" />
 

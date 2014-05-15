@@ -20,28 +20,64 @@
     <string name="dialog_add_camera_ip">IP address</string>
     <string name="dialog_add_camera_port">Port</string>
     <string name="delete_preset">Delete preset</string>
-    <string name="edit_preset">Edit preset</string>
+    <string name="rename_preset">Rename preset</string>
     <string name="delete_presets">Delete presets</string>
     <string name="delete_camera">Delete camera</string>
     <string name="apply_changes">Apply Changes</string>
     <string name="delete_camera_confirmation">\'%s\' will be removed.</string>
     <string name="dialog_about_text">Stockholm, 2014: This application was created by the project group Dream Team on behalf of The VIC Studio at KTH, for the course Software Engineering (DD1392).
-        The application is programmed as a controller for the Panasonic AW-HE50S [SDI Model].
+        The application is programmed as a controller for the Panasonic AW-HE50S [SDI Model].\n
     </string>
-    <string name="dialog_about_text_members">Aroshine Munasinghe, Benny Tieu, Brian Ye, Dajana Vlajic, Daniel Millevik, Daniel Szerszen, Donia Alipoor, Fredrik Sommar, Michael Wang, Milosz Wielondek and Oktay Bahceci.</string>
+    <string name="dialog_about_text_members">
+        <b>(Customer Communication)</b>\n
+        Aroshine Munasinghe\n
+        <i>aroshine\@kth.se</i>\n
+        <b>(Frontend/GUI)</b>\n
+        Benny Tieu\n
+        <i>btieu@kth.se</i>\n
+        <b>(Programmer)</b>\n
+        Brian Ye\n
+        <i>briany\@kth.se</i>\n
+        <b>(Programmer)</b>\n
+        Dajana Vlajic\n
+        <i>dajana\@kth.se</i>\n
+        <b>(Backend)</b>\n
+        Daniel Millevik\n
+        <i>millevik\@kth.se</i>\n
+        <b>(Programmer)</b>\n
+        Daniel Szerszen\n
+        <i>szerszen\@kth.se</i>\n
+        <b>(Frontend/Design/GUI)</b>\n
+        Donia Alipoor\n
+        <i>donia\@kth.se</i>\n
+        <b>(Chief Programmer)</b>\n
+        Fredrik Sommar\n
+        <i>fsommar\@kth.se</i>\n
+        <b>(Programmer)</b>\n
+        Michael Wang\n
+        <i>micwan\@kth.se</i>\n
+        <b>(Project Manager)</b>\n
+        Milosz Wielondek\n
+        <i>miloszw\@kth.se</i>\n
+        <b>(Design/GUI)</b>\n
+        Oktay Bahceci\n
+        <i>oktayb\@kth.se</i>\n
+
+    </string>
+
     <string name="about_us_credits">~ Credits ~</string>
     <string name="add_camera_invert_axis_x_hint">Inverted X-axis</string>
     <string name="add_camera_invert_axis_y_hint">Inverted Y-axis</string>
     <string name="connectìon_state">Connection State</string>
     <string name="vic_studio_logo">VIC Studio logo</string>
     <string name="dream_team_logo">Dream Team logo</string>
-    <string name="export_db">Export database</string>
-    <string name="import_db">Import database</string>
+    <string name="export_db">Export settings</string>
+    <string name="import_db">Import settings</string>
     <string name="no_camera_to_edit">There\'s no camera to be edited</string>
     <string name="no_camera_to_delete">There\'s no camera to be deleted</string>
-    <string name="export_database_success">Successfully exported database</string>
+    <string name="export_database_success">Successfully exported database to \n\"%s\"</string>
     <string name="export_database_failure">Failed exporting database</string>
-    <string name="import_database_success">Successfully imported database</string>
+    <string name="import_database_success">Successfully imported database from \n\"%s\"</string>
     <string name="import_database_failure">Failed importing database</string>
     <string name="save_preset_failure">Unable to save preset due to camera connection failure
     </string>

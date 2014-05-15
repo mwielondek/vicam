@@ -124,7 +124,7 @@ public class Utils {
     public static final String INTERNAL_DB_PATH = "/data/" + Constants.PACKAGE_NAME
                                                   + "/databases/" + Constants.DATABASE_NAME;
 
-    public static boolean importDb(String importName) {
+    public static String importDb(String importName) {
       try {
         File sd = Environment.getExternalStorageDirectory();
         File data = Environment.getDataDirectory();
@@ -132,20 +132,21 @@ public class Utils {
 
         if (sd.canWrite() && backupFolder.exists()) {
           File internalDb = new File(data, INTERNAL_DB_PATH);
-          File importDb = new File(sd, BACKUP_FOLDER_PATH + importName);
+          final String settingsPath = BACKUP_FOLDER_PATH + importName;
+          File importDb = new File(sd, settingsPath);
 
           if (importDb.exists()) {
             Files.copy(importDb, internalDb); // overwrite internal db with imported db
-            return true;
+            return settingsPath;
           }
         }
       } catch (Exception e) {
         Utils.errorLog("Error occurred while importing '" + importName + "'; " + e.toString());
       }
-      return false;
+      return null;
     }
 
-    public static boolean exportDb(String exportName) {
+    public static String exportDb(String exportName) {
       try {
         File sd = Environment.getExternalStorageDirectory();
         File data = Environment.getDataDirectory();
@@ -155,18 +156,19 @@ public class Utils {
 
           if (backupFolder.exists() || backupFolder.mkdir()) {
             File internalDb = new File(data, INTERNAL_DB_PATH);
-            File exportDb = new File(sd, BACKUP_FOLDER_PATH + exportName);
+            final String settingsPath = BACKUP_FOLDER_PATH + exportName;
+            File exportDb = new File(sd, settingsPath);
 
             if (exportDb.exists() || exportDb.createNewFile()) {
               Files.copy(internalDb, exportDb); // export internal db to export db location
-              return true;
+              return settingsPath;
             }
           }
         }
       } catch (Exception e) {
         Utils.errorLog("Error occurred while exporting '" + exportName + "'; " + e.toString());
       }
-      return false;
+      return null;
     }
   }
 
