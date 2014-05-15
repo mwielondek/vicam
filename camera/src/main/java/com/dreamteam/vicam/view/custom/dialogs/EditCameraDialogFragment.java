@@ -13,7 +13,7 @@ import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
 
@@ -73,11 +73,6 @@ public class EditCameraDialogFragment extends DialogFragment {
     MainActivity activity = (MainActivity) getActivity();
     AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
-    Context ctx = getActivity();
-    //ctx.setTheme(android.R.style.Theme_Holo_Light);
-
-    final int cameraId = getArguments().getInt(CAMERA_ID_KEY);
-
     // Get the layout inflater
     LayoutInflater inflater = activity.getLayoutInflater();
     View view = inflater.inflate(R.layout.dialog_edit_camera, null);
@@ -90,204 +85,7 @@ public class EditCameraDialogFragment extends DialogFragment {
     final Switch invertXSwitch = (Switch) view.findViewById(R.id.edit_camera_invert_x_axis);
     final Switch invertYSwitch = (Switch) view.findViewById(R.id.edit_camera_invert_y_axis);
 
-
-
-    // Inflate and set the layout for the dialog
-    // Pass null as the parent view because its going in the dialog layout
-    builder.setView(view)
-        .setPositiveButton(R.string.apply_changes, new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int id) {
-            mEventBus.post(new EditCameraEvent(new Camera(
-                cameraId,
-                ipEdit.getText().toString(),
-                nameEdit.getText().toString(),
-                Camera.parsePort(portEdit.getText().toString()),
-                !invertXSwitch.isChecked(),
-                invertYSwitch.isChecked()
-            )));
-          }
-        })
-        .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-          // Cancel dialog
-          public void onClick(DialogInterface dialog, int id) {
-            dialog.cancel();
-          }
-        });
-
-
-    final AlertDialog alertDialog = builder.create();
-
-    nameEdit.addTextChangedListener(new TextWatcher() {
-      @Override
-      public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-
-      }
-
-      @Override
-      public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-
-      }
-
-      @Override
-      public void afterTextChanged(Editable editable) {
-
-        validName = true;
-        if (TextUtils.isEmpty(nameEdit.getText().toString())) {
-          nameEdit.setError("Invalid name");
-          validName = false;
-          alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(false);
-        }
-
-        if(validName && validIP && validPort) {
-          alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(true);
-        }
-
-      }
-    });
-
-    ipEdit.addTextChangedListener(new TextWatcher() {
-      @Override
-      public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-
-      }
-
-      @Override
-      public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-
-      }
-
-      @Override
-      public void afterTextChanged(Editable editable) {
-
-        validIP = true;
-        Matcher matcher = IP_ADDRESS.matcher(ipEdit.getText().toString());
-        if (!matcher.matches()) {
-          ipEdit.setError("Invalid IP-Address");
-          validIP = false;
-          alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(false);
-        }
-        if(validName && validIP && validPort) {
-          alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(true);
-        }
-      }
-    });
-
-    portEdit.addTextChangedListener(new TextWatcher() {
-      @Override
-      public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-
-      }
-
-      @Override
-      public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-
-      }
-
-      @Override
-      public void afterTextChanged(Editable editable) {
-
-        validPort = true;
-
-        try {
-          int x = Integer.parseInt(portEdit.getText().toString());
-          if (x < 0 || x > 65535) {
-            portEdit.setError("Invalid Port");
-            validPort = false;
-            alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(false);
-          }
-
-        } catch (NumberFormatException e) {
-          // Nothing
-        }
-
-        if(validName && validIP && validPort) {
-          alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(true);
-        }
-      }
-    });
-
-    nameEdit.setOnFocusChangeListener(
-        new View.OnFocusChangeListener() {
-          @Override
-          public void onFocusChange(View v, boolean hasFocus) {
-
-            if (!hasFocus) {
-              validName = true;
-              if (TextUtils.isEmpty(nameEdit.getText().toString())) {
-                nameEdit.setError("Invalid name");
-                validName = false;
-                alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(false);
-              }
-              if(validName && validIP && validPort) {
-                alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(true);
-              }
-            }
-          }
-        }
-    );
-
-    ipEdit.setOnFocusChangeListener(
-        new View.OnFocusChangeListener() {
-          @Override
-          public void onFocusChange(View v, boolean hasFocus) {
-            if (!hasFocus) {
-              validIP = true;
-              Matcher matcher = IP_ADDRESS.matcher(ipEdit.getText().toString());
-              if (!matcher.matches()) {
-                ipEdit.setError("Invalid IP-Address");
-                validIP = false;
-                alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(false);
-              }
-              if(validName && validIP && validPort) {
-                alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(true);
-              }
-            }
-          }
-        }
-    );
-
-    portEdit.setOnFocusChangeListener(
-        new View.OnFocusChangeListener() {
-          @Override
-          public void onFocusChange(View v, boolean hasFocus) {
-            if (!hasFocus) {
-              validPort = true;
-
-              try {
-                int x = Integer.parseInt(portEdit.getText().toString());
-                if (x < 0 || x > 65535) {
-                  portEdit.setError("Invalid Port");
-                  validPort = false;
-                  alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(false);
-                }
-
-              } catch (NumberFormatException e) {
-                // Nothing
-              }
-
-              if(validName && validIP && validPort) {
-                alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(true);
-              }
-            }
-          }
-        }
-    );
-
-    alertDialog.setOnShowListener(
-        new DialogInterface.OnShowListener() {
-          @Override
-          public void onShow(DialogInterface dialogInterface) {
-            if(validName && validIP && validPort) {
-              alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(true);
-            } else {
-              alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(false);
-            }
-
-          }
-        }
-    );
-
+    final int cameraId = getArguments().getInt(CAMERA_ID_KEY);
     mDAOFactory.getCameraDAO().flatMap(new Func1<CameraDAO, Observable<Camera>>() {
       @Override
       public Observable<Camera> call(CameraDAO cameraDAO) {
@@ -313,10 +111,191 @@ public class EditCameraDialogFragment extends DialogFragment {
       }
     }, Utils.<Throwable>noop());
 
+    // Inflate and set the layout for the dialog
+    // Pass null as the parent view because its going in the dialog layout
+    builder.setView(view)
+        .setPositiveButton(R.string.apply_changes, new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int id) {
+            mEventBus.post(new EditCameraEvent(new Camera(
+                cameraId,
+                ipEdit.getText().toString(),
+                nameEdit.getText().toString(),
+                Camera.parsePort(portEdit.getText().toString()),
+                !invertXSwitch.isChecked(),
+                invertYSwitch.isChecked()
+            )));
+          }
+        })
+        .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+          // Cancel dialog
+          @Override
+          public void onClick(DialogInterface dialog, int id) {
+            dialog.cancel();
+          }
+        });
+
+    final AlertDialog alertDialog = builder.create();
+
+    nameEdit.addTextChangedListener(
+        new TextWatcher() {
+          @Override
+          public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+          }
+
+          @Override
+          public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+          }
+
+          @Override
+          public void afterTextChanged(Editable editable) {
+            validName = true;
+            Button positiveButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            if (TextUtils.isEmpty(nameEdit.getText().toString())) {
+              nameEdit.setError("Invalid name");
+              validName = false;
+              positiveButton.setEnabled(false);
+            }
+
+            if (validName && validIP && validPort) {
+              positiveButton.setEnabled(true);
+            }
+
+          }
+        }
+    );
+
+    ipEdit.addTextChangedListener(
+        new TextWatcher() {
+          @Override
+          public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+          }
+
+          @Override
+          public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+          }
+
+          @Override
+          public void afterTextChanged(Editable editable) {
+            Button positiveButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            validIP = true;
+            Matcher matcher = IP_ADDRESS.matcher(ipEdit.getText().toString());
+            if (!matcher.matches()) {
+              ipEdit.setError("Invalid IP-Address");
+              validIP = false;
+              positiveButton.setEnabled(false);
+            }
+            if (validName && validIP && validPort) {
+              positiveButton.setEnabled(true);
+            }
+          }
+        }
+    );
+
+    portEdit.addTextChangedListener(
+        new TextWatcher() {
+          @Override
+          public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+          }
+
+          @Override
+          public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+          }
+
+          @Override
+          public void afterTextChanged(Editable editable) {
+            Button positiveButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            validPort = true;
+            try {
+              int x = Integer.parseInt(portEdit.getText().toString());
+              if (x < 0 || x > 65535) {
+                portEdit.setError("Invalid Port");
+                validPort = false;
+                positiveButton.setEnabled(false);
+              }
+
+            } catch (NumberFormatException e) {
+              // Nothing
+            }
+
+            if (validName && validIP && validPort) {
+              positiveButton.setEnabled(true);
+            }
+          }
+        }
+    );
+
+    nameEdit.setOnFocusChangeListener(
+        new View.OnFocusChangeListener() {
+          @Override
+          public void onFocusChange(View v, boolean hasFocus) {
+            Button positiveButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+
+            if (!hasFocus) {
+              validName = true;
+              if (TextUtils.isEmpty(nameEdit.getText().toString())) {
+                nameEdit.setError("Invalid name");
+                validName = false;
+                positiveButton.setEnabled(false);
+              }
+              if (validName && validIP && validPort) {
+                positiveButton.setEnabled(true);
+              }
+            }
+          }
+        }
+    );
+
+    ipEdit.setOnFocusChangeListener(
+        new View.OnFocusChangeListener() {
+          @Override
+          public void onFocusChange(View v, boolean hasFocus) {
+            Button positiveButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            if (!hasFocus) {
+              validIP = true;
+              Matcher matcher = IP_ADDRESS.matcher(ipEdit.getText().toString());
+              if (!matcher.matches()) {
+                ipEdit.setError("Invalid IP-Address");
+                validIP = false;
+                positiveButton.setEnabled(false);
+              }
+              if (validName && validIP && validPort) {
+                positiveButton.setEnabled(true);
+              }
+            }
+          }
+        }
+    );
+
+    portEdit.setOnFocusChangeListener(
+        new View.OnFocusChangeListener() {
+          @Override
+          public void onFocusChange(View v, boolean hasFocus) {
+            Button positiveButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+
+            if (!hasFocus) {
+              validPort = true;
+              try {
+                int x = Integer.parseInt(portEdit.getText().toString());
+                if (x < 0 || x > 65535) {
+                  portEdit.setError("Invalid Port");
+                  validPort = false;
+                  positiveButton.setEnabled(false);
+                }
+              } catch (NumberFormatException e) {
+                // Nothing
+              }
+
+              if (validName && validIP && validPort) {
+                positiveButton.setEnabled(true);
+              }
+            }
+          }
+        }
+    );
 
     return alertDialog;
   }
-
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,

@@ -3,7 +3,6 @@ package com.dreamteam.vicam.view.custom.dialogs;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
@@ -13,7 +12,7 @@ import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
 
@@ -48,8 +47,6 @@ public class AddCameraDialogFragment extends DialogFragment {
   private boolean validIP;
   private boolean validPort;
 
-  private Context ctx;
-
   public AddCameraDialogFragment() {
     Dagger.inject(this);
   }
@@ -57,9 +54,6 @@ public class AddCameraDialogFragment extends DialogFragment {
   @Override
   public Dialog onCreateDialog(Bundle savedInstanceState) {
     final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-
-    ctx = getActivity();
-    //ctx.setTheme(android.R.style.Theme_Holo_Light);
 
     // Get the layout inflater
     LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -99,30 +93,28 @@ public class AddCameraDialogFragment extends DialogFragment {
 
     final AlertDialog alertDialog = builder.create();
 
-
     nameEdit.addTextChangedListener(new TextWatcher() {
       @Override
       public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-
       }
 
       @Override
       public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-
       }
 
       @Override
       public void afterTextChanged(Editable editable) {
+        Button positiveButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
 
         validName = true;
         if (TextUtils.isEmpty(nameEdit.getText().toString())) {
           nameEdit.setError("Invalid name");
           validName = false;
-          alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(false);
+          positiveButton.setEnabled(false);
         }
 
-        if(validName && validIP && validPort) {
-          alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(true);
+        if (validName && validIP && validPort) {
+          positiveButton.setEnabled(true);
         }
 
       }
@@ -131,26 +123,25 @@ public class AddCameraDialogFragment extends DialogFragment {
     ipEdit.addTextChangedListener(new TextWatcher() {
       @Override
       public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-
       }
 
       @Override
       public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-
       }
 
       @Override
       public void afterTextChanged(Editable editable) {
+        Button positiveButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
 
         validIP = true;
         Matcher matcher = IP_ADDRESS.matcher(ipEdit.getText().toString());
         if (!matcher.matches()) {
           ipEdit.setError("Invalid IP-Address");
           validIP = false;
-          alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(false);
+          positiveButton.setEnabled(false);
         }
-        if(validName && validIP && validPort) {
-          alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(true);
+        if (validName && validIP && validPort) {
+          positiveButton.setEnabled(true);
         }
       }
     });
@@ -168,7 +159,7 @@ public class AddCameraDialogFragment extends DialogFragment {
 
       @Override
       public void afterTextChanged(Editable editable) {
-
+        Button positiveButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
         validPort = true;
 
         try {
@@ -176,15 +167,15 @@ public class AddCameraDialogFragment extends DialogFragment {
           if (x < 0 || x > 65535) {
             portEdit.setError("Invalid Port");
             validPort = false;
-            alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(false);
+            positiveButton.setEnabled(false);
           }
 
         } catch (NumberFormatException e) {
           // Nothing
         }
 
-        if(validName && validIP && validPort) {
-          alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(true);
+        if (validName && validIP && validPort) {
+          positiveButton.setEnabled(true);
         }
       }
     });
@@ -193,18 +184,16 @@ public class AddCameraDialogFragment extends DialogFragment {
         new View.OnFocusChangeListener() {
           @Override
           public void onFocusChange(View v, boolean hasFocus) {
-
+            Button positiveButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
             if (!hasFocus) {
-
-
               validName = true;
               if (TextUtils.isEmpty(nameEdit.getText().toString())) {
                 nameEdit.setError("Invalid name");
                 validName = false;
-                alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(false);
+                positiveButton.setEnabled(false);
               }
-              if(validName && validIP && validPort) {
-                alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(true);
+              if (validName && validIP && validPort) {
+                positiveButton.setEnabled(true);
               }
             }
           }
@@ -215,16 +204,17 @@ public class AddCameraDialogFragment extends DialogFragment {
         new View.OnFocusChangeListener() {
           @Override
           public void onFocusChange(View v, boolean hasFocus) {
+            Button positiveButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
             if (!hasFocus) {
               validIP = true;
               Matcher matcher = IP_ADDRESS.matcher(ipEdit.getText().toString());
               if (!matcher.matches()) {
                 ipEdit.setError("Invalid IP-Address");
                 validIP = false;
-                alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(false);
+                positiveButton.setEnabled(false);
               }
-              if(validName && validIP && validPort) {
-                alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(true);
+              if (validName && validIP && validPort) {
+                positiveButton.setEnabled(true);
               }
             }
           }
@@ -235,6 +225,7 @@ public class AddCameraDialogFragment extends DialogFragment {
         new View.OnFocusChangeListener() {
           @Override
           public void onFocusChange(View v, boolean hasFocus) {
+            Button positiveButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
             if (!hasFocus) {
               validPort = true;
 
@@ -243,15 +234,15 @@ public class AddCameraDialogFragment extends DialogFragment {
                 if (x < 0 || x > 65535) {
                   portEdit.setError("Invalid Port");
                   validPort = false;
-                  alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(false);
+                  positiveButton.setEnabled(false);
                 }
 
               } catch (NumberFormatException e) {
                 // Nothing
               }
 
-              if(validName && validIP && validPort) {
-                alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(true);
+              if (validName && validIP && validPort) {
+                positiveButton.setEnabled(true);
               }
             }
           }
@@ -262,8 +253,7 @@ public class AddCameraDialogFragment extends DialogFragment {
         new DialogInterface.OnShowListener() {
           @Override
           public void onShow(DialogInterface dialogInterface) {
-            alertDialog.getButton(alertDialog.BUTTON_POSITIVE)
-                .setEnabled(false);
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
           }
         }
     );
@@ -274,11 +264,7 @@ public class AddCameraDialogFragment extends DialogFragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
-
-
     this.getDialog().setCanceledOnTouchOutside(false);
-
-
     return null;
   }
 }
