@@ -60,7 +60,7 @@ public class EditPresetDialogFragment extends DialogFragment {
     final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
     Context ctx = getActivity();
-    ctx.setTheme(android.R.style.Theme_Holo_Light);
+   // ctx.setTheme(android.R.style.Theme_Holo_Light);
 
     // Inflate the layout for the dialog
     LayoutInflater inflater = getActivity().getLayoutInflater();

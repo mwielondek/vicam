@@ -74,7 +74,7 @@ public class EditCameraDialogFragment extends DialogFragment {
     AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
     Context ctx = getActivity();
-    ctx.setTheme(android.R.style.Theme_Holo_Light);
+    //ctx.setTheme(android.R.style.Theme_Holo_Light);
 
     final int cameraId = getArguments().getInt(CAMERA_ID_KEY);
 

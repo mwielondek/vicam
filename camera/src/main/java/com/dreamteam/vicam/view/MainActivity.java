@@ -7,15 +7,18 @@ import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.widget.Button;
@@ -179,6 +182,24 @@ public class MainActivity extends Activity {
     mTouchpad.setOnTouchListener(new TouchpadTouchListener(this));
 
 
+/*
+    mTouchpad.setOnTouchListener(new View.OnTouchListener() {
+
+      @Override
+      public boolean onTouch(View v, MotionEvent event) {
+        // TODO Auto-generated method stub
+        if(event.getAction() == MotionEvent.ACTION_DOWN) {
+          Vibrator vb = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+          vb.vibrate(100);
+        }
+        return false;
+      }
+    });
+    */
+
+
+
+
 
     final SwitchButtonCheckedListener switchListener = new SwitchButtonCheckedListener(this);
     mAutofocusSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -192,8 +213,36 @@ public class MainActivity extends Activity {
 
     mZoomInButton.setOnTouchListener(
         new ZoomButtonTouchListener(this, ZoomButtonTouchListener.Type.ZOOM_IN));
+
+    mZoomInButton.setOnTouchListener(new View.OnTouchListener() {
+
+      @Override
+      public boolean onTouch(View v, MotionEvent event) {
+        // TODO Auto-generated method stub
+        if(event.getAction() == MotionEvent.ACTION_DOWN) {
+          Vibrator vb = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+          vb.vibrate(15);
+        }
+        return false;
+      }
+    });
+
+
     mZoomOutButton.setOnTouchListener(
         new ZoomButtonTouchListener(this, ZoomButtonTouchListener.Type.ZOOM_OUT));
+
+    mZoomOutButton.setOnTouchListener(new View.OnTouchListener() {
+
+      @Override
+      public boolean onTouch(View v, MotionEvent event) {
+        // TODO Auto-generated method stub
+        if(event.getAction() == MotionEvent.ACTION_DOWN) {
+          Vibrator vb = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+          vb.vibrate(15);
+        }
+        return false;
+      }
+    });
 
     populateCameraList();
 

@@ -59,7 +59,7 @@ public class AddCameraDialogFragment extends DialogFragment {
     final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
     ctx = getActivity();
-    ctx.setTheme(android.R.style.Theme_Holo_Light);
+    //ctx.setTheme(android.R.style.Theme_Holo_Light);
 
     // Get the layout inflater
     LayoutInflater inflater = getActivity().getLayoutInflater();
