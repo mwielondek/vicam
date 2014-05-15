@@ -25,7 +25,9 @@
     <string name="delete_camera">Delete camera</string>
     <string name="apply_changes">Apply Changes</string>
     <string name="delete_camera_confirmation">\'%s\' will be removed.</string>
-    <string name="dialog_about_text">Stockholm, 2014: This application was created by the project group Dream Team on behalf of The VIC Studio at KTH, for the course Software Engineering (DD1392).</string>
+    <string name="dialog_about_text">Stockholm, 2014: This application was created by the project group Dream Team on behalf of The VIC Studio at KTH, for the course Software Engineering (DD1392).
+        The application is programmed as a controller for the Panasonic AW-HE50S [SDI Model].
+    </string>
     <string name="dialog_about_text_members">Aroshine Munasinghe, Benny Tieu, Brian Ye, Dajana Vlajic, Daniel Millevik, Daniel Szerszen, Donia Alipoor, Fredrik Sommar, Michael Wang, Milosz Wielondek and Oktay Bahceci.</string>
     <string name="about_us_credits">~ Credits ~</string>
     <string name="add_camera_invert_axis_x_hint">Inverted X-axis</string>

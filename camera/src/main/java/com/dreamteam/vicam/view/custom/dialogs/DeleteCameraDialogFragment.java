@@ -56,7 +56,7 @@ public class DeleteCameraDialogFragment extends DialogFragment {
     final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
     Context ctx = getActivity();
-    ctx.setTheme(android.R.style.Theme_Holo_Light);
+    //ctx.setTheme(android.R.style.Theme_Holo_Light);
 
     final int cameraId = getArguments().getInt(CAMERA_ID_KEY);
     mDAOFactory.getCameraDAO().flatMap(new Func1<CameraDAO, Observable<Camera>>() {

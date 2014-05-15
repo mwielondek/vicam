@@ -29,7 +29,7 @@ public class AboutPageDialogFragment extends DialogFragment {
     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
     Context ctx = getActivity();
-    ctx.setTheme(android.R.style.Theme_Holo_Light);
+    //ctx.setTheme(android.R.style.Theme_Holo_Light);
 
     // Get the layout inflater
     LayoutInflater inflater = getActivity().getLayoutInflater();
