@@ -7,18 +7,15 @@ import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.widget.Button;
@@ -135,8 +132,6 @@ public class MainActivity extends Activity {
 
   private Action1<Throwable> mErrorHandler;
   private Action0 mSuccessHandler;
-  private Menu mMenu;
-
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -178,28 +173,7 @@ public class MainActivity extends Activity {
     mFocusSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(this, Type.FOCUS));
     mZoomSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener(this, Type.ZOOM));
 
-
     mTouchpad.setOnTouchListener(new TouchpadTouchListener(this));
-
-
-/*
-    mTouchpad.setOnTouchListener(new View.OnTouchListener() {
-
-      @Override
-      public boolean onTouch(View v, MotionEvent event) {
-        // TODO Auto-generated method stub
-        if(event.getAction() == MotionEvent.ACTION_DOWN) {
-          Vibrator vb = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-          vb.vibrate(100);
-        }
-        return false;
-      }
-    });
-    */
-
-
-
-
 
     final SwitchButtonCheckedListener switchListener = new SwitchButtonCheckedListener(this);
     mAutofocusSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -213,12 +187,8 @@ public class MainActivity extends Activity {
 
     mZoomInButton.setOnTouchListener(
         new ZoomButtonTouchListener(this, ZoomButtonTouchListener.Type.ZOOM_IN));
-
-
-
     mZoomOutButton.setOnTouchListener(
         new ZoomButtonTouchListener(this, ZoomButtonTouchListener.Type.ZOOM_OUT));
-
 
     populateCameraList();
 
@@ -274,18 +244,15 @@ public class MainActivity extends Activity {
     savePreset.setVisible(visible);
     cameraSpinner.setVisible(visible);
     mConnectedIcon.setVisible(visible);
-      cameraSpinner = menu.findItem(R.id.action_change_camera);
-      view = cameraSpinner.getActionView();
-      if (view instanceof Spinner) {
-        mCameraSpinner = (Spinner) view;
-        mCameraSpinner.setAdapter(mCameraAdapter);
-        mCameraSpinner.setOnItemSelectedListener(new CameraSpinnerItemListener());
-        restoreSelectedCamera();
-      }
-      mConnectedIcon = menu.findItem(R.id.connection_state);
-
-
-
+    cameraSpinner = menu.findItem(R.id.action_change_camera);
+    view = cameraSpinner.getActionView();
+    if (view instanceof Spinner) {
+      mCameraSpinner = (Spinner) view;
+      mCameraSpinner.setAdapter(mCameraAdapter);
+      mCameraSpinner.setOnItemSelectedListener(new CameraSpinnerItemListener());
+      restoreSelectedCamera();
+    }
+    mConnectedIcon = menu.findItem(R.id.connection_state);
 
     return true;
   }
@@ -313,7 +280,7 @@ public class MainActivity extends Activity {
     // Handle menu items
     switch (item.getItemId()) {
       case R.id.action_save_preset:
-        if(mCurrentCamera == null) {
+        if (mCurrentCamera == null) {
           showToast(getString(R.string.no_camera_save_preset), Toast.LENGTH_SHORT);
         } else {
           showDialog(SavePresetDialogFragment.newInstance(), "save_preset_dialog");
