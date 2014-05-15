@@ -8,14 +8,17 @@
         android:background="@drawable/bg_card"
         android:gravity="center_vertical"
         android:minWidth="@dimen/toolbox_min_width"
-        android:padding="@dimen/toolbox_padding">
+        android:paddingTop="@dimen/toolbox_padding"
+        android:paddingLeft="@dimen/toolbox_padding"
+        android:paddingRight="@dimen/toolbox_padding"
+        android:paddingBottom="0dp">
 
     <Switch
             android:id="@+id/autofocus_switch"
             android:text="@string/autofocus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/toolbox_margin"
+            android:layout_marginBottom="10dp"
             android:paddingLeft="8dp"
             android:textAppearance="?android:listSeparatorTextViewStyle"/>
 
@@ -58,6 +61,9 @@
     <LinearLayout android:layout_width="match_parent"
                   android:layout_height="wrap_content"
                   android:orientation="horizontal"
+                  android:layout_marginBottom="0dp"
+                  android:padding="0dp"
+                  android:layout_marginTop="20dp"
                   style="?android:attr/buttonBarStyle">
         <Button
                 android:text="{fa-search-minus}"
@@ -66,7 +72,9 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/zoom_in_button"
                 android:layout_weight="1"
+                android:layout_margin="0dp"
                 style="?android:attr/buttonBarButtonStyle"/>
+
         <Button
                 android:text="{fa-search-plus}"
                 android:textColor="@color/zoombuttoncolor"
@@ -74,6 +82,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/zoom_out_button"
                 android:layout_weight="1"
+                android:layout_margin="0dp"
                 style="?android:attr/buttonBarButtonStyle"/>
     </LinearLayout>
 
