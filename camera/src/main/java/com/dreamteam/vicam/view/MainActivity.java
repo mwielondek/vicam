@@ -320,22 +320,27 @@ public class MainActivity extends Activity {
         return true;
 
       case R.id.action_export_db:
-        if (Utils.Database.exportDb("export.db")) {
-          showToast(getString(R.string.export_database_success), Toast.LENGTH_SHORT);
+        String settingsExportPath = Utils.Database.exportDb("export.db");
+        if (settingsExportPath != null) {
+          showToast(getString(R.string.export_database_success, settingsExportPath),
+                    Toast.LENGTH_SHORT);
         } else {
           showToast(getString(R.string.export_database_failure), Toast.LENGTH_SHORT);
         }
         return true;
 
       case R.id.action_import_db:
-        if (Utils.Database.importDb("export.db")) {
+
+        String settingsImportPath = Utils.Database.importDb("export.db");
+        if (settingsImportPath != null) {
           populateCameraList();
           if (mCameraSpinner != null) {
             mCameraSpinner.setAdapter(mCameraAdapter);
           }
           mCameraAdapter.notifyDataSetChanged();
           invalidateOptionsMenu();
-          showToast(getString(R.string.import_database_success), Toast.LENGTH_SHORT);
+          showToast(getString(R.string.import_database_success, settingsImportPath),
+                    Toast.LENGTH_SHORT);
         } else {
           showToast(getString(R.string.import_database_failure), Toast.LENGTH_SHORT);
         }
@@ -863,11 +868,13 @@ public class MainActivity extends Activity {
             break;
           }
         }
-        mCurrentCamera = null;
+
         mCameraAdapter.notifyDataSetChanged();
-        if (mCameras.size() > 0) {
-          mCameraSpinner.setSelection(0);
+        final Camera selectedItem = (Camera) mCameraSpinner.getSelectedItem();
+        if (selectedItem != null) {
+          mEventBus.post(new CameraChangedEvent(selectedItem));
         }
+
       }
     }, Utils.<Throwable>noop());
   }

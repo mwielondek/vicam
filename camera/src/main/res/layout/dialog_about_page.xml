@@ -5,31 +5,17 @@
               android:layout_width="wrap_content"
               android:layout_height="wrap_content">
 
-    <LinearLayout android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:layout_gravity="center">
 
-        <ImageView android:layout_width="wrap_content"
-                   android:layout_height="wrap_content"
-                   android:layout_gravity="center_vertical|center"
-                   android:src="@drawable/vic_logo"
-                   android:contentDescription="@string/vic_studio_logo"
-                   android:layout_marginTop="5dp"
-                   android:layout_marginBottom="5dp"
-                   android:layout_marginLeft="5dp"
-                   android:layout_marginRight="5dp"/>
+    <ImageView android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:layout_gravity="center_vertical|center"
+               android:src="@drawable/vic_logo"
+               android:contentDescription="@string/vic_studio_logo"
+               android:layout_marginTop="5dp"
+               android:layout_marginBottom="5dp"
+               android:layout_marginLeft="5dp"
+               android:layout_marginRight="5dp"/>
 
-        <ImageView android:layout_width="wrap_content"
-                   android:layout_height="wrap_content"
-                   android:src="@drawable/dt_wo_bg"
-                   android:contentDescription="@string/dream_team_logo"
-                   android:layout_marginTop="5dp"
-                   android:layout_marginBottom="5dp"
-                   android:layout_marginRight="5dp"
-                />
-
-
-    </LinearLayout>
 
     <TextView android:id="@+id/about_text"
               android:textSize="12sp"
@@ -47,14 +33,46 @@
               android:text="@string/about_us_credits"
               android:layout_gravity="center"/>
 
-    <TextView android:id="@+id/about_text_members"
-              android:textSize="12sp"
-              android:paddingLeft="10dp"
-              android:paddingRight="10dp"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_gravity="center_vertical|right"
-              android:text="@string/dialog_about_text_members"
-              android:paddingBottom="10dp"/>
+    <LinearLayout android:layout_width="match_parent"
+                  android:layout_height="120dp"
+                  android:orientation="vertical"
+
+                  android:layout_gravity="center_horizontal">
+        <ScrollView
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+
+                >
+
+            <LinearLayout  android:orientation="vertical"
+                           android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_gravity="center_horizontal">
+                <TextView
+
+                        android:id="@+id/about_text_members"
+                        android:textSize="12sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:layout_gravity="center_horizontal"
+
+                        android:text="@string/dialog_about_text_members"
+                        />
+
+                <ImageView android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:src="@drawable/dt_wo_bg"
+                           android:contentDescription="@string/dream_team_logo"
+                           android:layout_marginTop="10dp"
+                           android:layout_marginBottom="20dp"
+                           android:layout_marginRight="5dp"
+                           android:layout_gravity="center"
+                        />
+            </LinearLayout>
+        </ScrollView>
+
+    </LinearLayout>
+
 
 </LinearLayout>

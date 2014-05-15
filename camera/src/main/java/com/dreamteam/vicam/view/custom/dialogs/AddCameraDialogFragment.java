@@ -45,7 +45,7 @@ public class AddCameraDialogFragment extends DialogFragment {
 
   private boolean validName;
   private boolean validIP;
-  private boolean validPort;
+  private boolean validPort = true;
 
   public AddCameraDialogFragment() {
     Dagger.inject(this);
