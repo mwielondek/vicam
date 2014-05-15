@@ -331,6 +331,7 @@ public class MainActivity extends Activity {
           if (mCameraSpinner != null) {
             mCameraSpinner.setAdapter(mCameraAdapter);
           }
+          mCameraAdapter.notifyDataSetChanged();
           invalidateOptionsMenu();
           showToast(getString(R.string.import_database_success), Toast.LENGTH_SHORT);
         } else {
