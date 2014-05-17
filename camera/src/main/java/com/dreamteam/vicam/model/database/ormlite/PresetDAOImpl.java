@@ -55,7 +55,7 @@ public class PresetDAOImpl implements PresetDAO {
           }
       );
     } catch (SQLException e) {
-      Utils.databaseLog(String.format("Error while inserting preset (%s)", preset), e);
+      Utils.databaseError(String.format("Error while inserting preset (%s)", preset), e);
       return Observable.error(e);
     }
   }
@@ -83,7 +83,7 @@ public class PresetDAOImpl implements PresetDAO {
       );
       return Observable.just(true);
     } catch (SQLException e) {
-      Utils.databaseLog(String.format("Error while updating preset (%s)", preset), e);
+      Utils.databaseError(String.format("Error while updating preset (%s)", preset), e);
       return Observable.error(e);
     }
   }
@@ -103,7 +103,7 @@ public class PresetDAOImpl implements PresetDAO {
     try {
       return Observable.just(presetDao.queryForEq("camera_id", c.getId()));
     } catch (SQLException e) {
-      Utils.databaseLog(String.format("Error while getting presets for camera %s", c), e);
+      Utils.databaseError(String.format("Error while getting presets for camera %s", c), e);
       return Observable.error(e);
     }
   }

@@ -45,7 +45,7 @@ public class DatabaseOrmLiteHelper extends OrmLiteSqliteOpenHelper {
       TableUtils.createTable(connectionSource, Preset.class);
       TableUtils.createTable(connectionSource, Camera.class);
     } catch (SQLException e) {
-      Utils.databaseLog("Can't create database", e);
+      Utils.databaseError("Can't create database", e);
       throw new RuntimeException(e);
     }
   }
@@ -80,7 +80,7 @@ public class DatabaseOrmLiteHelper extends OrmLiteSqliteOpenHelper {
         cameraDao = temp;
         return Observable.just(cameraDao);
       } catch (SQLException e) {
-        Utils.databaseLog("Error while getting Camera DAO", e);
+        Utils.databaseError("Error while getting Camera DAO", e);
         return Observable.error(e);
       }
     } else {
@@ -96,7 +96,7 @@ public class DatabaseOrmLiteHelper extends OrmLiteSqliteOpenHelper {
         presetDao = temp;
         return Observable.just(presetDao);
       } catch (SQLException e) {
-        Utils.databaseLog("Error while getting Preset DAO", e);
+        Utils.databaseError("Error while getting Preset DAO", e);
         return Observable.error(e);
       }
     }

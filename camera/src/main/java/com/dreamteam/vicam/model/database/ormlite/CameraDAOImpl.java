@@ -66,7 +66,7 @@ public class CameraDAOImpl implements CameraDAO {
       );
       return Observable.just(true);
     } catch (SQLException e) {
-      Utils.databaseLog(String.format(Locale.US, "Error while deleting camera with id %d", id), e);
+      Utils.databaseError(String.format(Locale.US, "Error while deleting camera with id %d", id), e);
       return Observable.error(e);
     }
   }

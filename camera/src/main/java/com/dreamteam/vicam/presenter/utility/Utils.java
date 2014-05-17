@@ -19,20 +19,27 @@ import rx.Observable;
 import rx.functions.Action1;
 
 /**
- * Created by fsommar on 2014-04-12.
+ * A collection of utility functions that are generic enough to not belong anywhere else.
+ *
+ * @author Fredrik Sommar
+ * @since 2014-04-12
  */
 public class Utils {
 
-  public static final long DELAY_TIME_MILLIS = 130;
-  private static final String TAG = "VICAM";
-
-  public static void rangeCheck(int param, int lower, int upper) {
-    if (param < lower || param > upper) {
+  /**
+   * Throws an {@link java.lang.IllegalArgumentException} if value is outside range [lower, upper].
+   */
+  public static void rangeCheck(int value, int lower, int upper) {
+    if (value < lower || value > upper) {
       throw new IllegalArgumentException(
-          String.format("Parameter needs to be in range [%d, %d] - was %d.", lower, upper, param));
+          String.format("Value needs to be in range [%d, %d] - was %d.", lower, upper, value));
     }
   }
 
+  /**
+   * Returns a no operation {@link rx.functions.Action1} useful when subscribing to {@link
+   * rx.Observable Observables} and the result isn't needed.
+   */
   public static <T> Action1<T> noop() {
     return new Action1<T>() {
       @Override
@@ -41,17 +48,19 @@ public class Utils {
     };
   }
 
+  /**
+   * Converts an {@link java.io.InputStream} to a {@link java.lang.String}. <br/>If unsuccessful an
+   * empty {@link java.lang.String} will be returned.
+   */
   public static String streamToString(java.io.InputStream is) {
     Scanner s = new Scanner(is).useDelimiter("\\A");
     return s.hasNext() ? s.next() : "";
   }
 
-  public static void databaseLog(String msg, Throwable e) {
-    if (Constants.DEBUG) {
-      Log.e(Constants.DATABASE_TAG, msg, e);
-    }
-  }
-
+  /**
+   * Grabs the stack trace from the supplied {@link java.lang.Throwable} and turns it into a {@link
+   * java.lang.String}.
+   */
   public static String throwableToString(Throwable throwable) {
     StringWriter sw = new StringWriter();
     PrintWriter pw = new PrintWriter(sw);
@@ -59,14 +68,34 @@ public class Utils {
     return sw.toString();
   }
 
+  /**
+   * Acknowledges an error has occurred when using the database by logging it.
+   */
+  public static void databaseError(String msg, Throwable e) {
+    Log.e(Constants.DATABASE_TAG, msg, e);
+  }
+
+  /**
+   * Used for logging general application errors.
+   */
   public static void errorLog(String s) {
-    Log.e(TAG, s);
+    Log.e(Constants.TAG, s);
   }
 
-  public static void infoLog(String s) {
-    Log.i(TAG, s);
+  /**
+   * Used for logging debug messages.
+   */
+  public static void debugLog(String s) {
+    Log.d(Constants.TAG, s);
   }
 
+  /**
+   * Contains functions useful when constructing generic Data Access Objects for the ORMLite
+   * library.
+   *
+   * @author Fredrik Sommar
+   * @since 2014-04-12
+   */
   public static class ORMLite {
 
     public static <T extends Identifiable> Observable<Integer> insert(Dao<T, ?> dao, T obj) {
@@ -74,7 +103,7 @@ public class Utils {
         dao.create(obj);
         return Observable.just(obj.getId());
       } catch (SQLException e) {
-        databaseLog(String.format("Failed inserting obj(%s) into database", obj), e);
+        databaseError(String.format("Failed inserting obj(%s) into database", obj), e);
         return Observable.error(e);
       }
     }
@@ -83,7 +112,7 @@ public class Utils {
       try {
         return Observable.just(dao.queryForId(id));
       } catch (SQLException e) {
-        databaseLog(String.format("Failed finding an object with id=%s in database", id), e);
+        databaseError(String.format("Failed finding an object with id=%s in database", id), e);
         return Observable.error(e);
       }
     }
@@ -93,7 +122,7 @@ public class Utils {
         dao.update(obj);
         return Observable.just(true);
       } catch (SQLException e) {
-        databaseLog(String.format("Failed updating obj(%s) in database", obj), e);
+        databaseError(String.format("Failed updating obj(%s) in database", obj), e);
         return Observable.error(e);
       }
     }
@@ -103,7 +132,7 @@ public class Utils {
         dao.deleteById(id);
         return Observable.just(true);
       } catch (SQLException e) {
-        databaseLog(String.format("Failed deleting an obj with id=%s in database", id), e);
+        databaseError(String.format("Failed deleting an obj with id=%s in database", id), e);
         return Observable.error(e);
       }
     }
@@ -112,27 +141,29 @@ public class Utils {
       try {
         return Observable.just(dao.queryForAll());
       } catch (SQLException e) {
-        databaseLog("Failed querying all objects from database", e);
+        databaseError("Failed querying all objects from database", e);
         return Observable.error(e);
       }
     }
   }
 
-  public static class Database {
-
-    public static final String BACKUP_FOLDER_PATH = "/Vicam/";
-    public static final String INTERNAL_DB_PATH = "/data/" + Constants.PACKAGE_NAME
-                                                  + "/databases/" + Constants.DATABASE_NAME;
+  /**
+   * Contains functions for importing and exporting settings as a database file.
+   *
+   * @author Fredrik Sommar
+   * @since 2014-05-14
+   */
+  public static class DatabaseSync {
 
     public static String importDb(String importName) {
       try {
         File sd = Environment.getExternalStorageDirectory();
         File data = Environment.getDataDirectory();
-        File backupFolder = new File(sd, BACKUP_FOLDER_PATH);
+        File backupFolder = new File(sd, Constants.BACKUP_FOLDER_PATH);
 
         if (sd.canWrite() && backupFolder.exists()) {
-          File internalDb = new File(data, INTERNAL_DB_PATH);
-          final String settingsPath = BACKUP_FOLDER_PATH + importName;
+          File internalDb = new File(data, Constants.INTERNAL_DB_PATH);
+          final String settingsPath = Constants.BACKUP_FOLDER_PATH + importName;
           File importDb = new File(sd, settingsPath);
 
           if (importDb.exists()) {
@@ -152,11 +183,11 @@ public class Utils {
         File data = Environment.getDataDirectory();
 
         if (sd.canWrite()) {
-          File backupFolder = new File(sd, BACKUP_FOLDER_PATH);
+          File backupFolder = new File(sd, Constants.BACKUP_FOLDER_PATH);
 
           if (backupFolder.exists() || backupFolder.mkdir()) {
-            File internalDb = new File(data, INTERNAL_DB_PATH);
-            final String settingsPath = BACKUP_FOLDER_PATH + exportName;
+            File internalDb = new File(data, Constants.INTERNAL_DB_PATH);
+            final String settingsPath = Constants.BACKUP_FOLDER_PATH + exportName;
             File exportDb = new File(sd, settingsPath);
 
             if (exportDb.exists() || exportDb.createNewFile()) {
@@ -166,7 +197,7 @@ public class Utils {
           }
         }
       } catch (Exception e) {
-        Utils.errorLog("Error occurred while exporting '" + exportName + "'; " + e.toString());
+        Utils.databaseError("Error occurred while exporting '" + exportName + "'", e);
       }
       return null;
     }

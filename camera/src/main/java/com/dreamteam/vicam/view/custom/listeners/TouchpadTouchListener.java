@@ -1,14 +1,13 @@
 package com.dreamteam.vicam.view.custom.listeners;
 
-import android.content.Context;
 import android.os.Handler;
-import android.os.Vibrator;
 import android.view.MotionEvent;
 import android.view.View;
 
 import com.dreamteam.vicam.model.pojo.Camera;
 import com.dreamteam.vicam.model.pojo.Speed;
 import com.dreamteam.vicam.presenter.network.camera.CameraFacade;
+import com.dreamteam.vicam.presenter.utility.Constants;
 import com.dreamteam.vicam.presenter.utility.Utils;
 import com.dreamteam.vicam.view.MainActivity;
 
@@ -25,8 +24,6 @@ public class TouchpadTouchListener implements View.OnTouchListener {
   private volatile boolean blocked;
   private Handler blockedHandler = new Handler();
   private Handler tapHandler = new Handler();
-  private Vibrator vibrator;
-  private Context context;
 
 
   public TouchpadTouchListener(MainActivity activity) {
@@ -45,10 +42,10 @@ public class TouchpadTouchListener implements View.OnTouchListener {
           public void run() {
             blocked = false;
           }
-        }, Utils.DELAY_TIME_MILLIS);
-        Utils.infoLog("Sent request!");
+        }, Constants.DELAY_TIME_MILLIS);
+        Utils.debugLog("Sent request!");
       } else {
-        Utils.infoLog("BLOCKED");
+        Utils.debugLog("BLOCKED");
         return false;
       }
     }
@@ -63,7 +60,7 @@ public class TouchpadTouchListener implements View.OnTouchListener {
     switch (motionEvent.getAction()) {
       case MotionEvent.ACTION_DOWN:
         // vibrator.vibrate(1);
-        tapHandler.postDelayed(tapRunnable, Utils.DELAY_TIME_MILLIS);
+        tapHandler.postDelayed(tapRunnable, Constants.DELAY_TIME_MILLIS);
 
       case MotionEvent.ACTION_MOVE:
         float eventX = motionEvent.getX();

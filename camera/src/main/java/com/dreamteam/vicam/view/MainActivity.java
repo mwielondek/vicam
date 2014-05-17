@@ -213,7 +213,7 @@ public class MainActivity extends Activity {
           Utils.errorLog("CameraResponseException: " + err.getMessage());
         } else if (throwable instanceof CameraDoesNotExistException) {
           // Do nothing
-          Utils.infoLog("No camera!");
+          Utils.debugLog("No camera!");
         }
         // Utils.errorLog(Utils.throwableToString(throwable));
         connectionError();
@@ -320,7 +320,7 @@ public class MainActivity extends Activity {
         return true;
 
       case R.id.action_export_db:
-        String settingsExportPath = Utils.Database.exportDb("export.db");
+        String settingsExportPath = Utils.DatabaseSync.exportDb("export.db");
         if (settingsExportPath != null) {
           showToast(getString(R.string.export_database_success, settingsExportPath),
                     Toast.LENGTH_SHORT);
@@ -331,7 +331,7 @@ public class MainActivity extends Activity {
 
       case R.id.action_import_db:
 
-        String settingsImportPath = Utils.Database.importDb("export.db");
+        String settingsImportPath = Utils.DatabaseSync.importDb("export.db");
         if (settingsImportPath != null) {
           populateCameraList();
           if (mCameraSpinner != null) {
@@ -612,7 +612,7 @@ public class MainActivity extends Activity {
 
   @SuppressWarnings("unused")
   public void onEventMainThread(Object o) {
-    Utils.infoLog("Event: " + o.getClass().getSimpleName());
+    Utils.debugLog("Event: " + o.getClass().getSimpleName());
   }
 
   @SuppressWarnings("unused")
@@ -711,7 +711,7 @@ public class MainActivity extends Activity {
         new Action1<Throwable>() {
           @Override
           public void call(Throwable throwable) {
-            Utils.infoLog("Failed getting state from camera when saving preset");
+            Utils.debugLog("Failed getting state from camera when saving preset");
             showToast(getString(R.string.save_preset_failure), Toast.LENGTH_SHORT);
           }
         }
