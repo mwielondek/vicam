@@ -86,7 +86,9 @@ public class Utils {
    * Used for logging debug messages.
    */
   public static void debugLog(String s) {
-    Log.d(Constants.TAG, s);
+    if (Constants.DEBUG) {
+      Log.d(Constants.TAG, s);
+    }
   }
 
   /**
@@ -98,6 +100,12 @@ public class Utils {
    */
   public static class ORMLite {
 
+    /**
+     * Uses the Data Access Object to insert an object into the database.
+     *
+     * @return An {@link rx.Observable} with the id of the inserted object, or if unsuccessful an
+     * {@link rx.Observable} error with the {@link java.sql.SQLException} that was thrown.
+     */
     public static <T extends Identifiable> Observable<Integer> insert(Dao<T, ?> dao, T obj) {
       try {
         dao.create(obj);
@@ -108,6 +116,13 @@ public class Utils {
       }
     }
 
+
+    /**
+     * Finds the object with the given id using the provided Data Access Object.
+     *
+     * @return An {@link rx.Observable} with the queried object, or if unsuccessful an {@link
+     * rx.Observable} error with the {@link java.sql.SQLException} that was thrown.
+     */
     public static <T, ID> Observable<T> find(Dao<T, ID> dao, ID id) {
       try {
         return Observable.just(dao.queryForId(id));
@@ -117,6 +132,13 @@ public class Utils {
       }
     }
 
+    /**
+     * Updates the given object using the provided Data Access Object. Make sure that whatever field
+     * is used as key exists on the provided object.
+     *
+     * @return An {@link rx.Observable} with true, or if unsuccessful an {@link rx.Observable} error
+     * with the {@link java.sql.SQLException} that was thrown.
+     */
     public static <T extends Identifiable> Observable<Boolean> update(Dao<T, ?> dao, T obj) {
       try {
         dao.update(obj);
@@ -127,6 +149,12 @@ public class Utils {
       }
     }
 
+    /**
+     * Deletes the object with the given id using the provided Data Access Object.
+     *
+     * @return An {@link rx.Observable} with true, or if unsuccessful an {@link rx.Observable} error
+     * with the {@link java.sql.SQLException} that was thrown.
+     */
     public static <T, ID> Observable<Boolean> delete(Dao<T, ID> dao, ID id) {
       try {
         dao.deleteById(id);
@@ -137,6 +165,12 @@ public class Utils {
       }
     }
 
+    /**
+     * Gets all objects related to the provided Data Access Object.
+     *
+     * @return An {@link rx.Observable} with a list of the objects, or an {@link rx.Observable}
+     * error with the {@link java.sql.SQLException} that was thrown.
+     */
     public static <T> Observable<List<T>> getAll(Dao<T, ?> dao) {
       try {
         return Observable.just(dao.queryForAll());
@@ -172,7 +206,7 @@ public class Utils {
           }
         }
       } catch (Exception e) {
-        Utils.errorLog("Error occurred while importing '" + importName + "'; " + e.toString());
+        Utils.databaseError("Error occurred while importing '" + importName + "'", e);
       }
       return null;
     }
