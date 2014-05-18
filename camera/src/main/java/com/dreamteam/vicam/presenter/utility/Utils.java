@@ -189,6 +189,14 @@ public class Utils {
    */
   public static class DatabaseSync {
 
+    /**
+     * Imports a database file from the external SD-card. <br/>For the base path BACKUP_FOLDER_PATH
+     * in {@link com.dreamteam.vicam.presenter.utility.Constants} is used.<br/><br/> The final path
+     * will be SD-card/BACKUP_FOLDER_PATH/importName.
+     *
+     * @param importName The name of the file to be imported.
+     * @return The path from the SD-card to the imported file, or null if unsuccessful.
+     */
     public static String importDb(String importName) {
       try {
         File sd = Environment.getExternalStorageDirectory();
@@ -197,6 +205,7 @@ public class Utils {
 
         if (sd.canWrite() && backupFolder.exists()) {
           File internalDb = new File(data, Constants.INTERNAL_DB_PATH);
+
           final String settingsPath = Constants.BACKUP_FOLDER_PATH + importName;
           File importDb = new File(sd, settingsPath);
 
@@ -211,6 +220,14 @@ public class Utils {
       return null;
     }
 
+    /**
+     * Exports a database file to the external SD-card. <br/>For the base path BACKUP_FOLDER_PATH
+     * in {@link com.dreamteam.vicam.presenter.utility.Constants} is used.<br/><br/> The final path
+     * will be SD-card/BACKUP_FOLDER_PATH/exportName.
+     *
+     * @param exportName The name of the file to be exported.
+     * @return The path from the SD-card to the exported file, or null if unsuccessful.
+     */
     public static String exportDb(String exportName) {
       try {
         File sd = Environment.getExternalStorageDirectory();
@@ -221,6 +238,7 @@ public class Utils {
 
           if (backupFolder.exists() || backupFolder.mkdir()) {
             File internalDb = new File(data, Constants.INTERNAL_DB_PATH);
+
             final String settingsPath = Constants.BACKUP_FOLDER_PATH + exportName;
             File exportDb = new File(sd, settingsPath);
 
