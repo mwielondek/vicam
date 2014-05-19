@@ -27,13 +27,50 @@ import rx.functions.Action1;
 public class Utils {
 
   /**
-   * Throws an {@link java.lang.IllegalArgumentException} if value is outside range [lower, upper].
+   * Throws an {@link java.lang.IllegalArgumentException} if value is outside range {@code [lower,
+   * upper]}.
    */
   public static void rangeCheck(int value, int lower, int upper) {
     if (value < lower || value > upper) {
       throw new IllegalArgumentException(
           String.format("Value needs to be in range [%d, %d] - was %d.", lower, upper, value));
     }
+  }
+
+  /**
+   * Takes an integer value and returns a {@link java.lang.String} of the value padded it with the
+   * given amount of zeroes.
+   *
+   * @param value         The value to be padded.
+   * @param decimalPlaces Number of zeroes to pad with.
+   * @return A zero-padded {@link java.lang.String}.
+   */
+  public static String padZeroes(int value, int decimalPlaces) {
+    return String.format("%0" + decimalPlaces + "d", value);
+  }
+
+  /**
+   * Takes a integer value and returns a {@link java.lang.String} of the value converted to base 16
+   * (hexadecimal) and padded with the given amount of zeroes.
+   *
+   * @param hexValue      The value to be padded and converted.
+   * @param decimalPlaces Number of zeroes to pad with.
+   * @return A zero-padded hexadecimal representation of the passed value as a {@link
+   * java.lang.String}.
+   */
+  public static String padZeroesHex(int hexValue, int decimalPlaces) {
+    return String.format("%0" + decimalPlaces + "X", hexValue);
+  }
+
+  /**
+   * Parses a {@link java.lang.String} strictly containing a hexadecimal number and returns the
+   * integer represented by the {@link java.lang.String}.
+   *
+   * @throws java.lang.NumberFormatException If the provided {@link java.lang.String} is not a valid
+   *                                         formatted number.
+   */
+  public static int parseHex(String hexString) {
+    return Integer.parseInt(hexString, 16);
   }
 
   /**
@@ -136,8 +173,8 @@ public class Utils {
      * Updates the given object using the provided Data Access Object. Make sure that whatever field
      * is used as key exists on the provided object.
      *
-     * @return An {@link rx.Observable} with true, or if unsuccessful an {@link rx.Observable} error
-     * with the {@link java.sql.SQLException} that was thrown.
+     * @return An {@link rx.Observable} with {@code true}, or if unsuccessful an {@link
+     * rx.Observable} error with the {@link java.sql.SQLException} that was thrown.
      */
     public static <T extends Identifiable> Observable<Boolean> update(Dao<T, ?> dao, T obj) {
       try {
@@ -152,8 +189,8 @@ public class Utils {
     /**
      * Deletes the object with the given id using the provided Data Access Object.
      *
-     * @return An {@link rx.Observable} with true, or if unsuccessful an {@link rx.Observable} error
-     * with the {@link java.sql.SQLException} that was thrown.
+     * @return An {@link rx.Observable} with {@code true}, or if unsuccessful an {@link
+     * rx.Observable} error with the {@link java.sql.SQLException} that was thrown.
      */
     public static <T, ID> Observable<Boolean> delete(Dao<T, ID> dao, ID id) {
       try {
@@ -190,9 +227,9 @@ public class Utils {
   public static class DatabaseSync {
 
     /**
-     * Imports a database file from the external SD-card. <br/>For the base path BACKUP_FOLDER_PATH
-     * in {@link com.dreamteam.vicam.presenter.utility.Constants} is used.<br/><br/> The final path
-     * will be SD-card/BACKUP_FOLDER_PATH/importName.
+     * Imports a database file from the external SD-card. <br/>For the base path {@code
+     * BACKUP_FOLDER_PATH} in {@link com.dreamteam.vicam.presenter.utility.Constants} is
+     * used.<br/><br/> The final path will be {@code SD-card/BACKUP_FOLDER_PATH/importName}.
      *
      * @param importName The name of the file to be imported.
      * @return The path from the SD-card to the imported file, or null if unsuccessful.
@@ -221,9 +258,9 @@ public class Utils {
     }
 
     /**
-     * Exports a database file to the external SD-card. <br/>For the base path BACKUP_FOLDER_PATH
-     * in {@link com.dreamteam.vicam.presenter.utility.Constants} is used.<br/><br/> The final path
-     * will be SD-card/BACKUP_FOLDER_PATH/exportName.
+     * Exports a database file to the external SD-card. <br/>For the base path {@code
+     * BACKUP_FOLDER_PATH} in {@link com.dreamteam.vicam.presenter.utility.Constants} is
+     * used.<br/><br/> The final path will be {@code SD-card/BACKUP_FOLDER_PATH/importName}.
      *
      * @param exportName The name of the file to be exported.
      * @return The path from the SD-card to the exported file, or null if unsuccessful.

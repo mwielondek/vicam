@@ -11,6 +11,10 @@ import java.util.Locale;
 public class Constants {
 
   /**
+   * Defined by the camera protocol as a prefix to commands sent to the camera.
+   */
+  public static final String COMMAND_PREFIX = "#";
+  /**
    * Used to determine whether debug statements should print or be logged.
    */
   public static final boolean DEBUG = true;

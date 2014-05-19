@@ -6,6 +6,7 @@ import com.dreamteam.vicam.model.pojo.Focus;
 import com.dreamteam.vicam.model.pojo.Position;
 import com.dreamteam.vicam.model.pojo.Speed;
 import com.dreamteam.vicam.model.pojo.Zoom;
+import com.dreamteam.vicam.presenter.utility.Constants;
 import com.dreamteam.vicam.presenter.utility.Utils;
 
 import java.util.concurrent.TimeUnit;
@@ -16,7 +17,8 @@ import rx.functions.Func2;
 import rx.functions.Func3;
 
 /**
- * Created by fsommar on 2014-04-01.
+ * @author Milosz Wielondek
+ * @since 2014-04-01
  */
 public class CameraFacade {
 
@@ -127,6 +129,6 @@ public class CameraFacade {
   }
 
   public static <T> Observable<T> accountForDelay(Observable<T> obs) {
-    return obs.delay(Utils.DELAY_TIME_MILLIS, TimeUnit.MILLISECONDS);
+    return obs.delay(Constants.DELAY_TIME_MILLIS, TimeUnit.MILLISECONDS);
   }
 }

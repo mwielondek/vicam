@@ -15,7 +15,8 @@ public interface CameraService {
   static final String CGI_BIN = "/cgi-bin";
 
   /**
-   * Sends a command over a web request to the camera.
+   * Sends a command over a web request to the camera.<br/><br/> N.B. The order of the query
+   * parameters matter; it needs to be first cmd and then res.
    *
    * @param command The camera command to be sent.
    * @param res     Should by default be 1 as per the camera protocol.
@@ -25,7 +26,8 @@ public interface CameraService {
   public Observable<String> sendCommand(@Query("cmd") String command, @Query("res") int res);
 
   /**
-   * Sends a control command over a web request to the camera.
+   * Sends a control command over a web request to the camera.<br/><br/> N.B. The order of the query
+   * parameters matter; it needs to be first cmd and then res.
    *
    * @param control The camera control command to be sent.
    * @param res     Either 0 or 1. Most cases it is 1 per the camera protocol.
