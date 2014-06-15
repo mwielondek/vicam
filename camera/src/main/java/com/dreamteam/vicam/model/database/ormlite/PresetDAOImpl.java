@@ -20,7 +20,10 @@ import rx.Observable;
 import static com.dreamteam.vicam.presenter.utility.Utils.ORMLite;
 
 /**
- * Created by fsommar on 2014-04-03.
+ * An ORMLite implementation of the {@link com.dreamteam.vicam.model.database.PresetDAO} interface.
+ *
+ * @author Fredrik Sommar
+ * @since 2014-04-03.
  */
 public class PresetDAOImpl implements PresetDAO {
 
@@ -38,6 +41,9 @@ public class PresetDAOImpl implements PresetDAO {
     this.focusDao = ormLiteHelper.getDao(Focus.class);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public Observable<Integer> insertPreset(final Preset preset) {
     try {
@@ -60,11 +66,17 @@ public class PresetDAOImpl implements PresetDAO {
     }
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public Observable<Preset> findPreset(int id) {
     return ORMLite.find(presetDao, id);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public Observable<Boolean> updatePreset(final Preset preset) {
     try {
@@ -88,16 +100,25 @@ public class PresetDAOImpl implements PresetDAO {
     }
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public Observable<Boolean> deletePreset(int id) {
     return ORMLite.delete(presetDao, id);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public Observable<List<Preset>> getPresets() {
     return ORMLite.getAll(presetDao);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public Observable<List<Preset>> getPresetsForCamera(Camera c) {
     try {
