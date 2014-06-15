@@ -92,9 +92,6 @@ import static com.dreamteam.vicam.view.custom.listeners.SeekBarChangeListener.Ty
 
 public class MainActivity extends Activity {
 
-  private static final String SELECTED_CAMERA = "SELECTED_CAMERA";
-  private static final String CONNECTION_SUCCESS = "CONNECTION_SUCCESS";
-
   @Inject
   EventBus mEventBus;
   @Inject
@@ -119,35 +116,48 @@ public class MainActivity extends Activity {
   @InjectView(R.id.zoom_out_button)
   Button mZoomOutButton;
 
-  private Camera mCurrentCamera;
+  private static final String SELECTED_CAMERA = "SELECTED_CAMERA";
+  private static final String CONNECTION_SUCCESS = "CONNECTION_SUCCESS";
+
   private CharSequence mTitle;
+
+  private Camera mCurrentCamera;
+  private boolean mConnectionSuccess;
+  /**
+   * Keeps track of the first camera event after onCreate. If it is the first it shouldn't update
+   * connection icon since the options menu will handle it
+   */
+  private boolean mIsFirstCameraEvent;
+
   private List<Preset> mPresets;
   private List<Camera> mCameras;
-  private ActionBarDrawerToggle mDrawerToggle;
+
   private CameraArrayAdapter mCameraAdapter;
   private PresetArrayAdapter mPresetAdapter;
-  private DrawerMultiChoiceListener mContextualActionBar;
+
+  private ActionBarDrawerToggle mDrawerToggle;
   private Spinner mCameraSpinner;
-  private SharedPreferences mSharedPreferences;
   private MenuItem mConnectedIcon;
+  private DrawerMultiChoiceListener mContextualActionBar;
 
   private Action1<Throwable> mErrorHandler;
   private Action0 mSuccessHandler;
-  private boolean mConnectionSuccess;
-  private boolean mIsFirstCameraEvent;
+
+  private SharedPreferences mSharedPreferences;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
 
+    // Dependency injection
     Dagger.inject(this);
+    // View injection
     ButterKnife.inject(this);
 
     Iconify.addIcons(mZoomInButton);
     Iconify.addIcons(mZoomOutButton);
 
-    // Get saved preferences
     mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
     mTitle = getString(R.string.app_name);
@@ -161,14 +171,11 @@ public class MainActivity extends Activity {
                                   | ActionBar.DISPLAY_HOME_AS_UP);
     }
 
-    // Keeps track of the first camera event after oncreate
-    // if it is the first it shouldn't update connection icon since the options menu will handle it
     mIsFirstCameraEvent = true;
 
     mPresets = new ArrayList<>();
     mPresetAdapter = new PresetArrayAdapter(this, mPresets);
 
-    // mCameraSpinnerMenu = new Menu
     mDrawerList.setAdapter(mPresetAdapter);
     mDrawerList.setOnItemClickListener(new DrawerItemClickListener(this));
     mDrawerList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
@@ -207,15 +214,14 @@ public class MainActivity extends Activity {
       public void call(Throwable throwable) {
         if (throwable instanceof RetrofitError) {
           RetrofitError err = (RetrofitError) throwable;
-          Utils.errorLog("RetroFitError URL: " + err.getUrl());
+          Utils.debugLog("RetroFitError URL: " + err.getUrl());
         } else if (throwable instanceof CameraResponseException) {
           CameraResponseException err = (CameraResponseException) throwable;
-          Utils.errorLog("CameraResponseException: " + err.getMessage());
+          Utils.debugLog("CameraResponseException: " + err.getMessage());
         } else if (throwable instanceof CameraDoesNotExistException) {
-          // Do nothing
           Utils.debugLog("No camera!");
         }
-        // Utils.errorLog(Utils.throwableToString(throwable));
+        Utils.errorLog(Utils.throwableToString(throwable));
         connectionError();
       }
     };
@@ -248,13 +254,6 @@ public class MainActivity extends Activity {
     MenuItem deleteCamera = menu.findItem(R.id.action_delete_camera);
     MenuItem savePreset = menu.findItem(R.id.action_save_preset);
     MenuItem cameraSpinner = menu.findItem(R.id.action_change_camera);
-    View view = cameraSpinner.getActionView();
-    if (view instanceof Spinner) {
-      mCameraSpinner = (Spinner) view;
-      mCameraSpinner.setAdapter(mCameraAdapter);
-      mCameraSpinner.setOnItemSelectedListener(new CameraSpinnerItemListener());
-      restoreSelectedCamera();
-    }
     mConnectedIcon = menu.findItem(R.id.connection_state);
 
     boolean visible = !mCameras.isEmpty();
@@ -263,6 +262,14 @@ public class MainActivity extends Activity {
     savePreset.setVisible(visible);
     cameraSpinner.setVisible(visible);
     mConnectedIcon.setVisible(visible);
+
+    View view = cameraSpinner.getActionView();
+    if (view instanceof Spinner) {
+      mCameraSpinner = (Spinner) view;
+      mCameraSpinner.setAdapter(mCameraAdapter);
+      mCameraSpinner.setOnItemSelectedListener(new CameraSpinnerItemListener());
+      restoreSelectedCamera();
+    }
 
     return true;
   }

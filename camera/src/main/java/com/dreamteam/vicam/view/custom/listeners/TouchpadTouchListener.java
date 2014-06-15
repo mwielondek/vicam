@@ -28,7 +28,6 @@ public class TouchpadTouchListener implements View.OnTouchListener {
 
   public TouchpadTouchListener(MainActivity activity) {
     this.mActivity = activity;
-    //  vibrator = (Vibrator) this.context.getSystemService(Context.VIBRATOR_SERVICE);
   }
 
   @Override
@@ -59,9 +58,8 @@ public class TouchpadTouchListener implements View.OnTouchListener {
 
     switch (motionEvent.getAction()) {
       case MotionEvent.ACTION_DOWN:
-        // vibrator.vibrate(1);
         tapHandler.postDelayed(tapRunnable, Constants.DELAY_TIME_MILLIS);
-
+        // fall through
       case MotionEvent.ACTION_MOVE:
         float eventX = motionEvent.getX();
         float eventY = motionEvent.getY();
@@ -77,7 +75,6 @@ public class TouchpadTouchListener implements View.OnTouchListener {
           return false;
         }
 
-        // If only java would've had lambdas...
         mActivity.prepareObservable(
             mActivity.getCurrentCamera().map(new Func1<Camera, Speed>() {
               @Override
@@ -94,6 +91,7 @@ public class TouchpadTouchListener implements View.OnTouchListener {
                 return new Speed(x, y);
               }
             }).flatMap(new Func1<Speed, Observable<String>>() {
+              // If only java would've had lambdas...
               @Override
               public Observable<String> call(final Speed speed) {
                 return mActivity.getFacade().flatMap(new Func1<CameraFacade, Observable<String>>() {
@@ -109,6 +107,7 @@ public class TouchpadTouchListener implements View.OnTouchListener {
         return true;
 
       case MotionEvent.ACTION_CANCEL:
+        // fall through
       case MotionEvent.ACTION_UP:
         // interrupt tap handler
         tapHandler.removeCallbacks(tapRunnable);
