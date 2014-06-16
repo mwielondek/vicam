@@ -39,7 +39,7 @@ import com.dreamteam.vicam.model.events.EditCameraEvent;
 import com.dreamteam.vicam.model.events.EditPresetDialogEvent;
 import com.dreamteam.vicam.model.events.EditPresetEvent;
 import com.dreamteam.vicam.model.events.OnDrawerCloseEvent;
-import com.dreamteam.vicam.model.events.PresetChangedEvent;
+import com.dreamteam.vicam.model.events.PresetSelectedEvent;
 import com.dreamteam.vicam.model.events.SaveCameraEvent;
 import com.dreamteam.vicam.model.events.SavePresetEvent;
 import com.dreamteam.vicam.model.pojo.Camera;
@@ -678,7 +678,7 @@ public class MainActivity extends Activity {
   }
 
   @SuppressWarnings("unused")
-  public void onEventMainThread(PresetChangedEvent e) {
+  public void onEventMainThread(PresetSelectedEvent e) {
     final CameraState cameraState = e.preset.getCameraState();
 
     prepareObservable(

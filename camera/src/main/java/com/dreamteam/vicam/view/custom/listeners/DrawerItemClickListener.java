@@ -3,7 +3,7 @@ package com.dreamteam.vicam.view.custom.listeners;
 import android.view.View;
 import android.widget.AdapterView;
 
-import com.dreamteam.vicam.model.events.PresetChangedEvent;
+import com.dreamteam.vicam.model.events.PresetSelectedEvent;
 import com.dreamteam.vicam.model.pojo.Preset;
 import com.dreamteam.vicam.presenter.utility.Dagger;
 import com.dreamteam.vicam.view.MainActivity;
@@ -31,7 +31,7 @@ public class DrawerItemClickListener implements android.widget.AdapterView.OnIte
     Preset preset = (Preset) parent.getItemAtPosition(position);
     mActivity.closeDrawer();
     if (preset != null) {
-      mEventBus.post(new PresetChangedEvent(preset));
+      mEventBus.post(new PresetSelectedEvent(preset));
     }
   }
 
