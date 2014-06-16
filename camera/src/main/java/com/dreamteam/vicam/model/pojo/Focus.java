@@ -44,7 +44,7 @@ public class Focus implements Identifiable {
   /**
    * Creates a Focus object with set level and autofocus.
    * The level should be withing accepted bounds.
-   * Throws IllegalArgumentExeption otherwise.
+   * Throws IllegalArgumentException otherwise.
    */
   public Focus(int level, boolean autofocus) {
     Utils.rangeCheck(level, LOWER_BOUND, UPPER_BOUND);
