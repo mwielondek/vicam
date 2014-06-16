@@ -26,7 +26,7 @@ import rx.functions.Action1;
 import rx.functions.Func1;
 
 /**
- * Created by fsommar on 2014-05-08.
+ * Manages a custom layout for the delete camera dialog
  */
 public class DeleteCameraDialogFragment extends DialogFragment {
 
@@ -55,8 +55,6 @@ public class DeleteCameraDialogFragment extends DialogFragment {
   public Dialog onCreateDialog(Bundle savedInstanceState) {
     final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-    Context ctx = getActivity();
-    //ctx.setTheme(android.R.style.Theme_Holo_Light);
 
     final int cameraId = getArguments().getInt(CAMERA_ID_KEY);
     mDAOFactory.getCameraDAO().flatMap(new Func1<CameraDAO, Observable<Camera>>() {

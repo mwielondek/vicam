@@ -39,9 +39,6 @@ public class SavePresetDialogFragment extends DialogFragment {
   public Dialog onCreateDialog(Bundle savedInstanceState) {
     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-    Context ctx = getActivity();
-    //ctx.setTheme(android.R.style.Theme_Holo_Light);
-
     // Inflate the layout for the dialog
     LayoutInflater inflater = getActivity().getLayoutInflater();
     // Pass null as the parent view because its going in the dialog layout

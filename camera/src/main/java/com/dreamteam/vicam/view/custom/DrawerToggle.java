@@ -14,7 +14,7 @@ import de.greenrobot.event.EventBus;
 import javax.inject.Inject;
 
 /**
- * Created by fsommar on 2014-04-26.
+ * A listener that manages the toggle of the preset drawer
  */
 public class DrawerToggle extends ActionBarDrawerToggle {
 

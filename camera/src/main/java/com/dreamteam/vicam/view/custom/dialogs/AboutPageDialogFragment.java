@@ -13,7 +13,8 @@ import android.view.ViewGroup;
 import com.dreamteam.camera.R;
 
 /**
- * Manages a custom layout for the about dialog.
+ * Manages a custom layout for the about dialog fragment.
+ *
  */
 public class AboutPageDialogFragment extends DialogFragment {
 
@@ -28,12 +29,12 @@ public class AboutPageDialogFragment extends DialogFragment {
   public Dialog onCreateDialog(Bundle savedInstanceState) {
     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-    Context ctx = getActivity();
-    //ctx.setTheme(android.R.style.Theme_Holo_Light);
-
     // Get the layout inflater
     LayoutInflater inflater = getActivity().getLayoutInflater();
+    // Inflates the layout
     View view = inflater.inflate(R.layout.dialog_about_page, null);
+
+
     // Inflate and set the layout for the dialog
     // Pass null as the parent view because its going in the dialog layout
     builder.setView(view)

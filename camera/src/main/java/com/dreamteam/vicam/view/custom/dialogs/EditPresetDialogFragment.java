@@ -28,7 +28,7 @@ import rx.functions.Action1;
 import rx.functions.Func1;
 
 /**
- * Manages a custom layout for the SavePreset dialog
+ * Manages a custom layout for the edit dialog
  */
 public class EditPresetDialogFragment extends DialogFragment {
 
@@ -59,8 +59,6 @@ public class EditPresetDialogFragment extends DialogFragment {
 
     final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-    Context ctx = getActivity();
-   // ctx.setTheme(android.R.style.Theme_Holo_Light);
 
     // Inflate the layout for the dialog
     LayoutInflater inflater = getActivity().getLayoutInflater();

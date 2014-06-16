@@ -206,7 +206,7 @@ public class MainActivity extends Activity {
 
     populateCameraList();
 
-    // Always show settings drop down (works with e.g. Samsung S3)
+    // Always show the setting icon (works with e.g. Samsung S3)
     getOverflowMenu();
 
     mErrorHandler = new Action1<Throwable>() {
@@ -250,6 +250,7 @@ public class MainActivity extends Activity {
     // Inflate the menu; this adds items to the action bar if it is present.
     getMenuInflater().inflate(R.menu.main, menu);
 
+    // Adds the menu items
     MenuItem editCamera = menu.findItem(R.id.action_edit_camera);
     MenuItem deleteCamera = menu.findItem(R.id.action_delete_camera);
     MenuItem savePreset = menu.findItem(R.id.action_save_preset);
@@ -263,6 +264,7 @@ public class MainActivity extends Activity {
     cameraSpinner.setVisible(visible);
     mConnectedIcon.setVisible(visible);
 
+    // Multiple camera drop down menu
     View view = cameraSpinner.getActionView();
     if (view instanceof Spinner) {
       mCameraSpinner = (Spinner) view;
@@ -409,7 +411,7 @@ public class MainActivity extends Activity {
     mDAOFactory.close();
   }
 
-  // Disable exit app when back pressed.
+  // Warning of closing the app when back is pressed
   @Override
   public void onBackPressed() {
     new AlertDialog.Builder(this)
@@ -444,10 +446,12 @@ public class MainActivity extends Activity {
         .doOnCompleted(mSuccessHandler);
   }
 
+  // Show an indication message toast
   public void showToast(String msg, int length) {
     Toast.makeText(this, msg, length).show();
   }
 
+  // Indication, changes the icon to online when connected to camera
   public void connectionSuccess() {
     mConnectionSuccess = true;
     if (mConnectedIcon != null) {
@@ -455,6 +459,7 @@ public class MainActivity extends Activity {
     }
   }
 
+  // Indication, changes the icon to online when not connected to camera
   public void connectionError() {
     mConnectionSuccess = false;
     if (mConnectedIcon != null) {

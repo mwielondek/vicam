@@ -39,10 +39,8 @@ public class AddCameraDialogFragment extends DialogFragment {
     return new AddCameraDialogFragment();
   }
 
-  private boolean wasKeyboardOpen = false;
-
+  // These fields checks the vaildity for corresponding input fields
   private static final Pattern IP_ADDRESS = Patterns.IP_ADDRESS;
-
   private boolean validName;
   private boolean validIP;
   private boolean validPort = true;
@@ -57,8 +55,10 @@ public class AddCameraDialogFragment extends DialogFragment {
 
     // Get the layout inflater
     LayoutInflater inflater = getActivity().getLayoutInflater();
+    // Inflate the layout
     View view = inflater.inflate(R.layout.dialog_add_camera, null);
 
+    // Set the title of the dialog
     builder.setTitle(R.string.add_new_camera);
 
     final EditText nameEdit = (EditText) view.findViewById(R.id.add_camera_name);
@@ -93,6 +93,8 @@ public class AddCameraDialogFragment extends DialogFragment {
 
     final AlertDialog alertDialog = builder.create();
 
+    // Listeners for the input fields
+
     nameEdit.addTextChangedListener(new TextWatcher() {
       @Override
       public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
@@ -107,12 +109,15 @@ public class AddCameraDialogFragment extends DialogFragment {
         Button positiveButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
 
         validName = true;
+
+        // If the field is empty display error
         if (TextUtils.isEmpty(nameEdit.getText().toString())) {
           nameEdit.setError("Invalid name");
           validName = false;
           positiveButton.setEnabled(false);
         }
 
+        // The user can only proceed if the fields name, IP and Port is valid
         if (validName && validIP && validPort) {
           positiveButton.setEnabled(true);
         }
@@ -135,11 +140,15 @@ public class AddCameraDialogFragment extends DialogFragment {
 
         validIP = true;
         Matcher matcher = IP_ADDRESS.matcher(ipEdit.getText().toString());
+
+        // If the inputted string is not an IP-address, set error
         if (!matcher.matches()) {
           ipEdit.setError("Invalid IP-Address");
           validIP = false;
           positiveButton.setEnabled(false);
         }
+
+        // The user can only proceed if the fields name, IP and Port is valid
         if (validName && validIP && validPort) {
           positiveButton.setEnabled(true);
         }
@@ -164,6 +173,8 @@ public class AddCameraDialogFragment extends DialogFragment {
 
         try {
           int x = Integer.parseInt(portEdit.getText().toString());
+
+          // The port can only be in the interval 0 - 65535, if not set error
           if (x < 0 || x > 65535) {
             portEdit.setError("Invalid Port");
             validPort = false;
@@ -173,7 +184,7 @@ public class AddCameraDialogFragment extends DialogFragment {
         } catch (NumberFormatException e) {
           // Nothing
         }
-
+        // The user can only proceed if the fields name, IP and Port is valid
         if (validName && validIP && validPort) {
           positiveButton.setEnabled(true);
         }
@@ -187,11 +198,15 @@ public class AddCameraDialogFragment extends DialogFragment {
             Button positiveButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
             if (!hasFocus) {
               validName = true;
+
+              // If the field is empty, set error
               if (TextUtils.isEmpty(nameEdit.getText().toString())) {
                 nameEdit.setError("Invalid name");
                 validName = false;
                 positiveButton.setEnabled(false);
               }
+
+              // The user can only proceed if the fields name, IP and Port is valid
               if (validName && validIP && validPort) {
                 positiveButton.setEnabled(true);
               }
@@ -208,11 +223,15 @@ public class AddCameraDialogFragment extends DialogFragment {
             if (!hasFocus) {
               validIP = true;
               Matcher matcher = IP_ADDRESS.matcher(ipEdit.getText().toString());
+
+              // Error if IP-address is not valid
               if (!matcher.matches()) {
                 ipEdit.setError("Invalid IP-Address");
                 validIP = false;
                 positiveButton.setEnabled(false);
               }
+
+              // The user can only proceed if the fields name, IP and Port is valid
               if (validName && validIP && validPort) {
                 positiveButton.setEnabled(true);
               }
@@ -231,6 +250,8 @@ public class AddCameraDialogFragment extends DialogFragment {
 
               try {
                 int x = Integer.parseInt(portEdit.getText().toString());
+
+                // The port can only be in the interval 0 - 65535, if not set error
                 if (x < 0 || x > 65535) {
                   portEdit.setError("Invalid Port");
                   validPort = false;
@@ -241,6 +262,7 @@ public class AddCameraDialogFragment extends DialogFragment {
                 // Nothing
               }
 
+              // The user can only proceed if the fields name, IP and Port is valid
               if (validName && validIP && validPort) {
                 positiveButton.setEnabled(true);
               }
@@ -260,6 +282,7 @@ public class AddCameraDialogFragment extends DialogFragment {
 
     return alertDialog;
   }
+
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
