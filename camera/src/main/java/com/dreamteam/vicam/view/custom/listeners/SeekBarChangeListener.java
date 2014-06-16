@@ -61,7 +61,7 @@ public class SeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
         new Action1<String>() {
           @Override
           public void call(String s) {
-            Utils.infoLog("FOCUS");
+            Utils.debugLog("FOCUS");
           }
         }, Utils.<Throwable>noop()
     );
@@ -79,7 +79,7 @@ public class SeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
         new Action1<String>() {
           @Override
           public void call(String s) {
-            Utils.infoLog("ZOOM");
+            Utils.debugLog("ZOOM");
           }
         }, Utils.<Throwable>noop()
     );

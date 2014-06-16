@@ -1,14 +1,13 @@
 package com.dreamteam.vicam.view.custom.listeners;
 
-import android.content.Context;
 import android.os.Handler;
-import android.os.Vibrator;
 import android.view.MotionEvent;
 import android.view.View;
 
 import com.dreamteam.vicam.model.pojo.Camera;
 import com.dreamteam.vicam.model.pojo.Speed;
 import com.dreamteam.vicam.presenter.network.camera.CameraFacade;
+import com.dreamteam.vicam.presenter.utility.Constants;
 import com.dreamteam.vicam.presenter.utility.Utils;
 import com.dreamteam.vicam.view.MainActivity;
 
@@ -25,13 +24,10 @@ public class TouchpadTouchListener implements View.OnTouchListener {
   private volatile boolean blocked;
   private Handler blockedHandler = new Handler();
   private Handler tapHandler = new Handler();
-  private Vibrator vibrator;
-  private Context context;
 
 
   public TouchpadTouchListener(MainActivity activity) {
     this.mActivity = activity;
-    //  vibrator = (Vibrator) this.context.getSystemService(Context.VIBRATOR_SERVICE);
   }
 
   @Override
@@ -45,10 +41,10 @@ public class TouchpadTouchListener implements View.OnTouchListener {
           public void run() {
             blocked = false;
           }
-        }, Utils.DELAY_TIME_MILLIS);
-        Utils.infoLog("Sent request!");
+        }, Constants.DELAY_TIME_MILLIS);
+        Utils.debugLog("Sent request!");
       } else {
-        Utils.infoLog("BLOCKED");
+        Utils.debugLog("BLOCKED");
         return false;
       }
     }
@@ -62,9 +58,8 @@ public class TouchpadTouchListener implements View.OnTouchListener {
 
     switch (motionEvent.getAction()) {
       case MotionEvent.ACTION_DOWN:
-        // vibrator.vibrate(1);
-        tapHandler.postDelayed(tapRunnable, Utils.DELAY_TIME_MILLIS);
-
+        tapHandler.postDelayed(tapRunnable, Constants.DELAY_TIME_MILLIS);
+        // fall through
       case MotionEvent.ACTION_MOVE:
         float eventX = motionEvent.getX();
         float eventY = motionEvent.getY();
@@ -80,7 +75,6 @@ public class TouchpadTouchListener implements View.OnTouchListener {
           return false;
         }
 
-        // If only java would've had lambdas...
         mActivity.prepareObservable(
             mActivity.getCurrentCamera().map(new Func1<Camera, Speed>() {
               @Override
@@ -97,6 +91,7 @@ public class TouchpadTouchListener implements View.OnTouchListener {
                 return new Speed(x, y);
               }
             }).flatMap(new Func1<Speed, Observable<String>>() {
+              // If only java would've had lambdas...
               @Override
               public Observable<String> call(final Speed speed) {
                 return mActivity.getFacade().flatMap(new Func1<CameraFacade, Observable<String>>() {
@@ -112,6 +107,7 @@ public class TouchpadTouchListener implements View.OnTouchListener {
         return true;
 
       case MotionEvent.ACTION_CANCEL:
+        // fall through
       case MotionEvent.ACTION_UP:
         // interrupt tap handler
         tapHandler.removeCallbacks(tapRunnable);
