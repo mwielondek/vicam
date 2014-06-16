@@ -25,8 +25,10 @@ public class Camera implements Identifiable {
   @DatabaseField(columnName = "invert_y", canBeNull = false)
   private boolean invertY;
 
+  /**
+   * ORMLite needs a no-argument constructor.
+   */
   Camera() {
-    // ORMLite needs a no-arg constructor
   }
 
   public Camera(int id, String ip, String name, Integer port, boolean invertX, boolean invertY) {

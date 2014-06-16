@@ -22,8 +22,10 @@ public class CameraState implements Identifiable {
                  foreignAutoRefresh = true)
   private Focus focus;
 
+  /**
+   * ORMLite needs a no-argument constructor.
+   */
   CameraState() {
-    // ORMLite needs a no-arg constructor
   }
 
   public CameraState(int id, Position position, Zoom zoom, Focus focus) {

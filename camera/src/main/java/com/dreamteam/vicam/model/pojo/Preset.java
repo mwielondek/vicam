@@ -5,7 +5,10 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 /**
- * Created by fsommar on 2014-04-01.
+ * 
+ * 
+ * @author Milosz Wielondek and Daniel Millevik
+ * @since 2014-04-01.
  */
 @DatabaseTable(tableName = "preset")
 public class Preset implements Identifiable {
@@ -20,8 +23,10 @@ public class Preset implements Identifiable {
                  foreignAutoRefresh = true)
   private CameraState cameraState;
 
+  /**
+   * ORMLite needs a no-argument constructor.
+   */
   Preset() {
-    // ORMLite needs a no-arg constructor
   }
 
   public Preset(int id, String name, Camera camera, CameraState cameraState) {
@@ -70,7 +75,6 @@ public class Preset implements Identifiable {
   }
 
   public class Copy {
-
     private String cName;
     private Camera cCamera;
     private CameraState cCameraState;
