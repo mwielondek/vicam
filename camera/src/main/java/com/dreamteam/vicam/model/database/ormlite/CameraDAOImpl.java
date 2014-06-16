@@ -19,7 +19,10 @@ import rx.Observable;
 import static com.dreamteam.vicam.presenter.utility.Utils.ORMLite;
 
 /**
- * Created by fsommar on 2014-04-03.
+ * An ORMLite implementation of the {@link com.dreamteam.vicam.model.database.CameraDAO} interface.
+ *
+ * @author Fredrik Sommar
+ * @since 2014-04-03.
  */
 public class CameraDAOImpl implements CameraDAO {
 
@@ -33,21 +36,33 @@ public class CameraDAOImpl implements CameraDAO {
     this.presetDaoOrmLite = ormLiteHelper.getDao(Preset.class);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public Observable<Integer> insertCamera(Camera camera) {
     return ORMLite.insert(cameraDaoOrmLite, camera);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public Observable<Camera> findCamera(int id) {
     return ORMLite.find(cameraDaoOrmLite, id);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public Observable<Boolean> updateCamera(Camera camera) {
     return ORMLite.update(cameraDaoOrmLite, camera);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public Observable<Boolean> deleteCamera(final int id) {
     try {
@@ -66,11 +81,15 @@ public class CameraDAOImpl implements CameraDAO {
       );
       return Observable.just(true);
     } catch (SQLException e) {
-      Utils.databaseError(String.format(Locale.US, "Error while deleting camera with id %d", id), e);
+      Utils.databaseError(String.format(
+          Locale.US, "Error while deleting camera with id %d", id), e);
       return Observable.error(e);
     }
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public Observable<List<Camera>> getCameras() {
     return ORMLite.getAll(cameraDaoOrmLite);

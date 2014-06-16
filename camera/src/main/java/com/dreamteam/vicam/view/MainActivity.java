@@ -337,7 +337,6 @@ public class MainActivity extends Activity {
         return true;
 
       case R.id.action_import_db:
-
         String settingsImportPath = Utils.DatabaseSync.importDb("export.db");
         if (settingsImportPath != null) {
           populateCameraList();
@@ -855,6 +854,8 @@ public class MainActivity extends Activity {
           }
         }
         mCurrentCamera = camera;
+        // TODO instead of the above?
+        // mEventBus.post(new CameraChangedEvent(camera));
         mCameraAdapter.notifyDataSetChanged();
       }
     }, Utils.<Throwable>noop());

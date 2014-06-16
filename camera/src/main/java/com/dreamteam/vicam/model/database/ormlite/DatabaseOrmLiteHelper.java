@@ -22,7 +22,12 @@ import java.sql.SQLException;
 import rx.Observable;
 
 /**
- * Created by fsommar on 2014-04-03.
+ * A database helper necessary for OrmLite to work with android. onUpgrade is called when {@link
+ * #DATABASE_VERSION} is increased and is used for e.g. altering tables and such as necessary when
+ * upgrading the internal database representation.
+ *
+ * @author Fredrik Sommar
+ * @since 2014-04-03.
  */
 public class DatabaseOrmLiteHelper extends OrmLiteSqliteOpenHelper {
 
@@ -63,7 +68,7 @@ public class DatabaseOrmLiteHelper extends OrmLiteSqliteOpenHelper {
   }
 
   /**
-   * Close the database connections and clear any cached DAOs.
+   * Closes the database connections and clears cached DAOs.
    */
   @Override
   public void close() {
@@ -72,6 +77,10 @@ public class DatabaseOrmLiteHelper extends OrmLiteSqliteOpenHelper {
     presetDao = null;
   }
 
+  /**
+   * Used by {@link com.dreamteam.vicam.model.database.ormlite.DAOFactoryImpl}.
+   * @see com.dreamteam.vicam.model.database.DAOFactory#getCameraDAO()
+   */
   public Observable<CameraDAO> getCameraDAO() {
     if (cameraDao == null) {
       try {
@@ -88,6 +97,10 @@ public class DatabaseOrmLiteHelper extends OrmLiteSqliteOpenHelper {
     }
   }
 
+  /**
+   * Used by {@link com.dreamteam.vicam.model.database.ormlite.DAOFactoryImpl}.
+   * @see com.dreamteam.vicam.model.database.DAOFactory#getPresetDAO()
+   */
   public Observable<PresetDAO> getPresetDAO() {
     if (presetDao == null) {
       try {
