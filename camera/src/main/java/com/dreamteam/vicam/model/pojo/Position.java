@@ -44,7 +44,7 @@ public class Position implements Identifiable {
   /**
    * Creates a Position object with set coordinates indicating camera position.
    * The coordinates should be withing accepted bounds.
-   * Throws IllegalArgumentExeption otherwise.
+   * Throws IllegalArgumentException otherwise.
    */
   public Position(int pan, int tilt) {
     Utils.rangeCheck(pan, LOWER_BOUND, UPPER_BOUND);

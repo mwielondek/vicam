@@ -6,7 +6,12 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 /**
- * Created by fsommar on 2014-04-01.
+ * Stores the current settings for a specific camera.
+ * Is also used for saving presets.
+ * 
+ * @author Milosz Wielondek
+ * @author Daniel Millevik
+ * @since 2014-04-01.
  */
 @DatabaseTable(tableName = "cameraState")
 public class CameraState implements Identifiable {
@@ -28,11 +33,21 @@ public class CameraState implements Identifiable {
   CameraState() {
   }
 
+  /**
+   * Creates a CameraState object with settings for position, zoom and focus as well as id.
+   * The different settings can not be null.
+   * @throws {@link IllegalArgumentException}.
+   */
   public CameraState(int id, Position position, Zoom zoom, Focus focus) {
     this(position, zoom, focus);
     this.id = id;
   }
 
+  /**
+   * Creates a CameraState object with settings for position, zoom and focus.
+   * The different settings can not be null.
+   * @throws {@link IllegalArgumentException}.
+   */
   public CameraState(Position position, Zoom zoom, Focus focus) {
     if (position == null || zoom == null || focus == null) {
       throw new IllegalArgumentException(String.format(
@@ -44,30 +59,53 @@ public class CameraState implements Identifiable {
     this.focus = focus;
   }
 
+  /**
+   * Returns the unique id for the CameraState object.
+   */
   public int getId() {
     return id;
   }
 
+  /**
+   * Returns the position for the CameraState.
+   */
   public Position getPosition() {
     return position;
   }
 
+  /**
+   * Returns the zoom for the CameraState.
+   */
   public Zoom getZoom() {
     return zoom;
   }
 
+  /**
+   * Returns the focus for the CameraState.
+   */
   public Focus getFocus() {
     return focus;
   }
 
+  /**
+   * Returns true if autofocus is active, false otherwise.
+   */
   public boolean isAF() {
     return focus.isAutofocus();
   }
 
+  /**
+   * Creates a new Copy Object
+   */
   public Copy copy() {
     return new Copy();
   }
 
+  /**
+   * Overrides toString and returns the new representation of the CameraState object as a String.
+   * 
+   * @return A String representing the CameraState object and its state.
+   */
   @Override
   public String toString() {
     return "CameraState{" +
@@ -78,6 +116,12 @@ public class CameraState implements Identifiable {
            '}';
   }
 
+  /**
+   * The Copy Class is used for copying CameraState objects and making changes to them.
+   * Returns the new object with the commit method.
+   * 
+   * @author Fredrik Sommar
+   */
   public class Copy {
 
     private Position cPosition;
@@ -85,27 +129,42 @@ public class CameraState implements Identifiable {
     private Focus cFocus;
 
 
+    /**
+     * The constructor copies the exact same state that the CameraState has.
+     */
     private Copy() {
       this.cPosition = position;
       this.cZoom = zoom;
       this.cFocus = focus;
     }
 
+    /**
+     * Changes the position of the copy.
+     */
     public Copy position(Position position) {
       this.cPosition = position;
       return this;
     }
 
+    /**
+     * Changes the zoom of the copy.
+     */
     public Copy zoom(Zoom zoom) {
       this.cZoom = zoom;
       return this;
     }
 
+    /**
+     * Changes the focus of the copy.
+     */
     public Copy focus(Focus focus) {
       this.cFocus = focus;
       return this;
     }
 
+    /**
+     * Creates a new CameraState with the copied or changed state and returns it.
+     */
     public CameraState commit() {
       return new CameraState(id, cPosition, cZoom, cFocus);
     }
