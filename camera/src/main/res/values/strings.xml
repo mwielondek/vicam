@@ -82,5 +82,7 @@
     <string name="save_preset_failure">Unable to save preset due to camera connection failure
     </string>
     <string name="no_camera_save_preset">Add a camera first!</string>
+    <string name="exit_vicam">Exit VICAM?</string>
+    <string name="confirmation_exit_vicam">Are you sure you want to exit VICAM?</string>
 
 </resources>

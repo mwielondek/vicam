@@ -415,8 +415,8 @@ public class MainActivity extends Activity {
     // To fix that, make it a dialog fragment (like DeleteCameraDialogFragment).
     new AlertDialog.Builder(this)
         .setIcon(android.R.drawable.ic_dialog_alert)
-        .setTitle("Exit VICAM?")
-        .setMessage("Are you sure you want to exit VICAM?")
+        .setTitle(getString(R.string.exit_vicam))
+        .setMessage(getString(R.string.confirmation_exit_vicam))
         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
           @Override
           public void onClick(DialogInterface dialog, int which) {
