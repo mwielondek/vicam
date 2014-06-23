@@ -3,7 +3,6 @@ package com.dreamteam.vicam.view.custom.dialogs;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -28,7 +27,9 @@ import rx.functions.Action1;
 import rx.functions.Func1;
 
 /**
- * Manages a custom layout for the edit dialog
+ * Manages a custom layout for the edit dialog.
+ *
+ * @author Benny Tieu
  */
 public class EditPresetDialogFragment extends DialogFragment {
 
@@ -59,7 +60,6 @@ public class EditPresetDialogFragment extends DialogFragment {
 
     final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-
     // Inflate the layout for the dialog
     LayoutInflater inflater = getActivity().getLayoutInflater();
     // Pass null as the parent view because its going in the dialog layout
@@ -78,7 +78,7 @@ public class EditPresetDialogFragment extends DialogFragment {
             android.R.string.ok, new DialogInterface.OnClickListener() {
               @Override
               public void onClick(DialogInterface dialog, int id) {
-                // Add the preset to database
+                // Send event for adding the preset to database
                 Preset renamedPreset = preset.copy().name(editText.getText().toString()).commit();
                 mEventBus.post(new EditPresetEvent(renamedPreset));
               }

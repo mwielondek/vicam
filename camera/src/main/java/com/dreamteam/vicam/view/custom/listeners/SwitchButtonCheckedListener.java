@@ -11,7 +11,11 @@ import rx.functions.Action1;
 import rx.functions.Func1;
 
 /**
- * Created by fsommar on 2014-05-06.
+ * Manages switch button changes for the auto focus button by updating the auto focus on the web
+ * camera.
+ *
+ * @author Fredrik Sommar
+ * @since 2014-05-06.
  */
 public class SwitchButtonCheckedListener implements CompoundButton.OnCheckedChangeListener {
 

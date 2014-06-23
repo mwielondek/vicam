@@ -12,9 +12,14 @@ import de.greenrobot.event.EventBus;
 import javax.inject.Inject;
 
 /**
- * Created by fsommar on 2014-04-26.
+ * Manages the camera spinner selection and posts a {@link com.dreamteam.vicam.model.events.CameraChangedEvent}
+ * when another {@link com.dreamteam.vicam.model.pojo.Camera} is selected.
+ *
+ * @author Fredrik Sommar
+ * @since 2014-04-26.
  */
 public class CameraSpinnerItemListener implements AdapterView.OnItemSelectedListener {
+
   @Inject
   EventBus mEventBus;
 

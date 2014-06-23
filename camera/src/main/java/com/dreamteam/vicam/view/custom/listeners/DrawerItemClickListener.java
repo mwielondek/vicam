@@ -13,7 +13,11 @@ import de.greenrobot.event.EventBus;
 import javax.inject.Inject;
 
 /**
- * Created by fsommar on 2014-04-26.
+ * Manages drawer selections and when an item is selected it closes the drawer and sends a {@link
+ * com.dreamteam.vicam.model.events.PresetSelectedEvent} with the selected {@link Preset}.
+ *
+ * @author Fredrik Sommar
+ * @since 2014-04-26.
  */
 public class DrawerItemClickListener implements android.widget.AdapterView.OnItemClickListener {
 

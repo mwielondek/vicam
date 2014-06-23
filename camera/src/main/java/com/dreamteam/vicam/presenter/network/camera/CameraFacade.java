@@ -18,7 +18,7 @@ import rx.functions.Func3;
 
 /**
  * @author Milosz Wielondek
- * @since 2014-04-01
+ * @since 2014-04-01.
  */
 public class CameraFacade {
 

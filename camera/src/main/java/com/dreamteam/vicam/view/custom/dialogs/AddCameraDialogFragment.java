@@ -28,7 +28,9 @@ import java.util.regex.Pattern;
 import javax.inject.Inject;
 
 /**
- * Manages a custom layout for the Add Camera dialog in settings
+ * Manages a custom layout for the Add Camera dialog in settings.
+ *
+ * @author Benny Tieu
  */
 public class AddCameraDialogFragment extends DialogFragment {
 

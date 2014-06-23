@@ -3,7 +3,6 @@ package com.dreamteam.vicam.view.custom.dialogs;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -20,7 +19,9 @@ import de.greenrobot.event.EventBus;
 import javax.inject.Inject;
 
 /**
- * Manages a custom layout for the SavePreset dialog
+ * Manages a custom layout for the SavePreset dialog.
+ *
+ * @author Benny Tieu
  */
 public class SavePresetDialogFragment extends DialogFragment {
 
@@ -50,7 +51,7 @@ public class SavePresetDialogFragment extends DialogFragment {
         .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
           @Override
           public void onClick(DialogInterface dialog, int id) {
-            // Add the preset to database
+            // Send event for adding the preset to database
             mEventBus.post(new SavePresetEvent(dialog, editText.getText().toString()));
           }
         })
@@ -64,7 +65,8 @@ public class SavePresetDialogFragment extends DialogFragment {
   }
 
   @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+  public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                           Bundle savedInstanceState) {
     this.getDialog().setCanceledOnTouchOutside(false);
     return null;
   }

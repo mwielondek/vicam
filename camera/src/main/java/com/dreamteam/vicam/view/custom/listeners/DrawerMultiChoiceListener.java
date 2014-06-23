@@ -23,7 +23,15 @@ import java.util.List;
 import javax.inject.Inject;
 
 /**
- * Created by fsommar on 2014-05-04.
+ * Manages multiple selections in the drawer list and posts either {@link
+ * com.dreamteam.vicam.model.events.DeletePresetsEvent} or {@link com.dreamteam.vicam.model.events.EditPresetEvent}
+ * depending on which action was chosen (or nothing in the case that the selection was
+ * interrupted).
+ *
+ * @author Benny Tieu
+ * @author Milosz Wielondek
+ * @author Fredrik Sommaron
+ * @since 2014-05-04.
  */
 public class DrawerMultiChoiceListener implements AbsListView.MultiChoiceModeListener {
 
@@ -51,6 +59,7 @@ public class DrawerMultiChoiceListener implements AbsListView.MultiChoiceModeLis
       mSelected.remove(preset);
     }
 
+    // forces a redraw
     mode.invalidate();
   }
 
@@ -87,6 +96,8 @@ public class DrawerMultiChoiceListener implements AbsListView.MultiChoiceModeLis
     MenuItem edit = menu.findItem(R.id.context_edit_preset);
     MenuItem delete = menu.findItem(R.id.context_delete_preset);
 
+    // Only show edit action item when one preset is selected.
+    // It's not possible to edit multiple presets simultaneously).
     boolean oneSelection = mList.getCheckedItemCount() <= 1;
     edit.setVisible(oneSelection);
     edit.setEnabled(oneSelection);

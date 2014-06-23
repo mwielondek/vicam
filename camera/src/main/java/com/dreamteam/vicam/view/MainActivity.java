@@ -45,7 +45,6 @@ import com.dreamteam.vicam.model.events.SavePresetEvent;
 import com.dreamteam.vicam.model.pojo.Camera;
 import com.dreamteam.vicam.model.pojo.CameraState;
 import com.dreamteam.vicam.model.pojo.Preset;
-import com.dreamteam.vicam.model.pojo.Zoom;
 import com.dreamteam.vicam.presenter.CameraServiceManager;
 import com.dreamteam.vicam.presenter.network.camera.CameraFacade;
 import com.dreamteam.vicam.presenter.utility.Dagger;
@@ -91,9 +90,13 @@ import rx.schedulers.Schedulers;
 import static com.dreamteam.vicam.view.custom.listeners.SeekBarChangeListener.Type;
 
 /**
+ * The main activity of the application where all the frontend and backend code blends together in a
+ * lovely mix.
+ *
  * @author Benny Tieu
  * @author Dajana Vlajic
  * @author Donia Alipoor
+ * @author Milosz Wielondek
  * @author Fredrik Sommar
  */
 public class MainActivity extends Activity {
@@ -124,8 +127,6 @@ public class MainActivity extends Activity {
 
   private static final String SELECTED_CAMERA = "SELECTED_CAMERA";
   private static final String CONNECTION_SUCCESS = "CONNECTION_SUCCESS";
-
-  private CharSequence mTitle;
 
   private Camera mCurrentCamera;
   private boolean mConnectionSuccess;
@@ -165,8 +166,6 @@ public class MainActivity extends Activity {
     Iconify.addIcons(mZoomOutButton);
 
     mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-
-    mTitle = getString(R.string.app_name);
 
     ActionBar actionBar = getActionBar();
     if (actionBar != null) {
@@ -371,15 +370,6 @@ public class MainActivity extends Activity {
   }
 
   @Override
-  public void setTitle(CharSequence title) {
-    mTitle = title;
-    ActionBar actionBar = getActionBar();
-    if (actionBar != null) {
-      actionBar.setTitle(mTitle);
-    }
-  }
-
-  @Override
   protected void onResume() {
     super.onResume();
     mEventBus.register(this);
@@ -417,9 +407,12 @@ public class MainActivity extends Activity {
     mDAOFactory.close();
   }
 
-  // Warning of closing the app when back is pressed
   @Override
   public void onBackPressed() {
+    // Warns of closing the app when back is pressed
+
+    // This dialog is dismissed on rotation change.
+    // To fix that, make it a dialog fragment (like DeleteCameraDialogFragment).
     new AlertDialog.Builder(this)
         .setIcon(android.R.drawable.ic_dialog_alert)
         .setTitle("Exit VICAM?")
@@ -481,6 +474,7 @@ public class MainActivity extends Activity {
     return Observable.just(mCurrentCamera);
   }
 
+  // TODO: Move to another class like the rest of the input listeners (to reduce clutter here)
   @OnClick(R.id.one_touch_autofocus)
   @SuppressWarnings("unused")
   public void OneTouchAutofocusClick(Button button) {
@@ -528,6 +522,7 @@ public class MainActivity extends Activity {
   private void restoreSelectedCamera() {
     if (mCameraSpinner != null && mCameras != null && mSharedPreferences != null) {
       int selected = mSharedPreferences.getInt(SELECTED_CAMERA, 0);
+
       if (selected >= 0 && selected < mCameras.size()) {
         mCameraSpinner.setSelection(selected);
       } else if (mCameras.size() > 0) {
@@ -583,30 +578,6 @@ public class MainActivity extends Activity {
     } catch (Exception e) {
       Utils.errorLog(Utils.throwableToString(e));
     }
-  }
-
-  public void stopZoom() {
-    prepareObservable(
-        getFacade().flatMap(new Func1<CameraFacade, Observable<Zoom>>() {
-          @Override
-          public Observable<Zoom> call(final CameraFacade cameraFacade) {
-            return cameraFacade.zoomStop().flatMap(new Func1<String, Observable<Zoom>>() {
-              @Override
-              public Observable<Zoom> call(String s) {
-                return cameraFacade.getZoom();
-              }
-            });
-          }
-        })
-    ).subscribe(
-        new Action1<Zoom>() {
-          @Override
-          public void call(Zoom zoom) {
-            updateZoomLevel(zoom.getLevel());
-          }
-        },
-        Utils.<Throwable>noop()
-    );
   }
 
   private void updateCameraState() {
@@ -864,9 +835,8 @@ public class MainActivity extends Activity {
             break;
           }
         }
-        mCurrentCamera = camera;
-        // TODO instead of the above?
-        // mEventBus.post(new CameraChangedEvent(camera));
+
+        mEventBus.post(new CameraChangedEvent(camera));
         mCameraAdapter.notifyDataSetChanged();
       }
     }, Utils.<Throwable>noop());

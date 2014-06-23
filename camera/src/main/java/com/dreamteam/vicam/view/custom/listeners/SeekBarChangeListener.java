@@ -12,7 +12,12 @@ import rx.functions.Action1;
 import rx.functions.Func1;
 
 /**
- * Created by fsommar on 2014-04-26.
+ * Manages the focus and zoom seek bars by updating the web camera on seek bar changes.
+ *
+ * @author Donia Alipoor
+ * @author Dajana Vlajic
+ * @author Fredrik Sommar
+ * @since 2014-04-26.
  */
 public class SeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
 
@@ -38,6 +43,8 @@ public class SeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
   @Override
   public void onStopTrackingTouch(SeekBar seekBar) {
     final int level = progressToLevel(seekBar.getProgress(), seekBar.getMax());
+    // Seek bar updates are only done when the finger is lifted from the seek bar.
+    // It's done to minimize the amount of network requests to the web camera.
     doAction(level);
   }
 
@@ -85,10 +92,20 @@ public class SeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
     );
   }
 
+  /**
+   * Converts the seek bar progress value to the scale used on the web camera.
+   *
+   * @param max The maximum progress value. 0 is expected to be the minimum.
+   */
   public static int progressToLevel(int progress, int max) {
     return progress * Zoom.RANGE / max + Zoom.LOWER_BOUND;
   }
 
+  /**
+   * Converts the value used on the web camera to the progress scale used in the application.
+   *
+   * @param max The maximum progress value. 0 is expected to be the minimum.
+   */
   public static int levelToProgress(int level, int max) {
     return (level - Zoom.LOWER_BOUND) * max / Zoom.RANGE;
   }

@@ -3,7 +3,6 @@ package com.dreamteam.vicam.view.custom.dialogs;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -15,6 +14,7 @@ import com.dreamteam.camera.R;
 /**
  * Manages a custom layout for the about dialog fragment.
  *
+ * @author Benny Tieu
  */
 public class AboutPageDialogFragment extends DialogFragment {
 
@@ -33,7 +33,6 @@ public class AboutPageDialogFragment extends DialogFragment {
     LayoutInflater inflater = getActivity().getLayoutInflater();
     // Inflates the layout
     View view = inflater.inflate(R.layout.dialog_about_page, null);
-
 
     // Inflate and set the layout for the dialog
     // Pass null as the parent view because its going in the dialog layout

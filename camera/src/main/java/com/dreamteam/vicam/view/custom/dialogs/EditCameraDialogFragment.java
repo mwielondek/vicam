@@ -3,7 +3,6 @@ package com.dreamteam.vicam.view.custom.dialogs;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
@@ -38,7 +37,9 @@ import rx.functions.Action1;
 import rx.functions.Func1;
 
 /**
- * Manages a custom layout for the Edit Camera Dialog
+ * Manages a custom layout for the Edit Camera Dialog.
+ *
+ * @author Benny Tieu
  */
 public class EditCameraDialogFragment extends DialogFragment {
 
@@ -81,7 +82,6 @@ public class EditCameraDialogFragment extends DialogFragment {
 
     // Set the title of the dialog
     builder.setTitle(R.string.edit_camera);
-
 
     final EditText nameEdit = (EditText) view.findViewById(R.id.edit_camera_name);
     final EditText ipEdit = (EditText) view.findViewById(R.id.edit_camera_ip);
@@ -240,8 +240,6 @@ public class EditCameraDialogFragment extends DialogFragment {
           }
         }
     );
-
-
 
     nameEdit.setOnFocusChangeListener(
         new View.OnFocusChangeListener() {

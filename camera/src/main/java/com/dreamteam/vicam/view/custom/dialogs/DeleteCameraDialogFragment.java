@@ -3,7 +3,6 @@ package com.dreamteam.vicam.view.custom.dialogs;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -26,7 +25,9 @@ import rx.functions.Action1;
 import rx.functions.Func1;
 
 /**
- * Manages a custom layout for the delete camera dialog
+ * Manages a custom layout for the delete camera dialog.
+ *
+ * @author Benny Tieu
  */
 public class DeleteCameraDialogFragment extends DialogFragment {
 
@@ -54,7 +55,6 @@ public class DeleteCameraDialogFragment extends DialogFragment {
   @Override
   public Dialog onCreateDialog(Bundle savedInstanceState) {
     final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-
 
     final int cameraId = getArguments().getInt(CAMERA_ID_KEY);
     mDAOFactory.getCameraDAO().flatMap(new Func1<CameraDAO, Observable<Camera>>() {

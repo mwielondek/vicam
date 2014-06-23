@@ -15,7 +15,13 @@ import rx.Observable;
 import rx.functions.Func1;
 
 /**
- * Created by fsommar on 2014-04-26.
+ * Manages touch pad events and updates the camera movements according to touch events.
+ *
+ * @author Donia Alipoor
+ * @author Milosz Wielondek
+ * @author Dajana Vlajic
+ * @author Fredrik Sommar
+ * @since 2014-04-26.
  */
 public class TouchpadTouchListener implements View.OnTouchListener {
 
@@ -58,6 +64,7 @@ public class TouchpadTouchListener implements View.OnTouchListener {
 
     switch (motionEvent.getAction()) {
       case MotionEvent.ACTION_DOWN:
+        // Make it possible to tap the touch pad and have it move a set distance
         tapHandler.postDelayed(tapRunnable, Constants.DELAY_TIME_MILLIS);
         // fall through
       case MotionEvent.ACTION_MOVE:
@@ -81,12 +88,13 @@ public class TouchpadTouchListener implements View.OnTouchListener {
               public Speed call(Camera camera) {
                 int x = normX;
                 int y = normY;
+                int speedRange = Speed.LOWER_BOUND + Speed.UPPER_BOUND;
 
                 if (camera.isInvertX()) {
-                  x = 100 - x;
+                  x = speedRange - x;
                 }
                 if (camera.isInvertY()) {
-                  y = 100 - y;
+                  y = speedRange - y;
                 }
                 return new Speed(x, y);
               }
@@ -115,8 +123,14 @@ public class TouchpadTouchListener implements View.OnTouchListener {
           @Override
           public void run() {
             while (blocked) {
-              // block
+              // Continuously poll for the blocked value
+              try {
+                Thread.sleep(10);
+              } catch (InterruptedException ignored) {
+                // Do nothing
+              }
             }
+            // When the requests are no longer blocked, send a request to stop moving the camera.
             stopCameraMoving();
           }
         }).start();
