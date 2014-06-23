@@ -14,19 +14,20 @@ import de.greenrobot.event.EventBus;
 import javax.inject.Inject;
 
 /**
- * A listener that manages the toggle of the preset drawer
+ * A listener that manages the toggle of the preset drawer. When the drawer is closed a {@link
+ * com.dreamteam.vicam.model.events.OnDrawerCloseEvent} is fired.
+ *
+ * @author Benny Tieu
  */
 public class DrawerToggle extends ActionBarDrawerToggle {
 
   @Inject
   EventBus eventBus;
-  private final Activity activity;
 
   public DrawerToggle(Activity activity, DrawerLayout drawerLayout) {
     super(activity, drawerLayout, R.drawable.ic_drawer, R.string.drawer_open,
           R.string.drawer_close);
     Dagger.inject(this);
-    this.activity = activity;
   }
 
   /**
@@ -35,14 +36,6 @@ public class DrawerToggle extends ActionBarDrawerToggle {
   @Override
   public void onDrawerClosed(View view) {
     eventBus.post(new OnDrawerCloseEvent(view));
-    activity.setTitle(activity.getString(R.string.app_name));
   }
 
-  /**
-   * Called when a drawer has settled in a completely open state.
-   */
-  @Override
-  public void onDrawerOpened(View view) {
-    activity.setTitle(activity.getString(R.string.change_preset));
-  }
 }

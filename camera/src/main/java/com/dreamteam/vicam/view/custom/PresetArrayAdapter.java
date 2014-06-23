@@ -13,9 +13,14 @@ import com.dreamteam.vicam.model.pojo.Preset;
 import java.util.List;
 
 /**
- * Created by Donia on 2014-04-24.
+ * Manages a text representation for {@link com.dreamteam.vicam.model.pojo.Preset} objects in an
+ * adapter list.
+ *
+ * @author Donia Alipoor
+ * @since 2014-04-24.
  */
 public class PresetArrayAdapter extends ArrayAdapter<Preset> {
+
   private final Context context;
   private final List<Preset> presets;
 
@@ -27,13 +32,14 @@ public class PresetArrayAdapter extends ArrayAdapter<Preset> {
 
   @Override
   public View getDropDownView(int position, View convertView, ViewGroup parent) {
-    return getCustomView(position, convertView, parent);
+    return getCustomView(position, parent);
   }
 
-  private View getCustomView(int position, View convertView, ViewGroup parent){
+  private View getCustomView(int position, ViewGroup parent) {
     LayoutInflater inflater = (LayoutInflater) context
         .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     View rowView = inflater.inflate(R.layout.drawer_list_item, parent, false);
+
     TextView textView = (TextView) rowView.findViewById(R.id.textView);
     textView.setText(presets.get(position).getName());
 
@@ -42,6 +48,6 @@ public class PresetArrayAdapter extends ArrayAdapter<Preset> {
 
   @Override
   public View getView(int position, View convertView, ViewGroup parent) {
-    return getCustomView(position, convertView, parent);
+    return getCustomView(position, parent);
   }
 }

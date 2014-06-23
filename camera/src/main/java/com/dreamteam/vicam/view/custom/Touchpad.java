@@ -8,14 +8,16 @@ import android.util.AttributeSet;
 import android.view.View;
 
 /**
- * Created by fsommar on 2014-05-04.
+ * A grey square with square outlines on top of it..
+ *
+ * @author Fredrik Sommar
+ * @since 2014-05-04.
  */
 public class Touchpad extends View {
 
   private final Paint mBackgroundPaint;
   private final Paint mAccentPaint;
   private RectF mBackgroundBounds;
-  private int mSize;
   private RectF mOuterSquare;
   private RectF mMiddleSquare;
   private RectF mInnerSquare;
@@ -102,6 +104,7 @@ public class Touchpad extends View {
   }
 
 
+  @Override
   protected void onDraw(Canvas canvas) {
     super.onDraw(canvas);
 

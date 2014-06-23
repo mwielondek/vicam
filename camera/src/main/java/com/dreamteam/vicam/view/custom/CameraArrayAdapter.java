@@ -13,9 +13,14 @@ import com.dreamteam.vicam.model.pojo.Camera;
 import java.util.List;
 
 /**
- * Created by Donia on 2014-04-24.
+ * Manages a text representation for {@link com.dreamteam.vicam.model.pojo.Camera} objects in an
+ * adapter list.
+ *
+ * @author Donia Alipoor
+ * @since 2014-04-24.
  */
 public class CameraArrayAdapter extends ArrayAdapter<Camera> {
+
   private final Context context;
   private final List<Camera> cameras;
 
@@ -27,13 +32,14 @@ public class CameraArrayAdapter extends ArrayAdapter<Camera> {
 
   @Override
   public View getDropDownView(int position, View convertView, ViewGroup parent) {
-    return getCustomView(position, convertView, parent);
+    return getCustomView(position, parent);
   }
 
-  private View getCustomView(int position, View convertView, ViewGroup parent){
+  private View getCustomView(int position, ViewGroup parent) {
     LayoutInflater inflater = (LayoutInflater) context
         .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     View rowView = inflater.inflate(R.layout.change_camera_spinner, parent, false);
+
     TextView textView = (TextView) rowView.findViewById(android.R.id.text1);
     textView.setText(cameras.get(position).getName());
 
@@ -42,6 +48,6 @@ public class CameraArrayAdapter extends ArrayAdapter<Camera> {
 
   @Override
   public View getView(int position, View convertView, ViewGroup parent) {
-    return getCustomView(position, convertView, parent);
+    return getCustomView(position, parent);
   }
 }
