@@ -25,44 +25,55 @@
     <string name="delete_camera">Delete camera</string>
     <string name="apply_changes">Apply Changes</string>
     <string name="delete_camera_confirmation">\'%s\' will be removed.</string>
-    <string name="dialog_about_text">Stockholm, 2014: This application was created by the project group Dream Team on behalf of The VIC Studio at KTH, for the course Software Engineering (DD1392).
-        The application is programmed as a controller for the Panasonic AW-HE50S [SDI Model].\n
+    <string name="dialog_about_text">Stockholm, 2014: This application was created by the project
+        group Dream Team on behalf of The VIC Studio at KTH, for the course Software Engineering
+        (DD1392).
+        The application is programmed as a controller for the Panasonic AW-HE50.\n
     </string>
     <string name="dialog_about_text_members">
         <b>(Customer Communication)</b>\n
         Aroshine Munasinghe\n
-        <i>aroshine\@kth.se</i>\n
+        <i>aroshine\@kth.se</i>\n\n
+
         <b>(Frontend/GUI)</b>\n
         Benny Tieu\n
-        <i>btieu@kth.se</i>\n
-        <b>(Programmer)</b>\n
+        <i>btieu@kth.se</i>\n\n
+
+        <b>(Secretary/Editor)</b>\n
         Brian Ye\n
-        <i>briany\@kth.se</i>\n
-        <b>(Programmer)</b>\n
+        <i>briany\@kth.se</i>\n\n
+
+        <b>(Frontend)</b>\n
         Dajana Vlajic\n
-        <i>dajana\@kth.se</i>\n
+        <i>dajana\@kth.se</i>\n\n
+
         <b>(Backend)</b>\n
         Daniel Millevik\n
-        <i>millevik\@kth.se</i>\n
-        <b>(Programmer)</b>\n
+        <i>millevik\@kth.se</i>\n\n
+
+        <b>(Editor in Chief)</b>\n
         Daniel Szerszen\n
-        <i>szerszen\@kth.se</i>\n
-        <b>(Frontend/Design/GUI)</b>\n
+        <i>szerszen\@kth.se</i>\n\n
+
+        <b>(Frontend/Design)</b>\n
         Donia Alipoor\n
-        <i>donia\@kth.se</i>\n
+        <i>donia\@kth.se</i>\n\n
+
         <b>(Chief Programmer)</b>\n
         Fredrik Sommar\n
-        <i>fsommar\@kth.se</i>\n
-        <b>(Programmer)</b>\n
-        Michael Wang\n
-        <i>micwan\@kth.se</i>\n
-        <b>(Project Manager)</b>\n
-        Milosz Wielondek\n
-        <i>miloszw\@kth.se</i>\n
-        <b>(Design/GUI)</b>\n
-        Oktay Bahceci\n
-        <i>oktayb\@kth.se</i>\n
+        <i>fsommar\@kth.se</i>\n\n
 
+        <b>(GUI)</b>\n
+        Michael Wang\n
+        <i>micwan\@kth.se</i>\n\n
+
+        <b>(Project Manager/Programmer)</b>\n
+        Milosz Wielondek\n
+        <i>miloszw\@kth.se</i>\n\n
+
+        <b>(Design)</b>\n
+        Oktay Bahceci\n
+        <i>oktayb\@kth.se</i>\n\n
     </string>
 
     <string name="about_us_credits">~ Credits ~</string>
@@ -84,5 +95,7 @@
     <string name="no_camera_save_preset">Add a camera first!</string>
     <string name="exit_vicam">Exit VICAM?</string>
     <string name="confirmation_exit_vicam">Are you sure you want to exit VICAM?</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
 
 </resources>

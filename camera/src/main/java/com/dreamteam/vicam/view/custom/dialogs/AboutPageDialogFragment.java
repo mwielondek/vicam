@@ -3,7 +3,6 @@ package com.dreamteam.vicam.view.custom.dialogs;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,15 +33,7 @@ public class AboutPageDialogFragment extends DialogFragment {
     // Inflates the layout
     View view = inflater.inflate(R.layout.dialog_about_page, null);
 
-    // Inflate and set the layout for the dialog
-    // Pass null as the parent view because its going in the dialog layout
-    builder.setView(view)
-        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int id) {
-
-          }
-        });
+    builder.setView(view).setPositiveButton(R.string.ok, null);
 
     return builder.create();
   }

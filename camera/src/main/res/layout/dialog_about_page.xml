@@ -3,7 +3,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="wrap_content"
-              android:layout_height="wrap_content">
+              android:layout_height="match_parent">
 
 
     <ImageView android:layout_width="wrap_content"
@@ -33,46 +33,22 @@
               android:text="@string/about_us_credits"
               android:layout_gravity="center"/>
 
-    <LinearLayout android:layout_width="match_parent"
-                  android:layout_height="120dp"
-                  android:orientation="vertical"
+    <ScrollView
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent">
 
-                  android:layout_gravity="center_horizontal">
-        <ScrollView
+        <TextView
+                android:id="@+id/about_text_members"
+                android:textSize="12sp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_width="match_parent"
+                android:gravity="center_horizontal"
+                android:layout_gravity="center_horizontal"
+                android:paddingBottom="15dp"
+                android:paddingTop="15dp"
+                android:text="@string/dialog_about_text_members"
+                android:drawableBottom="@drawable/dt_wo_bg"/>
 
-                >
-
-            <LinearLayout  android:orientation="vertical"
-                           android:layout_width="wrap_content"
-                          android:layout_height="wrap_content"
-                          android:layout_gravity="center_horizontal">
-                <TextView
-
-                        android:id="@+id/about_text_members"
-                        android:textSize="12sp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
-                        android:layout_gravity="center_horizontal"
-
-                        android:text="@string/dialog_about_text_members"
-                        />
-
-                <ImageView android:layout_width="wrap_content"
-                           android:layout_height="wrap_content"
-                           android:src="@drawable/dt_wo_bg"
-                           android:contentDescription="@string/dream_team_logo"
-                           android:layout_marginTop="10dp"
-                           android:layout_marginBottom="20dp"
-                           android:layout_marginRight="5dp"
-                           android:layout_gravity="center"
-                        />
-            </LinearLayout>
-        </ScrollView>
-
-    </LinearLayout>
-
+    </ScrollView>
 
 </LinearLayout>

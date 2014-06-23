@@ -68,12 +68,12 @@ public class DeleteCameraDialogFragment extends DialogFragment {
         builder.setTitle(getString(R.string.delete_camera))
             .setMessage(getString(R.string.delete_camera_confirmation, camera.getName()))
             .setCancelable(false)
-            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
               public void onClick(DialogInterface dialog, int id) {
                 mEventBus.post(new DeleteCameraEvent(camera));
               }
             })
-            .setNegativeButton(android.R.string.cancel, null);
+            .setNegativeButton(R.string.cancel, null);
       }
     }, new Action1<Throwable>() {
       @Override

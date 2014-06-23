@@ -131,7 +131,7 @@ public class EditCameraDialogFragment extends DialogFragment {
             )));
           }
         })
-        .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
           // Cancel dialog
           @Override
           public void onClick(DialogInterface dialog, int id) {

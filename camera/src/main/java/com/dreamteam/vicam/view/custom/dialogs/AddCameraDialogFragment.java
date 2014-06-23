@@ -41,7 +41,7 @@ public class AddCameraDialogFragment extends DialogFragment {
     return new AddCameraDialogFragment();
   }
 
-  // These fields checks the vaildity for corresponding input fields
+  // These fields checks the validity for corresponding input fields
   private static final Pattern IP_ADDRESS = Patterns.IP_ADDRESS;
   private boolean validName;
   private boolean validIP;
@@ -72,7 +72,7 @@ public class AddCameraDialogFragment extends DialogFragment {
     // Inflate and set the layout for the dialog
     // Pass null as the parent view because its going in the dialog layout
     builder.setView(view)
-        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
           @Override
           public void onClick(DialogInterface dialog, int id) {
 
@@ -86,7 +86,7 @@ public class AddCameraDialogFragment extends DialogFragment {
                 invertYSwitch.isChecked()));
           }
         })
-        .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
           // Cancel dialog
           public void onClick(DialogInterface dialog, int id) {
             dialog.cancel();

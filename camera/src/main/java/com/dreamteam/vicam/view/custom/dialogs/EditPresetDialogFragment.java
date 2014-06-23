@@ -75,7 +75,7 @@ public class EditPresetDialogFragment extends DialogFragment {
       public void call(final Preset preset) {
         editText.setText(preset.getName());
         builder.setPositiveButton(
-            android.R.string.ok, new DialogInterface.OnClickListener() {
+            R.string.ok, new DialogInterface.OnClickListener() {
               @Override
               public void onClick(DialogInterface dialog, int id) {
                 // Send event for adding the preset to database
@@ -90,7 +90,7 @@ public class EditPresetDialogFragment extends DialogFragment {
     builder.setView(view)
         // Add action buttons
         .setNegativeButton(
-            android.R.string.cancel,
+            R.string.cancel,
             new DialogInterface.OnClickListener() {
               // Cancel dialog
               public void onClick(DialogInterface dialog, int id) {

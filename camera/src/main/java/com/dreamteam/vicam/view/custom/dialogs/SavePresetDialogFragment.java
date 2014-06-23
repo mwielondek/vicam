@@ -48,14 +48,14 @@ public class SavePresetDialogFragment extends DialogFragment {
 
     builder.setView(view)
         // Add action buttons
-        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
           @Override
           public void onClick(DialogInterface dialog, int id) {
             // Send event for adding the preset to database
             mEventBus.post(new SavePresetEvent(dialog, editText.getText().toString()));
           }
         })
-        .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
           // Cancel dialog
           public void onClick(DialogInterface dialog, int id) {
             dialog.cancel();
