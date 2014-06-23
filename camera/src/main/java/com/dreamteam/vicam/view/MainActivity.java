@@ -90,6 +90,12 @@ import rx.schedulers.Schedulers;
 
 import static com.dreamteam.vicam.view.custom.listeners.SeekBarChangeListener.Type;
 
+/**
+ * @author Benny Tieu
+ * @author Dajana Vlajic
+ * @author Donia Alipoor
+ * @author Fredrik Sommar
+ */
 public class MainActivity extends Activity {
 
   @Inject

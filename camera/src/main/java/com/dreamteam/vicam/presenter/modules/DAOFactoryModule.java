@@ -13,7 +13,11 @@ import dagger.Module;
 import dagger.Provides;
 
 /**
- * Created by fsommar on 2014-04-26.
+ * A {@link dagger.ObjectGraph.DaggerObjectGraph Dagger} module for injecting {@link
+ * com.dreamteam.vicam.model.database.DAOFactory} instances.
+ *
+ * @author Fredrik Sommar
+ * @since 2014-04-26.
  */
 @Module(
     injects = {
@@ -26,6 +30,7 @@ import dagger.Provides;
     library = true
 )
 public class DAOFactoryModule {
+
   @Provides
   @Singleton
   public DAOFactory provideDAOFactory() {

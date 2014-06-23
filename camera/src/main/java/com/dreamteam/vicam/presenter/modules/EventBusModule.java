@@ -19,7 +19,11 @@ import dagger.Module;
 import dagger.Provides;
 
 /**
- * Created by fsommar on 2/5/14.
+ * A {@link dagger.ObjectGraph.DaggerObjectGraph Dagger} module for injecting {@link
+ * de.greenrobot.event.EventBus} instances.
+ *
+ * @author Fredrik Sommar
+ * @since 2014-02-05.
  */
 @Module(
     injects = {

@@ -3,7 +3,10 @@ package com.dreamteam.vicam.presenter.modules;
 import dagger.Module;
 
 /**
- * Created by fsommar on 2/20/14.
+ * A {@link dagger.ObjectGraph.DaggerObjectGraph Dagger} module for collecting the other modules.
+ *
+ * @author Fredrik Sommar
+ * @since 2014-02-20.
  */
 @Module(
     includes = {
