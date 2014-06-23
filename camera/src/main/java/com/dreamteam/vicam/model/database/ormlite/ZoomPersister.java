@@ -8,7 +8,11 @@ import com.j256.ormlite.field.types.IntegerObjectType;
 import java.sql.SQLException;
 
 /**
- * Created by Daniel on 2014-04-11.
+ * Used for {@link com.dreamteam.vicam.model.pojo.Zoom} by ORMLite in order to represent the {@link
+ * com.dreamteam.vicam.model.pojo.Zoom} object as an integer in the database.
+ *
+ * @author Daniel Millevik
+ * @since 2014-04-11.
  */
 public class ZoomPersister extends IntegerObjectType {
 
@@ -18,6 +22,9 @@ public class ZoomPersister extends IntegerObjectType {
     super(SqlType.INTEGER, new Class<?>[]{Zoom.class});
   }
 
+  /**
+   * ORMLite uses reflection to find this method and therefore its signature can't be changed!
+   */
   public static ZoomPersister getSingleton() {
     if (singleton == null) {
       singleton = new ZoomPersister();

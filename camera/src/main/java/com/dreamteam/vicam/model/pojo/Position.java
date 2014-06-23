@@ -6,7 +6,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 /**
- * The Position class represents the cameras position in both axes.
+ * The Position class represents the camera\s position in both axes.
  * Uses ORMLite to store the object as a table in a database.
  * 
  * @author Milosz Wielondek
@@ -34,7 +34,7 @@ public class Position implements Identifiable {
   /**
    * Creates a Position object with an id and sets coordinates indicating camera position.
    * The coordinates should be withing accepted bounds.
-   * Throws IllegalArgumentExeption otherwise.
+   * @throws java.lang.IllegalArgumentException if the coordinates are out of bound.
    */
   public Position(int id, int pan, int tilt) {
     this(pan, tilt);
@@ -42,9 +42,8 @@ public class Position implements Identifiable {
   }
 
   /**
-   * Creates a Position object with set coordinates indicating camera position.
-   * The coordinates should be withing accepted bounds.
-   * Throws IllegalArgumentException otherwise.
+   * Creates a Position object without an id.
+   * @see #Position(int, int, int)
    */
   public Position(int pan, int tilt) {
     Utils.rangeCheck(pan, LOWER_BOUND, UPPER_BOUND);
@@ -56,25 +55,9 @@ public class Position implements Identifiable {
   
   /**
    * Returns the unique id for the Position object.
-   * 
-   * @return The id as an int.
    */
   public int getId() {
     return id;
-  }
-
-  /**
-   * Overrides toString and returns the new representation of the Position object as a String.
-   * 
-   * @return A String representing the Position object and its state.
-   */
-  @Override
-  public String toString() {
-    return "Position{" +
-           "id=" + id +
-           ", pan=" + pan +
-           ", tilt=" + tilt +
-           '}';
   }
 
   /**
@@ -89,5 +72,19 @@ public class Position implements Identifiable {
    */
   public int getTilt() {
     return tilt;
+  }
+
+  /**
+   * Overrides toString and returns the new representation of the Position object as a String.
+   *
+   * @return A String representing the Position object and its state.
+   */
+  @Override
+  public String toString() {
+    return "Position{" +
+           "id=" + id +
+           ", pan=" + pan +
+           ", tilt=" + tilt +
+           '}';
   }
 }

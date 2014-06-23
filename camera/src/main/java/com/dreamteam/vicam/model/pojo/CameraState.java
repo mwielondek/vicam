@@ -6,9 +6,9 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 /**
- * Stores the current settings for a specific camera.
- * Is also used for saving presets.
- * 
+ * Stores the current settings for a specific camera. It is often used in conjunction with {@link
+ * com.dreamteam.vicam.model.pojo.Preset}.
+ *
  * @author Milosz Wielondek
  * @author Daniel Millevik
  * @since 2014-04-01.
@@ -34,9 +34,10 @@ public class CameraState implements Identifiable {
   }
 
   /**
-   * Creates a CameraState object with settings for position, zoom and focus as well as id.
-   * The different settings can not be null.
-   * @throws {@link IllegalArgumentException}.
+   * Creates a CameraState object with settings for position, zoom and focus as well as id. The
+   * different settings can not be null.
+   *
+   * @throws java.lang.IllegalArgumentException if either of the arguments are null.
    */
   public CameraState(int id, Position position, Zoom zoom, Focus focus) {
     this(position, zoom, focus);
@@ -44,9 +45,9 @@ public class CameraState implements Identifiable {
   }
 
   /**
-   * Creates a CameraState object with settings for position, zoom and focus.
-   * The different settings can not be null.
-   * @throws {@link IllegalArgumentException}.
+   * Creates a CameraState object without an id.
+   *
+   * @see #CameraState(int, Position, Zoom, Focus)
    */
   public CameraState(Position position, Zoom zoom, Focus focus) {
     if (position == null || zoom == null || focus == null) {
@@ -95,7 +96,7 @@ public class CameraState implements Identifiable {
   }
 
   /**
-   * Creates a new Copy Object
+   * Creates a new {@link com.dreamteam.vicam.model.pojo.CameraState.Copy} object.
    */
   public Copy copy() {
     return new Copy();
@@ -103,7 +104,7 @@ public class CameraState implements Identifiable {
 
   /**
    * Overrides toString and returns the new representation of the CameraState object as a String.
-   * 
+   *
    * @return A String representing the CameraState object and its state.
    */
   @Override
@@ -117,9 +118,9 @@ public class CameraState implements Identifiable {
   }
 
   /**
-   * The Copy Class is used for copying CameraState objects and making changes to them.
-   * Returns the new object with the commit method.
-   * 
+   * This class is used for copying {@link com.dreamteam.vicam.model.pojo.CameraState} objects and
+   * making changes to them. Returns the new object with the commit method.
+   *
    * @author Fredrik Sommar
    */
   public class Copy {
@@ -130,7 +131,8 @@ public class CameraState implements Identifiable {
 
 
     /**
-     * The constructor copies the exact same state that the CameraState has.
+     * The constructor copies the exact same state that the {@link com.dreamteam.vicam.model.pojo.CameraState}
+     * has.
      */
     private Copy() {
       this.cPosition = position;
@@ -163,7 +165,7 @@ public class CameraState implements Identifiable {
     }
 
     /**
-     * Creates a new CameraState with the copied or changed state and returns it.
+     * Returns a new {@link com.dreamteam.vicam.model.pojo.CameraState} with the updated fields.
      */
     public CameraState commit() {
       return new CameraState(id, cPosition, cZoom, cFocus);

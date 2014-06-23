@@ -6,7 +6,7 @@ import com.j256.ormlite.table.DatabaseTable;
 
 /**
  * Used for storing different predefined settings for a specific camera.
- * 
+ *
  * @author Milosz Wielondek
  * @author Daniel Millevik
  * @since 2014-04-01.
@@ -31,9 +31,11 @@ public class Preset implements Identifiable {
   }
 
   /**
-   * Creates a Preset object with a name, Camera and CameraState as well as id.
-   * The Preset's name, Camera and CameraState can not be null.
-   * @throws {@link IllegalArgumentException}.
+   * Creates a Preset object with a name, {@link com.dreamteam.vicam.model.pojo.Camera} and {@link
+   * com.dreamteam.vicam.model.pojo.CameraState} as well as id. The preset's name, Camera and
+   * CameraState can not be null.
+   *
+   * @throws java.lang.IllegalArgumentException if either parameter is null.
    */
   public Preset(int id, String name, Camera camera, CameraState cameraState) {
     this(name, camera, cameraState);
@@ -41,9 +43,9 @@ public class Preset implements Identifiable {
   }
 
   /**
-   * Creates a Preset object with a name, Camera and CameraState.
-   * The Preset's name, Camera and CameraState can not be null.
-   * @throws {@link IllegalArgumentException}.
+   * Creates a {@link com.dreamteam.vicam.model.pojo.Preset} object without an id.
+   *
+   * @see #Preset(int, String, Camera, CameraState)
    */
   public Preset(String name, Camera camera, CameraState cameraState) {
     if (name == null || camera == null || cameraState == null) {
@@ -77,14 +79,14 @@ public class Preset implements Identifiable {
   }
 
   /**
-   * Returns saved settings for the camera as a CameraState object
+   * Returns saved settings for the camera as a CameraState object.
    */
   public CameraState getCameraState() {
     return cameraState;
   }
 
   /**
-   * Creates a new Copy Object
+   * Creates a new {@link com.dreamteam.vicam.model.pojo.Preset.Copy} object.
    */
   public Copy copy() {
     return new Copy();
@@ -92,7 +94,7 @@ public class Preset implements Identifiable {
 
   /**
    * Overrides toString and returns the new representation of the Preset object as a String.
-   * 
+   *
    * @return A String representing the Preset object and its state.
    */
   @Override
@@ -106,12 +108,13 @@ public class Preset implements Identifiable {
   }
 
   /**
-   * The Copy Class is used for copying Preset objects and making changes to them.
-   * Returns the new object with the commit method.
-   * 
+   * The Copy Class is used for copying {@link com.dreamteam.vicam.model.pojo.Preset} objects and
+   * making changes to them. Returns the new object with the commit method.
+   *
    * @author Fredrik Sommar
    */
   public class Copy {
+
     private String cName;
     private Camera cCamera;
     private CameraState cCameraState;
@@ -135,7 +138,7 @@ public class Preset implements Identifiable {
     }
 
     /**
-     * Changes the camera of the copy.
+     * Changes the {@link com.dreamteam.vicam.model.pojo.Camera} of the copy.
      */
     public Copy camera(Camera camera) {
       this.cCamera = camera;
@@ -143,7 +146,7 @@ public class Preset implements Identifiable {
     }
 
     /**
-     * Changes the camera state of the copy.
+     * Changes the {@link com.dreamteam.vicam.model.pojo.CameraState} of the copy.
      */
     public Copy cameraState(CameraState cameraState) {
       this.cCameraState = cameraState;
@@ -151,7 +154,7 @@ public class Preset implements Identifiable {
     }
 
     /**
-     * Creates a new Preset with the copied or changed state and returns it.
+     * Returns a new {@link com.dreamteam.vicam.model.pojo.Preset} with the updated fields.
      */
     public Preset commit() {
       return new Preset(id, cName, cCamera, cCameraState);

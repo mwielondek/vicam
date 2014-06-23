@@ -7,6 +7,8 @@ import com.j256.ormlite.table.DatabaseTable;
 import java.util.Locale;
 
 /**
+ * A representation of the web camera and its settings, including the IP address.
+ *
  * @author Milosz Wielondek
  * @author Daniel Millevik
  * @since 2014-04-01.
@@ -34,9 +36,10 @@ public class Camera implements Identifiable {
   }
 
   /**
-   * Creates a Camera object initiating the Camera's state as well as the Camera id.
-   * The Camera's name and ip can not be null.
-   * @throws {@link IllegalArgumentException}.
+   * Creates a Camera object initiating the Camera's state as well as the Camera id. The Camera's
+   * name and ip can't be null.
+   *
+   * @throws java.lang.IllegalArgumentException if name or ip are null.
    */
   public Camera(int id, String ip, String name, Integer port, boolean invertX, boolean invertY) {
     this(ip, name, port, invertX, invertY);
@@ -44,18 +47,10 @@ public class Camera implements Identifiable {
   }
 
   /**
-   * Creates a Camera object initiating the Camera's state, inverted movements is deactivated.
-   * The Camera's name and ip can not be null.
-   * @throws {@link IllegalArgumentException}.
-   */
-  public Camera(String ip, String name, Integer port) {
-    this(ip, name, port, false, false);
-  }
-
-  /**
-   * Creates a Camera object initiating the Camera's state.
-   * The Camera's name and ip can not be null.
-   * @throws {@link IllegalArgumentException}.
+   * Creates a Camera object without an id.
+   *
+   * @throws java.lang.IllegalArgumentException if either name or ip is null.
+   * @see #Camera(int, String, String, Integer, boolean, boolean)
    */
   public Camera(String ip, String name, Integer port, boolean invertX, boolean invertY) {
     if (ip == null || name == null) {
@@ -70,7 +65,18 @@ public class Camera implements Identifiable {
   }
 
   /**
-   * Returns the Camera's ip
+   * Creates a Camera object without an id and with both invertX and invertY as false.
+   *
+   * @throws java.lang.IllegalArgumentException if either name or ip is null.
+   * @see #Camera(String, String, Integer, boolean, boolean)
+   * @see #Camera(int, String, String, Integer, boolean, boolean)
+   */
+  public Camera(String ip, String name, Integer port) {
+    this(ip, name, port, false, false);
+  }
+
+  /**
+   * Returns the Camera's ip.
    */
   public String getIp() {
     return ip;
@@ -92,8 +98,6 @@ public class Camera implements Identifiable {
 
   /**
    * Returns the unique id for the Position object.
-   * 
-   * @return The id as an int.
    */
   public int getId() {
     return id;
@@ -114,7 +118,7 @@ public class Camera implements Identifiable {
   }
 
   /**
-   * Returns a formatted String of the Camera's web address
+   * Returns a formatted String of the Camera's web address.
    */
   public String getAddress() {
     if (port == null) {
@@ -125,7 +129,7 @@ public class Camera implements Identifiable {
 
   /**
    * Overrides toString and returns the new representation of the Camera object as a String.
-   * 
+   *
    * @return A String representing the Camera object and its state.
    */
   @Override
@@ -144,10 +148,10 @@ public class Camera implements Identifiable {
    * Parses the port from a String to an Integer and returns it.
    */
   public static Integer parsePort(String port) {
-      try {
-        return Integer.parseInt(port);
-      } catch (NumberFormatException ignored) {
-        return null;
-      }
+    try {
+      return Integer.parseInt(port);
+    } catch (NumberFormatException ignored) {
+      return null;
+    }
   }
 }

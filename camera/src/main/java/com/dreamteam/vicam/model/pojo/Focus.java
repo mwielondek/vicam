@@ -34,7 +34,7 @@ public class Focus implements Identifiable {
   /**
    * Creates a Focus object with set level and autofocus as well as an id.
    * The level should be withing accepted bounds.
-   * Throws IllegalArgumentExeption otherwise.
+   * @throws java.lang.IllegalArgumentException if the level is out of bounds.
    */
   public Focus(int id, int level, boolean autofocus) {
     this(level, autofocus);
@@ -42,9 +42,8 @@ public class Focus implements Identifiable {
   }
 
   /**
-   * Creates a Focus object with set level and autofocus.
-   * The level should be withing accepted bounds.
-   * Throws IllegalArgumentException otherwise.
+   * Creates a Focus object without an id.
+   * @see #Focus(int, int, boolean)
    */
   public Focus(int level, boolean autofocus) {
     Utils.rangeCheck(level, LOWER_BOUND, UPPER_BOUND);
@@ -54,8 +53,6 @@ public class Focus implements Identifiable {
 
   /**
    * Returns the unique id for the Focus object.
-   * 
-   * @return The id as an int.
    */
   public int getId() {
     return id;
@@ -63,8 +60,6 @@ public class Focus implements Identifiable {
 
   /**
    * Returns true if the autofocus is active, false otherwise.
-   * 
-   * @return The autofocus as a boolean.
    */
   public boolean isAutofocus() {
     return autofocus;
@@ -72,8 +67,6 @@ public class Focus implements Identifiable {
 
   /**
    * Returns the focus level to the caller.
-   * 
-   * @return An int representing the objects focus level.
    */
   public int getLevel() {
     return level;

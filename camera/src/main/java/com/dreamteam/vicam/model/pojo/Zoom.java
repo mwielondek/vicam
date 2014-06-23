@@ -3,9 +3,9 @@ package com.dreamteam.vicam.model.pojo;
 import com.dreamteam.vicam.presenter.utility.Utils;
 
 /**
- * This class keeps track of a camera's zoom level.
- * Also makes sure the zoom level stays within the specific bounds.
- * 
+ * This class keeps track of a camera's zoom level and makes sure the zoom level stays within the
+ * specific bounds.
+ *
  * @author Milosz Wielondek
  * @author Daniel Millevik
  * @since 2014-04-01.
@@ -19,7 +19,8 @@ public class Zoom {
 
   /**
    * Constructor creates a new Zoom object with the level as argument.
-   * Throws IllegalArgumentException if the level is not within acceptet bounds. 
+   *
+   * @throws java.lang.IllegalArgumentException if the level is not within accepted bounds.
    */
   public Zoom(int level) {
     Utils.rangeCheck(level, LOWER_BOUND, UPPER_BOUND);
@@ -27,9 +28,7 @@ public class Zoom {
   }
 
   /**
-   * Returns the zoom level to the caller.
-   * 
-   * @return An int representing the objects zoom level.
+   * Returns the zoom level.
    */
   public int getLevel() {
     return level;
@@ -37,8 +36,8 @@ public class Zoom {
 
   /**
    * Takes a parameter and changes the zoom level of the object accordingly.
-   * 
-   * @param An int representing the objects zoom level.
+   *
+   * @param level An int representing the objects zoom level.
    */
   public void setLevel(int level) {
     this.level = level;
@@ -46,7 +45,7 @@ public class Zoom {
 
   /**
    * Overrides toString and returns the new representation of the Zoom object as a String.
-   * 
+   *
    * @return A String representing the Zoom object and its level.
    */
   @Override
