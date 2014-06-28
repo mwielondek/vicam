@@ -62,7 +62,7 @@ dependencies {
     compile 'com.netflix.rxjava:rxjava-android:0.18.1'
     compile 'com.j256.ormlite:ormlite-core:4.48'
     compile 'com.j256.ormlite:ormlite-android:4.48'
-    compile 'com.android.support:support-v4:+'
+    compile 'com.android.support:support-v4:20.+'
     compile 'com.joanzapata.android:android-iconify:1.0.+'
     compile fileTree(dir: 'libs', include: ['*.jar'])
 }
